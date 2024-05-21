@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xmi:XMI xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:java="http://www.eclipse.org/papyrus/JAVA/1" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML">
-  <uml:Model xmi:id="_dbawcAraEe-AIa4p5EgIYA" name="Project">
+  <uml:Model xmi:id="_dbawcAraEe-AIa4p5EgIYA" name="OOP Project UBS Code">
     <packageImport xmi:type="uml:PackageImport" xmi:id="_hfb_gAraEe-AIa4p5EgIYA">
       <importedPackage xmi:type="uml:Profile" href="pathmap://Papyrus_JAVA_PROFILES/java.profile.uml#_6TYLMN0yEd6P1qtlpBOZyg"/>
     </packageImport>
