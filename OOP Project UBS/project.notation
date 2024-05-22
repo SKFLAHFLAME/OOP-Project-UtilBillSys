@@ -106,7 +106,7 @@
             <layoutConstraint xmi:type="notation:Bounds" xmi:id="_S33wFhGnEe-K57urmgGKGQ"/>
           </children>
           <element xmi:type="uml:UseCase" href="project.uml#_S3umIBGnEe-K57urmgGKGQ"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_S32h8RGnEe-K57urmgGKGQ" x="426" y="156" width="185" height="39"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_S32h8RGnEe-K57urmgGKGQ" x="408" y="164" width="185" height="39"/>
         </children>
         <children xmi:type="notation:Shape" xmi:id="_hU1I4BGnEe-K57urmgGKGQ" type="3012">
           <children xmi:type="notation:DecorationNode" xmi:id="_hU1I4hGnEe-K57urmgGKGQ" type="5022"/>
