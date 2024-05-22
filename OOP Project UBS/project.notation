@@ -847,8 +847,8 @@
       <styles xmi:type="notation:FontStyle" xmi:id="_bZC-0RX4Ee-6Yas5MLkShw"/>
       <element xmi:type="uml:Association" href="project.uml#_bY3_sBX4Ee-6Yas5MLkShw"/>
       <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_bZC-0hX4Ee-6Yas5MLkShw" points="[-2, 20, 6, -114]$[47, 101, 55, -33]"/>
-      <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_bZg44BX4Ee-6Yas5MLkShw" id="(0.2196078431372549,1.0)"/>
-      <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_bZg44RX4Ee-6Yas5MLkShw" id="(0.2,0.0)"/>
+      <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_bZg44BX4Ee-6Yas5MLkShw" id="(0.2792156862745098,1.0)"/>
+      <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_bZg44RX4Ee-6Yas5MLkShw" id="(0.19827586206896552,0.0)"/>
     </edges>
     <edges xmi:type="notation:Connector" xmi:id="_iowt1BX4Ee-6Yas5MLkShw" type="StereotypeCommentLink" source="_YYzDEBW6Ee-6Yas5MLkShw" target="_iowt0BX4Ee-6Yas5MLkShw">
       <styles xmi:type="notation:FontStyle" xmi:id="_iowt1RX4Ee-6Yas5MLkShw"/>
