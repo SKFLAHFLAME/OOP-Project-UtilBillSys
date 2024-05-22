@@ -106,7 +106,7 @@
           <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_QvDl8BfoEe-uSO094IUFfQ" value="1"/>
           <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_QvGpQBfoEe-uSO094IUFfQ" value="1"/>
         </ownedAttribute>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_bY3_sxX4Ee-6Yas5MLkShw" name="readings" visibility="private" type="_YYorABW6Ee-6Yas5MLkShw" aggregation="shared" association="_bY3_sBX4Ee-6Yas5MLkShw">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_bY3_sxX4Ee-6Yas5MLkShw" name="readings" visibility="private" type="_YYorABW6Ee-6Yas5MLkShw" association="_bY3_sBX4Ee-6Yas5MLkShw">
           <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_dIsXgBX4Ee-6Yas5MLkShw"/>
           <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_dIuzwBX4Ee-6Yas5MLkShw" value="*"/>
         </ownedAttribute>
