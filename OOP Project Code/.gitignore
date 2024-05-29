@@ -23,10 +23,8 @@
 hs_err_pid*
 replay_pid*
 
-
 /target/
 /.classpath
 /*.project
 /.settings
 /*.springBeans
-/bin/
