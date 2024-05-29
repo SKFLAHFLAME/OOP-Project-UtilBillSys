@@ -9,6 +9,7 @@ public class Menu extends JPanel{
 
     public Menu(MainFrame m){
         this.main = m;
+        
     }
 
 }
