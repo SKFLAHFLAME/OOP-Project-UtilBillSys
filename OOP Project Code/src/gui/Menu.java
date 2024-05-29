@@ -1,5 +1,7 @@
 package gui;
 
-public class Menu {
+import javax.swing.JPanel;
+
+public class Menu extends JPanel{
 
 }
