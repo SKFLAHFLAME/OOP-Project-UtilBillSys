@@ -18,6 +18,8 @@ public class MainFrame extends JFrame{
         card = new CardLayout();
         this.setLayout(card);
 
+        this.showLogin();
+
         this.setVisible(true);
     }
 
@@ -25,6 +27,18 @@ public class MainFrame extends JFrame{
         Menu m = new Menu(this);
         add(m, "menu");
         card.show(this.getContentPane(), "menu");
+    }
+
+    public void showLogin(){
+        Login l = new Login(this);
+        add(l, "login");
+        card.show(this.getContentPane(), "login");
+    }
+
+    public void showStaffLogin(){
+        SLogin sl = new SLogin(this);
+        add(sl, "Slogin");
+        card.show(this.getContentPane(), "Slogin");
     }
 
 
