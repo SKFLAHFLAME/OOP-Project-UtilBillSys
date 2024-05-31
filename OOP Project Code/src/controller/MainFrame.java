@@ -56,7 +56,5 @@ public class MainFrame extends JFrame{
         return cont;
     }
 
-    public static void main(String[] args) {
-        MainFrame gui = new MainFrame();
-    }
+    
 }
