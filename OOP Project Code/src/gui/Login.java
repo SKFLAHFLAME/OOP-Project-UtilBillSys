@@ -4,30 +4,16 @@ import javax.swing.JPanel;
 
 import controller.MainFrame;
 import java.awt.Button;
-import javax.swing.JButton;
-import java.awt.TextField;
 import javax.swing.JTextField;
-import javax.swing.plaf.ColorUIResource;
-import javax.swing.JRadioButtonMenuItem;
-import java.awt.List;
-import javax.swing.JList;
-import java.awt.Scrollbar;
-import java.awt.ScrollPane;
-import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.Cursor;
-
 import javax.swing.JLabel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.logging.Handler;
 import java.awt.Font;
-import javax.swing.JTextArea;
-import javax.swing.JTextPane;
 import javax.swing.JPasswordField;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import javax.swing.JTree;
 
 public class Login extends JPanel{
     MainFrame main;
