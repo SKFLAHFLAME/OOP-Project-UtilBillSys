@@ -1,23 +1,24 @@
 package controller;
 
-import javax.swing.JFrame;
-import java.awt.CardLayout;
 import gui.*;
+import java.awt.CardLayout;
+import javax.swing.JFrame;
 
 public class MainFrame extends JFrame{
     private CardLayout card;
     private Controller cont;
 
     public MainFrame(){
-        this.setTitle("UBS");
+        this.setTitle("Utility Billing System");
         this.setSize(400,300);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
 
         this.cont = new Controller();
-        card = new CardLayout();
+        
+        card = new CardLayout();    
         this.setLayout(card);
-
+        
         this.showLogin();
 
         this.setVisible(true);
@@ -40,6 +41,12 @@ public class MainFrame extends JFrame{
         add(sl, "Slogin");
         card.show(this.getContentPane(), "Slogin");
     }
+    
+    public void showSignUp(){
+        SignUp su = new SignUp(this);
+        add(su, "Signup");
+        card.show(this.getContentPane(), "Signup");
+    }
 
 
 
@@ -49,7 +56,5 @@ public class MainFrame extends JFrame{
         return cont;
     }
 
-    public static void main(String[] args) {
-        MainFrame gui = new MainFrame();
-    }
+    
 }

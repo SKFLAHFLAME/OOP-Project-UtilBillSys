@@ -10,6 +10,7 @@ public class SLogin extends JPanel{
     public SLogin(MainFrame m){
         this.main = m;
         this.setLayout(null);
+        
     }
 
 }
