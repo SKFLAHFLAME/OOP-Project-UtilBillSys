@@ -5,12 +5,24 @@ import java.util.Vector;
 public class Customer extends Account{
     // private String address;
     private Vector<Readings> userReadings = new Vector<>();
+    private String name;
+	private String email;
     
-    public Customer(){
+	public Customer(){
         super();
+        this.email = null;
+        this.name = null;
     }
-    public Customer(String name, String pass){
-        super(name,pass);
+    public Customer(String uname, String pass){
+        super(uname,pass);
+        this.email = null;
+        this.name = null;
+    }
+    
+    public Customer(String fname, String email, String uname, String pass){
+        super(uname,pass);
+        this.email = email;
+        this.name = fname;
     }
 
 
@@ -25,4 +37,20 @@ public class Customer extends Account{
         this.userReadings.add(r);
     }
     
+    
+
+    public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+    
+	
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
 }

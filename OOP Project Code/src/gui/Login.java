@@ -16,6 +16,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 
 public class Login extends JPanel{
     MainFrame main;
@@ -104,12 +106,12 @@ public class Login extends JPanel{
         	}
         	@Override
         	public void mouseClicked(MouseEvent e) {
+        		main.showSignUp();
         	}
         });
         lblSignUp.setFont(new Font("Dialog", Font.PLAIN, 12));
         lblSignUp.setBounds(132, 243, 130, 26);
         add(lblSignUp);
-        
         
         
         passwordField = new JPasswordField();
@@ -147,11 +149,9 @@ public class Login extends JPanel{
         		String name = textField.getText();
                 String pass = new String(passwordField.getPassword());
                 if (main.getCont().verifyUser(name, pass)) {
-                    System.out.println("Success!");
                     lblSuccess.setText("Success!");
                 }
                 else{
-                	chkbShowPass.setLocation(132, 210);
                 	lblSuccess.setText("Email or Password incorrect. Try Again.");
                 	}
 
@@ -163,6 +163,13 @@ public class Login extends JPanel{
         
         
         this.lblSuccess = new JLabel();
+        this.lblSuccess.addPropertyChangeListener(new PropertyChangeListener() {
+        	public void propertyChange(PropertyChangeEvent evt) {
+        		if (!lblSuccess.getText().isBlank()) {
+    				chkbShowPass.setLocation(132,210);}
+    			else {chkbShowPass.setLocation(132,188);}
+        	}
+        });
         this.lblSuccess.setForeground(Color.RED);
         this.lblSuccess.setFont(new Font("Dialog", Font.ITALIC, 12));
         this.lblSuccess.setBounds(132, 188, 307, 15);

@@ -15,6 +15,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Checkbox;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 
 public class SLogin extends JPanel{
     MainFrame main;
@@ -26,7 +28,7 @@ public class SLogin extends JPanel{
     private JPasswordField passwordField;
     private Button btnLogin;
     private Checkbox cbSP;
-    private JLabel label;
+    private JLabel lblErrors;
 
     public SLogin(MainFrame m){
         this.main = m;
@@ -55,7 +57,7 @@ public class SLogin extends JPanel{
         
         this.lblSLogin = new JLabel("Staff Login");
         this.lblSLogin.setFont(new Font("Dialog", Font.BOLD, 20));
-        this.lblSLogin.setBounds(157, 12, 130, 37);
+        this.lblSLogin.setBounds(168, 12, 130, 37);
         add(this.lblSLogin);
         
         this.lblStaffId = new JLabel("Staff ID:");
@@ -89,6 +91,7 @@ public class SLogin extends JPanel{
         this.btnLogin.setBounds(320, 208, 115, 31);
         add(this.btnLogin);
         
+        
         this.cbSP = new Checkbox("Show Password");
         this.cbSP.addMouseListener(new MouseAdapter() {
         	@Override
@@ -102,9 +105,18 @@ public class SLogin extends JPanel{
         this.cbSP.setBounds(109, 188, 115, 23);
         add(this.cbSP);
         
-        this.label = new JLabel("");
-        this.label.setBounds(109, 188, 326, 15);
-        add(this.label);
+        
+        this.lblErrors = new JLabel("");
+        this.lblErrors.addPropertyChangeListener(new PropertyChangeListener() {
+        	public void propertyChange(PropertyChangeEvent evt) {
+        		if(!lblErrors.getText().isBlank()) {
+        			cbSP.setLocation(109,188);
+        		}
+        		else {cbSP.setLocation(109,210);}
+        	}
+        });
+        this.lblErrors.setBounds(109, 188, 326, 15);
+        add(this.lblErrors);
         
     }
 }
