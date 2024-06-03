@@ -1,24 +1,33 @@
 package gui;
 
-import javax.swing.JPanel;
-
 import controller.MainFrame;
 import java.awt.Button;
-import javax.swing.JTextField;
+import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.Cursor;
-import javax.swing.JLabel;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.Font;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import javax.swing.JTextField;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
+import javax.swing.JCheckBox;
 
 public class Login extends JPanel{
     MainFrame main;
+    private boolean p = false;
     private JPasswordField passwordField;
     private JTextField textField;
+    private JLabel lblEye;
+    private JLabel lblSuccess;
+    private JCheckBox chckbxShowPass;
 
     public Login(MainFrame m){
         this.main = m;
@@ -42,11 +51,11 @@ public class Login extends JPanel{
         	}
         	@Override
         	public void mouseClicked(MouseEvent e) {
-        		main.showMenu();
+        		main.showStaffLogin();
         	}
         	
         });
-        lblSLogin.setBounds(12, 269, 75, 17);
+        lblSLogin.setBounds(12, 271, 75, 17);
         add(lblSLogin);
         
         JLabel lblUsername = new JLabel("Username:");
@@ -79,7 +88,7 @@ public class Login extends JPanel{
         	}
         });
         lblForgotPassword.setFont(new Font("Dialog", Font.PLAIN, 12));
-        lblForgotPassword.setBounds(334, 230, 105, 37);
+        lblForgotPassword.setBounds(334, 238, 105, 37);
         add(lblForgotPassword);
         
         JLabel lblSignUp = new JLabel("No account? Sign Up");
@@ -98,12 +107,12 @@ public class Login extends JPanel{
         	}
         	@Override
         	public void mouseClicked(MouseEvent e) {
+        		main.showSignUp();
         	}
         });
         lblSignUp.setFont(new Font("Dialog", Font.PLAIN, 12));
-        lblSignUp.setBounds(132, 194, 130, 26);
+        lblSignUp.setBounds(132, 243, 130, 26);
         add(lblSignUp);
-        
         
         
         passwordField = new JPasswordField();
@@ -116,23 +125,79 @@ public class Login extends JPanel{
         textField.setBounds(132, 89, 307, 38);
         add(textField);
         textField.setColumns(10);
-        
+
         Button btnLogin = new Button("Login");
         btnLogin.setFont(new Font("Dialog", Font.PLAIN, 14));
         btnLogin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnLogin.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		
+        		String name = textField.getText();
+                String pass = new String(passwordField.getPassword());
+                if (main.getCont().verifyUser(name, pass)) {
+                    lblSuccess.setText("Success!");
+                }
+                else{
+                	lblSuccess.setText("Email or Password incorrect. Try Again.");
+                	}
+
         	}
         });
-        btnLogin.setSize(105, 37);
-        btnLogin.setLocation(334, 194);
+        btnLogin.setSize(105, 32);
+        btnLogin.setLocation(334, 203);
         add(btnLogin);
         
         
-        JLabel lblSuccess = new JLabel();
-        lblSuccess.setBounds(142, 243, 70, 15);
-        add(lblSuccess);
+        this.lblSuccess = new JLabel();
+        this.lblSuccess.addPropertyChangeListener(new PropertyChangeListener() {
+        	public void propertyChange(PropertyChangeEvent evt) {
+        		if (!lblSuccess.getText().isEmpty()) {
+    				chckbxShowPass.setLocation(132,210);}
+    			
+        	}
+        });
+        this.lblSuccess.setForeground(Color.RED);
+        this.lblSuccess.setFont(new Font("Dialog", Font.ITALIC, 12));
+        this.lblSuccess.setBounds(132, 188, 307, 15);
+        add(this.lblSuccess);
+        
+        this.chckbxShowPass = new JCheckBox("Show Password");
+        chckbxShowPass.setFont(new Font("Dialog", Font.PLAIN, 12));
+        chckbxShowPass.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent arg0) {
+        		if(chckbxShowPass.isSelected()) {
+                	passwordField.setEchoChar((char)0);
+                }
+                else {
+                    passwordField.setEchoChar((char)0x2022);
+                }
+        	}
+        });
+        chckbxShowPass.setBounds(132, 191, 138, 25);
+        add(chckbxShowPass);
+        
+        // this.lblEye = new JLabel(new ImageIcon(Login.class.getResource("/files/eyeO.jpg")));
+        // this.lblEye.addMouseListener(new MouseAdapter() {
+        // 	@Override
+        // 	public void mouseClicked(MouseEvent e) {
+        // 		if(p == false) {
+        // 			lblEye.setIcon(new ImageIcon(Login.class.getResource("/files/eyeC.jpg")));
+        //             p =true;
+        // 		}
+        // 		else {lblEye.setIcon(new ImageIcon(Login.class.getResource("/files/eyeO.jpg")));p=false;}
+        		
+        // 		if(p == true) {
+        // 			passwordField.setEchoChar((char)0);
+        // 		}
+        // 		else {
+        //             passwordField.setEchoChar((char)0x2022);
+        //         }
+        		
+        //     }
+        // });
+        // this.lblEye.setBounds(443, 144, 45, 38);
+        // add(this.lblEye);
+        
+        
         
         
 
