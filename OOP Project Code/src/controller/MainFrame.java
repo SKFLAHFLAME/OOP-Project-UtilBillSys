@@ -9,19 +9,22 @@ public class MainFrame extends JFrame{
     private Controller cont;
 
     public MainFrame(){
+        
         this.setTitle("Utility Billing System");
         this.setSize(400,300);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
-
+            
         this.cont = new Controller();
         
-        card = new CardLayout();    
+            
+        card = new CardLayout();
         this.setLayout(card);
-        
+            
         this.showLogin();
-
+            
         this.setVisible(true);
+        
     }
 
     public void showMenu(){
@@ -55,6 +58,8 @@ public class MainFrame extends JFrame{
     public Controller getCont() {
         return cont;
     }
+
+    
 
     
 }
