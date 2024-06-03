@@ -18,6 +18,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import javax.swing.JCheckBox;
 
 public class Login extends JPanel{
     MainFrame main;
@@ -25,8 +26,8 @@ public class Login extends JPanel{
     private JPasswordField passwordField;
     private JTextField textField;
     private JLabel lblEye;
-    private Checkbox chkbShowPass;
     private JLabel lblSuccess;
+    private JCheckBox chckbxShowPass;
 
     public Login(MainFrame m){
         this.main = m;
@@ -124,22 +125,6 @@ public class Login extends JPanel{
         textField.setBounds(132, 89, 307, 38);
         add(textField);
         textField.setColumns(10);
-        
-        this.chkbShowPass = new Checkbox("Show Password");
-        this.chkbShowPass.addMouseListener(new MouseAdapter() {
-        	@Override
-        	public void mouseClicked(MouseEvent e) {
-        		if(chkbShowPass.getState()) {
-                	passwordField.setEchoChar((char)0);
-                }
-                else {
-                    passwordField.setEchoChar((char)0x2022);
-                }
-        	}
-        });
-        
-        this.chkbShowPass.setBounds(132, 188, 115, 23);
-        add(this.chkbShowPass);
 
         Button btnLogin = new Button("Login");
         btnLogin.setFont(new Font("Dialog", Font.PLAIN, 14));
@@ -165,15 +150,30 @@ public class Login extends JPanel{
         this.lblSuccess = new JLabel();
         this.lblSuccess.addPropertyChangeListener(new PropertyChangeListener() {
         	public void propertyChange(PropertyChangeEvent evt) {
-        		if (!lblSuccess.getText().isBlank()) {
-    				chkbShowPass.setLocation(132,210);}
-    			else {chkbShowPass.setLocation(132,188);}
+        		if (!lblSuccess.getText().isEmpty()) {
+    				chckbxShowPass.setLocation(132,210);}
+    			
         	}
         });
         this.lblSuccess.setForeground(Color.RED);
         this.lblSuccess.setFont(new Font("Dialog", Font.ITALIC, 12));
         this.lblSuccess.setBounds(132, 188, 307, 15);
         add(this.lblSuccess);
+        
+        this.chckbxShowPass = new JCheckBox("Show Password");
+        chckbxShowPass.setFont(new Font("Dialog", Font.PLAIN, 12));
+        chckbxShowPass.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent arg0) {
+        		if(chckbxShowPass.isSelected()) {
+                	passwordField.setEchoChar((char)0);
+                }
+                else {
+                    passwordField.setEchoChar((char)0x2022);
+                }
+        	}
+        });
+        chckbxShowPass.setBounds(132, 191, 138, 25);
+        add(chckbxShowPass);
         
         // this.lblEye = new JLabel(new ImageIcon(Login.class.getResource("/files/eyeO.jpg")));
         // this.lblEye.addMouseListener(new MouseAdapter() {

@@ -46,6 +46,7 @@ public class SignUp extends JPanel{
 	private Button btnSignUp;
 	private JLabel lblErrors;
 	private JLabel lblGoLogin;
+	private JCheckBox chckbxShowPassword;
 	
 	public SignUp(MainFrame m) {
 		this.main = m;
@@ -94,18 +95,18 @@ public class SignUp extends JPanel{
 		this.passwordField.setBounds(114, 214, 340, 35);
 		add(this.passwordField);
 		
-		this.cbShPa = new Checkbox("Show Password");
-		this.cbShPa.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if (cbShPa.getState()) {
-					passwordField.setEchoChar((char)0);
-				}
-				else {passwordField.setEchoChar((char)0x2022);}
-			}
-		});
-		this.cbShPa.setBounds(114, 261, 115, 23);
-		add(this.cbShPa);
+//		this.cbShPa = new Checkbox("Show Password");
+//		this.cbShPa.addMouseListener(new MouseAdapter() {
+//			@Override
+//			public void mouseClicked(MouseEvent e) {
+//				if (cbShPa.getState()) {
+//					passwordField.setEchoChar((char)0);
+//				}
+//				else {passwordField.setEchoChar((char)0x2022);}
+//				}
+//		});
+//		this.cbShPa.setBounds(114, 261, 115, 23);
+//		add(this.cbShPa);
 		
 		this.btnSignUp = new Button("Sign Up");
 		this.btnSignUp.addActionListener(new ActionListener() {
@@ -114,11 +115,13 @@ public class SignUp extends JPanel{
 				String email = txtEmail.getText();
 				String uName = txtUName.getText();
 				String pass = new String(passwordField.getPassword());
-				if (!uName.isBlank() && !pass.isBlank()) {
+				if (!uName.isEmpty() && !pass.isEmpty()) {
+					if(!uName.contains(" ")&&pass.contains(" ")){
 					main.getCont().addUser(uName, pass);
-					main.showLogin();
+					main.showLogin();}
+					else{lblErrors.setText("Fields contains Spaces");}
 				}
-				else {lblErrors.setText("Fields are Blank or has Spaces");}
+				else {lblErrors.setText("Fields are Blank");}
 			}
 		});
 		this.btnSignUp.setBounds(364, 261, 90, 35);
@@ -127,9 +130,9 @@ public class SignUp extends JPanel{
 		this.lblErrors = new JLabel();
 		this.lblErrors.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
-				if (!lblErrors.getText().isBlank()) {
-				cbShPa.setLocation(114, 280);}
-				else {cbShPa.setLocation(114,261);}
+				if (!lblErrors.getText().isEmpty()) {
+				chckbxShowPassword.setLocation(114, 280);}
+//				else {chckbxShowPassword.setLocation(114,261);}
 				
 			}
 		});
@@ -159,6 +162,19 @@ public class SignUp extends JPanel{
 		this.lblGoLogin.setFont(new Font("Dialog", Font.BOLD, 11));
 		this.lblGoLogin.setBounds(12, 323, 239, 15);
 		add(this.lblGoLogin);
+		
+		this.chckbxShowPassword = new JCheckBox("Show Password");
+		this.chckbxShowPassword.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (chckbxShowPassword.isSelected()) {
+					passwordField.setEchoChar((char)0);
+				}
+				else {passwordField.setEchoChar((char)0x2022);}
+				
+			}
+		});
+		this.chckbxShowPassword.setBounds(114, 258, 133, 25);
+		add(this.chckbxShowPassword);
 		
 		main.setSize(525, 390);
 		

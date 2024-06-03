@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.Checkbox;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import javax.swing.JCheckBox;
 
 public class SLogin extends JPanel{
     MainFrame main;
@@ -27,8 +28,8 @@ public class SLogin extends JPanel{
     private JTextField idField;
     private JPasswordField passwordField;
     private Button btnLogin;
-    private Checkbox cbSP;
     private JLabel lblErrors;
+    private JCheckBox chckbxShowPassword;
 
     public SLogin(MainFrame m){
         this.main = m;
@@ -92,31 +93,29 @@ public class SLogin extends JPanel{
         add(this.btnLogin);
         
         
-        this.cbSP = new Checkbox("Show Password");
-        this.cbSP.addMouseListener(new MouseAdapter() {
-        	@Override
-        	public void mouseClicked(MouseEvent e) {
-        		if(cbSP.getState()) {
+        this.lblErrors = new JLabel("");
+        this.lblErrors.addPropertyChangeListener(new PropertyChangeListener() {
+        	public void propertyChange(PropertyChangeEvent evt) {
+        		if(!lblErrors.getText().isEmpty()) {
+        			chckbxShowPassword.setLocation(109,188);
+        		}
+//        		else {chckbxShowPassword.setLocation(109,210);}
+        	}
+        });
+        this.lblErrors.setBounds(109, 188, 326, 15);
+        add(this.lblErrors);
+        
+        this.chckbxShowPassword = new JCheckBox("Show Password");
+        this.chckbxShowPassword.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		if(chckbxShowPassword.isSelected()) {
         			passwordField.setEchoChar((char)0);
         		}
         		else {passwordField.setEchoChar((char)0x2022);}
         	}
         });
-        this.cbSP.setBounds(109, 188, 115, 23);
-        add(this.cbSP);
-        
-        
-        this.lblErrors = new JLabel("");
-        this.lblErrors.addPropertyChangeListener(new PropertyChangeListener() {
-        	public void propertyChange(PropertyChangeEvent evt) {
-        		if(!lblErrors.getText().isBlank()) {
-        			cbSP.setLocation(109,188);
-        		}
-        		else {cbSP.setLocation(109,210);}
-        	}
-        });
-        this.lblErrors.setBounds(109, 188, 326, 15);
-        add(this.lblErrors);
+        this.chckbxShowPassword.setBounds(109, 191, 136, 25);
+        add(this.chckbxShowPassword);
         
     }
 }
