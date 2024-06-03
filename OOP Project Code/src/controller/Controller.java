@@ -24,6 +24,10 @@ public class Controller {
         ds.addUser(c);
     }
 
+    public void editUser(){
+        
+    }
+
     public DataStorage getDS() {
         return ds;
     }
