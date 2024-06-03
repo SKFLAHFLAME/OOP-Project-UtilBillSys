@@ -11,6 +11,66 @@ public class DataStorage {
     public void addUser(Customer cust){
         user.add(cust);
     }
+    
+    public void editUser(String type,String user, String val) {
+        type = type.toLowerCase();
+        int i=0;
+    	for(Customer u : this.getAllUser()){
+    		if(user.equals(u.getUsername())) {
+    			switch(type) {
+    			case "name": 
+    				u.setName(val);
+                    this.user.remove(i);
+                    this.user.add(i, u);
+    				break;
+    			case "email":
+                    u.setEmail(val);
+                    this.user.remove(i);
+                    this.user.add(i, u);
+    				break;
+    			case "password":
+    				u.setPassword(val);
+                    this.user.remove(i);
+                    this.user.add(i, u);
+    				break;
+    			default:
+    				break;
+    			}
+    		}
+    		else if(user.equals(u.getEmail())) {
+    			switch(type){
+                case "name": 
+                    u.setName(val);
+                    this.user.remove(i);
+                    this.user.add(i, u);
+    			    break;
+    			case "email":
+                    u.setEmail(val);
+                    this.user.remove(i);
+                    this.user.add(i, u);
+    	    		break;
+                case "username":
+                    u.setUsername(val);
+                    this.user.remove(i);
+                    this.user.add(i, u);
+                    break;
+    		    case "password":
+                    u.setPassword(val);
+                    this.user.remove(i);
+                    this.user.add(i, u);
+    			    break;
+    			default:
+        			break;
+    		    	
+                }
+    		}
+            i+=1;
+    	}
+    	
+    	
+    	
+		
+	}
 
 
 
@@ -46,6 +106,8 @@ public class DataStorage {
         }
         return null;
     }
+    
+    
 
     public Readings getReadings(String name) {
         for(Readings r:readings){
