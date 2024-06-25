@@ -87,6 +87,15 @@ public class SLogin extends JPanel{
         	public void actionPerformed(ActionEvent e) {
         		String id = idField.getText();
         		String pass = new String(passwordField.getPassword());
+                if (main.getCont().verifyStaff(id, pass)){
+                    if (id.equals("admin")){
+                        lblErrors.setText("Admin Login");
+                        main.showAdminMenu();
+                    }
+                    else{lblErrors.setText("Success");main.showStaffMenu();}
+                }
+                else {lblErrors.setText("ID or Password Incorrect! Try Again.");}
+                
         	}
         });
         this.btnLogin.setBounds(320, 208, 115, 31);
@@ -94,12 +103,13 @@ public class SLogin extends JPanel{
         
         
         this.lblErrors = new JLabel("");
+        this.lblErrors.setForeground(Color.RED);
         this.lblErrors.addPropertyChangeListener(new PropertyChangeListener() {
         	public void propertyChange(PropertyChangeEvent evt) {
         		if(!lblErrors.getText().isEmpty()) {
-        			chckbxShowPassword.setLocation(109,188);
+        			chckbxShowPassword.setLocation(109,210);
         		}
-//        		else {chckbxShowPassword.setLocation(109,210);}
+       		    // else {chckbxShowPassword.setLocation(109,210);}
         	}
         });
         this.lblErrors.setBounds(109, 188, 326, 15);

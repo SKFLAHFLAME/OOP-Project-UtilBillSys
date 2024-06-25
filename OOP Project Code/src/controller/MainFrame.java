@@ -22,13 +22,24 @@ public class MainFrame extends JFrame{
         this.setLayout(card);
             
         this.showLogin();
+        getCont().initialiseUsers();
             
         this.setVisible(true);
         
     }
 
-    public void showMenu(){
-        Menu m = new Menu(this);
+    public void showCustMenu(){
+        CMenu m = new CMenu(this);
+        add(m, "menu");
+        card.show(this.getContentPane(), "menu");
+    }
+    public void showAdminMenu(){
+        AMenu m = new AMenu(this);
+        add(m, "menu");
+        card.show(this.getContentPane(), "menu");
+    }
+    public void showStaffMenu(){
+        SMenu m = new SMenu(this);
         add(m, "menu");
         card.show(this.getContentPane(), "menu");
     }
