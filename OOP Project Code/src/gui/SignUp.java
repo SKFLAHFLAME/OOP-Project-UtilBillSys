@@ -116,7 +116,7 @@ public class SignUp extends JPanel{
 				String uName = txtUName.getText();
 				String pass = new String(passwordField.getPassword());
 				if (!uName.isEmpty() && !pass.isEmpty()) {
-					if(!uName.contains(" ")&&pass.contains(" ")){
+					if(!uName.contains(" ")&&!pass.contains(" ")){
 					main.getCont().addUser(uName, pass);
 					main.showLogin();}
 					else{lblErrors.setText("Fields contains Spaces");}

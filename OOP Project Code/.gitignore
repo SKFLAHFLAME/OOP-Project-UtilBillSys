@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Compiled class file
 *.class
 
@@ -24,16 +23,10 @@
 hs_err_pid*
 replay_pid*
 
-=======
 /bin/
->>>>>>> master
 /target/
 /.classpath
-/*.project
 /.settings
-<<<<<<< HEAD
 /*.springBeans
 /bin/
-=======
 /*.springBeans
->>>>>>> master
