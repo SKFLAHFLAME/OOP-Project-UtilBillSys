@@ -19,7 +19,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 import javax.swing.JCheckBox;
 
-public class SLogin extends JPanel{
+public class CLogin extends JPanel{
     MainFrame main;
     private JLabel lblNLogin;
     private JLabel lblCLogin;
