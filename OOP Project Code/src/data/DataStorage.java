@@ -7,6 +7,14 @@ public class DataStorage {
     private Vector<Customer> user = new Vector<>();
     private Vector<Readings> readings = new Vector<>();
 
+    public DataStorage (){
+        Staff admin = new Staff("admin", "admin");
+        staff.add(admin);
+    }
+    public void addStaff(Staff s){
+        staff.add(s);
+    }
+
 
     public void addUser(Customer cust){
         user.add(cust);
@@ -20,18 +28,15 @@ public class DataStorage {
     			switch(type) {
     			case "name": 
     				u.setName(val);
-                    this.user.remove(i);
-                    this.user.add(i, u);
+                    this.user.set(i, u);
     				break;
     			case "email":
                     u.setEmail(val);
-                    this.user.remove(i);
-                    this.user.add(i, u);
+                    this.user.set(i, u);
     				break;
     			case "password":
     				u.setPassword(val);
-                    this.user.remove(i);
-                    this.user.add(i, u);
+                    this.user.set(i, u);
     				break;
     			default:
     				break;
@@ -41,23 +46,19 @@ public class DataStorage {
     			switch(type){
                 case "name": 
                     u.setName(val);
-                    this.user.remove(i);
-                    this.user.add(i, u);
+                    this.user.set(i, u);
     			    break;
     			case "email":
                     u.setEmail(val);
-                    this.user.remove(i);
-                    this.user.add(i, u);
+                    this.user.set(i, u);
     	    		break;
                 case "username":
                     u.setUsername(val);
-                    this.user.remove(i);
-                    this.user.add(i, u);
+                    this.user.set(i, u);
                     break;
     		    case "password":
                     u.setPassword(val);
-                    this.user.remove(i);
-                    this.user.add(i, u);
+                    this.user.set(i, u);
     			    break;
     			default:
         			break;
