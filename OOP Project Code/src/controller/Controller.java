@@ -2,6 +2,7 @@ package controller;
 
 import data.Customer;
 import data.DataStorage;
+import data.Readings;
 import data.Staff;
 
 public class Controller {
@@ -33,9 +34,32 @@ public class Controller {
         else {return false;}
     }
 
+    public Readings[] allReadings(){
+    	Readings[] r=ds.getAllReadings();
+    	return r;
+    }
+    
     public void addUser(String name, String password){
         Customer c = new Customer(name, password);
         ds.addUser(c);
+    }
+    public void addStaff(String id, String pass){
+    	Staff s= new Staff(id,pass);
+    	ds.addStaff(s);
+    }
+    public void addReading(String name, double price, String unit, double serviceCharge){
+    	Readings readings = new Readings(name, price, unit, serviceCharge);
+    	ds.addReading(readings);
+    }
+    
+    public void updateReading(String name, double price, String unit, double serviceCharge, int index){
+    	Readings readings = new Readings(name, price, unit, serviceCharge);
+    	ds.updateReading(readings, index);
+    }
+    
+    public void init_Readings(){
+    	this.addReading("Gas", 0.24, "kWh", 2);
+    	this.addReading("Water", 1.40, "Cu_M", 10);
     }
 
     public void editUser(){

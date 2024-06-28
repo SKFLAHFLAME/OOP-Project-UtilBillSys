@@ -14,6 +14,7 @@ public class CMenu extends JPanel{
     public CMenu(MainFrame m){
         this.main = m;
         this.setLayout(null);
+        main.setSize(500,340);
         
         this.loc = new JLabel("Customer");
         this.loc.addMouseListener(new MouseAdapter() {

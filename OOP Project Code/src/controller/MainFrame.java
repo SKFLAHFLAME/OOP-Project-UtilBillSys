@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 public class MainFrame extends JFrame{
     private CardLayout card;
     private Controller cont;
+    private boolean prepage=false;
 
     public MainFrame(){
         
@@ -16,6 +17,7 @@ public class MainFrame extends JFrame{
         this.setLocationRelativeTo(null);
             
         this.cont = new Controller();
+        this.getCont().init_Readings();
         
             
         card = new CardLayout();
@@ -61,6 +63,16 @@ public class MainFrame extends JFrame{
         add(su, "Signup");
         card.show(this.getContentPane(), "Signup");
     }
+    public void showSSignUp(){
+        CreateStaff su = new CreateStaff(this);
+        add(su, "SSignup");
+        card.show(this.getContentPane(), "SSignup");
+    }
+    public void showEditUtility(){
+        EditUtility eu = new EditUtility(this);
+        add(eu,"Util");
+        card.show(this.getContentPane(), "Util");
+    }
 
 
 
@@ -69,6 +81,14 @@ public class MainFrame extends JFrame{
     public Controller getCont() {
         return cont;
     }
+
+	public boolean getPrepage() {
+		return prepage;
+	}
+
+	public void setPrepage(boolean prepage) {
+		this.prepage = prepage;
+	}
 
     
 
