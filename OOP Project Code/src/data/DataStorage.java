@@ -19,6 +19,12 @@ public class DataStorage {
     public void addUser(Customer cust){
         user.add(cust);
     }
+    public void addReading(Readings r){
+    	readings.add(r);
+    }
+    public void updateReading(Readings r,int index){
+    	readings.setElementAt(r, index);
+    }
     
     public void editUser(String type,String user, String val) {
         type = type.toLowerCase();
@@ -134,7 +140,7 @@ public class DataStorage {
 
     public Readings[] getAllReadings() {
         Readings[] r = new Readings[readings.size()];
-        user.toArray(r);
+        readings.toArray(r);
         return r;
     }
 
