@@ -19,6 +19,8 @@ import javax.swing.JTextField;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 import javax.swing.JCheckBox;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class Login extends JPanel{
     MainFrame main;
@@ -131,16 +133,7 @@ public class Login extends JPanel{
         btnLogin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnLogin.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		String name = textField.getText();
-                String pass = new String(passwordField.getPassword());
-                if (main.getCont().verifyUser(name, pass)) {
-                    lblSuccess.setText("Success!");
-                    main.showCustMenu();
-                }
-                else{
-                	lblSuccess.setText("Email or Password incorrect. Try Again.");
-                	}
-
+        		nextPage();
         	}
         });
         btnLogin.setSize(105, 32);
@@ -203,5 +196,17 @@ public class Login extends JPanel{
         
 
         
+    }
+
+    public void nextPage(){
+        String name = textField.getText();
+        String pass = new String(passwordField.getPassword());
+        if (main.getCont().verifyUser(name, pass)) {
+            lblSuccess.setText("Success!");
+            main.showCustMenu();
+        }
+        else{
+            lblSuccess.setText("Email or Password incorrect. Try Again.");
+            } 
     }
 }

@@ -7,8 +7,10 @@ public class Customer extends Account{
     private Vector<Readings> userReadings = new Vector<>();
     private String name;
 	private String email;
+    private String address;
     
-	public Customer(){
+
+    public Customer(){
         super();
         this.email = null;
         this.name = null;
@@ -53,4 +55,11 @@ public class Customer extends Account{
 	public void setName(String name) {
 		this.name = name;
 	}
+
+    public String getAddress() {
+        return address;
+    }
+    public void setAddress(String address) {
+        this.address = address;
+    }  
 }

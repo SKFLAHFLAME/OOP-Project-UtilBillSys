@@ -34,6 +34,7 @@ public class SLogin extends JPanel{
     public SLogin(MainFrame m){
         this.main = m;
         this.setLayout(null);
+        main.setSize(500,340);
         
         this.lblNLogin = new JLabel("Normal Login");
         this.lblNLogin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

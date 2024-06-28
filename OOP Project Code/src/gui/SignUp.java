@@ -51,6 +51,7 @@ public class SignUp extends JPanel{
 	public SignUp(MainFrame m) {
 		this.main = m;
 		this.setLayout(null);
+		main.setSize(525, 390);
 		
 		this.lblFullName = new JLabel("Full Name:");
 		this.lblFullName.setFont(new Font("Dialog", Font.BOLD, 15));
@@ -176,7 +177,7 @@ public class SignUp extends JPanel{
 		this.chckbxShowPassword.setBounds(114, 258, 133, 25);
 		add(this.chckbxShowPassword);
 		
-		main.setSize(525, 390);
+		
 		
 		
 	}
