@@ -41,7 +41,7 @@ public class EditUtility extends JPanel{
 		this.btnBack = new JButton("Back");
 		this.btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-//				main.closeAddFrame();
+				main.closeAddFrame();
 				if (main.getPrepage()==true){
 					main.showAdminMenu();
 				}
