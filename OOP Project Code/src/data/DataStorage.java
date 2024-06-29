@@ -26,6 +26,10 @@ public class DataStorage {
     	readings.setElementAt(r, index);
     }
     
+    public void removeReading(){
+    	
+    }
+    
     public void editUser(String type,String user, String val) {
         type = type.toLowerCase();
         int i=0;
