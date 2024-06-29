@@ -8,6 +8,7 @@ public class MainFrame extends JFrame{
     private CardLayout card;
     private Controller cont;
     private boolean prepage=false;
+    private String[] currentAcct = new String[2];//( S/C , Username )
 
     public MainFrame(){
         
@@ -17,7 +18,6 @@ public class MainFrame extends JFrame{
         this.setLocationRelativeTo(null);
             
         this.cont = new Controller();
-        this.getCont().init_Readings();
         
             
         card = new CardLayout();
@@ -88,6 +88,19 @@ public class MainFrame extends JFrame{
 
 	public void setPrepage(boolean prepage) {
 		this.prepage = prepage;
+	}
+
+	public String[] getCurrentAcct() {
+		return currentAcct;
+	}
+
+	public void setCurrentAcct(String type, String Uname) {
+		String[] x = {type,Uname};
+		this.currentAcct = x;
+	}
+	public void clearCurrentAcct(){
+		this.currentAcct[0] =null;
+		this.currentAcct[1] = null;
 	}
 
     

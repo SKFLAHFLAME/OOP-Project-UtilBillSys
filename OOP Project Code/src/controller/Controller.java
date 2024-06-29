@@ -7,9 +7,13 @@ import data.Staff;
 
 public class Controller {
     private DataStorage ds = new DataStorage();
+    
+    
     public void initialiseUsers(){
         ds.addUser(new Customer("John_Doe", "password"));
         ds.addStaff(new Staff("1234ABC", "password"));
+        this.addReading("Gas", 0.24, "kWh", 2);
+    	this.addReading("Water", 1.40, "Cu_M", 10);
     }
 
     public boolean isUser(String name) {
@@ -57,10 +61,10 @@ public class Controller {
     	ds.updateReading(readings, index);
     }
     
-    public void init_Readings(){
-    	this.addReading("Gas", 0.24, "kWh", 2);
-    	this.addReading("Water", 1.40, "Cu_M", 10);
+    public void removeReading(){
+    	
     }
+    
 
     public void editUser(){
         
