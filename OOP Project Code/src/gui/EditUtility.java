@@ -18,6 +18,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Vector;
+import java.util.PrimitiveIterator.OfDouble;
 import java.beans.PropertyChangeEvent;
 
 public class EditUtility extends JPanel{
@@ -26,13 +27,12 @@ public class EditUtility extends JPanel{
 	private JButton btnDelete;
 	private JButton btnAddUtility;
 	private JButton btnUpdateUtility;
-	private JScrollPane sPane;
-	private Object[] coloumnames={"Utility Name","Price","Unit", "Service Charge (%)"};
+	private Object[] coloumnames={"Utility Name","Price (S$)","Unit", "Service Charge (%)"};
 	private JScrollPane scrollPane;
 	private JTable table;
 	private Vector<Object[]> changes = new Vector<>();
 	private String[][]data;
-	private Vector<Object[]> finaldata=new Vector<>();
+//	private Vector<Object[]> finaldata=new Vector<>();
 	private DefaultTableModel model;
 	public EditUtility(MainFrame m){
 		this.main = m;
@@ -41,6 +41,7 @@ public class EditUtility extends JPanel{
 		this.btnBack = new JButton("Back");
 		this.btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+//				main.closeAddFrame();
 				if (main.getPrepage()==true){
 					main.showAdminMenu();
 				}
@@ -54,7 +55,10 @@ public class EditUtility extends JPanel{
 		this.btnDelete = new JButton("Delete");
 		this.btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				deleteRow();
+				int edtRow= table.getSelectedRow();
+				System.out.println(edtRow);
+				deleteRow(edtRow);
+				redraw();
 			}
 		});
 		this.btnDelete.setFont(new Font("Tahoma", Font.PLAIN, 17));
@@ -75,6 +79,15 @@ public class EditUtility extends JPanel{
 		this.btnUpdateUtility = new JButton("Update Utilities");
 		this.btnUpdateUtility.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				int c=0;
+				int c2=0;
+//				for (Object[] x : finaldata){
+//					for(Object y:x){System.out.print(y+":"+c2+":"+c+" , ");c2+=1;}
+//					System.out.println();
+//					c2=0;
+//					c+=1;
+//				}
+				c2=0;c=0;
 				updateItems();
 			}
 		});
@@ -92,11 +105,11 @@ public class EditUtility extends JPanel{
 		this.table.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		this.table.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent arg0) {
-				int selectedRow=table.getEditingRow();
-				int selectedCol=table.getEditingColumn();
-				if (selectedRow==-1||selectedCol==-1){return;}
-				Object item = table.getValueAt(selectedRow, selectedCol);
-				Object[] i = {selectedRow,selectedCol,item};
+				int editedRow=table.getEditingRow();
+				int editedCol=table.getEditingColumn();
+				if (editedRow==-1||editedCol==-1){return;}
+				Object item = table.getValueAt(editedRow, editedCol);
+				Object[] i = {editedRow,editedCol,item};
 				changes.add(i);
 				System.out.println(item);
 				System.out.println(i[0]+", "+i[1]+", "+i[2]);
@@ -110,13 +123,13 @@ public class EditUtility extends JPanel{
 	public void addRow(){
 //		main.getCont().addReading("i", 0.0, "i", 0.0);
 //		redraw();
-		AddFrame frame = new AddFrame();
-		frame.setVisible(true);
-		
-		
+		main.showAddFrame();
+//		redraw();
 	}
-	public void deleteRow(){
-		
+	
+	public void deleteRow(int row){
+		if (row<0){return;}
+		main.getCont().removeReading(row);
 	}
 	
 	public void redraw(){
@@ -125,12 +138,12 @@ public class EditUtility extends JPanel{
 		data= new String[main.getCont().allReadings().length][4];
 		for (Readings r:main.getCont().allReadings()){
 			Object[] x = {r.getUtilityName(),r.getPrice(),r.getUnit(),r.getServiceCharge()};
-			finaldata.add(x);
-			System.out.println(x[0]+", "+x[1]+", "+x[2]+", "+x[3]);
+//			finaldata.insertElementAt(x, c);
+			System.out.println(x[0]+", "+x[1]+", "+x[2]+", "+x[3]+": "+c);
 			data[c][0]=r.getUtilityName();
 			data[c][1]=String.valueOf(r.getPrice());
 			data[c][2]=r.getUnit();
-			data[c][3]=String.valueOf(r.getServiceCharge()+"%");
+			data[c][3]=String.valueOf(r.getServiceCharge());
 			model.addRow(x);
 			c+=1;
 		}
@@ -147,17 +160,19 @@ public class EditUtility extends JPanel{
 	}
 	
 	public void updateItems(){
+		redraw();
 //		change = new Object[main.getCont().allReadings().length+1][4];
 		int c=0;
-		for(Object[] i:changes){
-			Object[] y =finaldata.get((int) i[0]);
-			y[(int) i[1]]=i[2];
-			finaldata.set((int)i[0], y);
-			
-		}
-		c=0;
-		for(Object[] s: finaldata){
-			System.out.println(s.length);
+//		for(Object[] i:changes){
+////			System.out.println(i[0]+", "+i[1]+", "+i[2]);
+//			Object[] y =finaldata.get((int) i[0]);
+//			y[(int) i[1]]=i[2];
+//			finaldata.set((int)i[0], y);
+//			
+//		}
+//		c=0;
+		for(Object[] s: data){
+//			System.out.println(s[0].toString()+","+ Double.valueOf(s[1].toString())+", "+ s[2].toString()+", "+ Double.valueOf(s[3].toString())+", "+ c);
 			main.getCont().updateReading(s[0].toString(), Double.valueOf(s[1].toString()), s[2].toString(), Double.valueOf(s[3].toString()), c);
 			c+=1;
 		}

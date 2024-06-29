@@ -16,6 +16,7 @@ public class AMenu extends JPanel{
     private JButton btnAddStaff;
     private JButton btnEditUtilities;
     private JButton btnViewBills;
+    private JButton btnEditStaff;
     
     public AMenu(MainFrame m){
         this.main = m;
@@ -50,7 +51,7 @@ public class AMenu extends JPanel{
         	}
         });
         this.btnAddStaff.setFont(new Font("Tahoma", Font.PLAIN, 17));
-        this.btnAddStaff.setBounds(12, 105, 140, 59);
+        this.btnAddStaff.setBounds(12, 105, 140, 25);
         add(this.btnAddStaff);
         
         this.btnEditUtilities = new JButton("Edit Utilities");
@@ -73,6 +74,11 @@ public class AMenu extends JPanel{
         this.btnViewBills.setFont(new Font("Tahoma", Font.PLAIN, 17));
         this.btnViewBills.setBounds(321, 106, 117, 57);
         add(this.btnViewBills);
+        
+        this.btnEditStaff = new JButton("Edit Staff");
+        this.btnEditStaff.setFont(new Font("Tahoma", Font.PLAIN, 17));
+        this.btnEditStaff.setBounds(12, 136, 140, 25);
+        add(this.btnEditStaff);
 
 
 
