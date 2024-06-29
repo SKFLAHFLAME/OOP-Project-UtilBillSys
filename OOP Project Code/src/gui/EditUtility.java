@@ -52,6 +52,11 @@ public class EditUtility extends JPanel{
 		add(this.btnBack);
 		
 		this.btnDelete = new JButton("Delete");
+		this.btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				deleteRow();
+			}
+		});
 		this.btnDelete.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		this.btnDelete.setBounds(12, 318, 117, 52);
 		add(this.btnDelete);
@@ -83,6 +88,7 @@ public class EditUtility extends JPanel{
 		
 		this.model = new DefaultTableModel(coloumnames, 0);
 		this.table = new JTable(model);
+		this.table.setRowHeight(table.getRowHeight()+10);
 		this.table.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		this.table.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent arg0) {
@@ -102,9 +108,14 @@ public class EditUtility extends JPanel{
 	}
 	
 	public void addRow(){
-		main.getCont().addReading("i", 0.0, "i", 0.0);
-		redraw();
+//		main.getCont().addReading("i", 0.0, "i", 0.0);
+//		redraw();
+		AddFrame frame = new AddFrame();
+		frame.setVisible(true);
 		
+		
+	}
+	public void deleteRow(){
 		
 	}
 	
