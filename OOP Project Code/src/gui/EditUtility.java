@@ -17,6 +17,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeListener;
+import java.text.DecimalFormat;
 import java.util.Vector;
 import java.util.PrimitiveIterator.OfDouble;
 import java.beans.PropertyChangeEvent;
@@ -137,7 +138,7 @@ public class EditUtility extends JPanel{
 		int c=0;
 		data= new String[main.getCont().allReadings().length][4];
 		for (Readings r:main.getCont().allReadings()){
-			Object[] x = {r.getUtilityName(),r.getPrice(),r.getUnit(),r.getServiceCharge()};
+			Object[] x = {r.getUtilityName(),String.format("%.2f", r.getPrice()),r.getUnit(),r.getServiceCharge()};
 //			finaldata.insertElementAt(x, c);
 			System.out.println(x[0]+", "+x[1]+", "+x[2]+", "+x[3]+": "+c);
 			data[c][0]=r.getUtilityName();
