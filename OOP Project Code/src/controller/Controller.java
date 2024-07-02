@@ -1,5 +1,7 @@
 package controller;
 
+import javax.swing.DefaultDesktopManager;
+
 import data.Customer;
 import data.DataStorage;
 import data.Readings;
@@ -18,6 +20,10 @@ public class Controller {
 
     public boolean isUser(String name) {
         return name.equals(ds.getUser(name).getUsername());
+    }
+    
+    public boolean isStaff(String id){
+    	return id.equals(ds.getStaff(id).getUsername());
     }
 
     public boolean verifyUser(String name, String password){
