@@ -8,7 +8,10 @@ public class MainFrame extends JFrame{
     private CardLayout card;
     private Controller cont;
     private boolean prepage=false;
-    private String[] currentAcct = new String[2];//( S/C , Username )
+    private String[] currentAcct = new String[2];//( S/C , Username)
+    public boolean flag;
+    AddFrame frame;
+    private EditUtility eu;
 
     public MainFrame(){
         
@@ -69,9 +72,16 @@ public class MainFrame extends JFrame{
         card.show(this.getContentPane(), "SSignup");
     }
     public void showEditUtility(){
-        EditUtility eu = new EditUtility(this);
+        eu=new EditUtility(this);
         add(eu,"Util");
         card.show(this.getContentPane(), "Util");
+    }
+    public void showAddFrame(){
+    	frame = new AddFrame(this);
+    	frame.setVisible(true);
+    }
+    public void closeAddFrame(){
+    	frame.dispose();
     }
 
 
@@ -101,6 +111,10 @@ public class MainFrame extends JFrame{
 	public void clearCurrentAcct(){
 		this.currentAcct[0] =null;
 		this.currentAcct[1] = null;
+	}
+
+	public EditUtility getEu() {
+		return eu;
 	}
 
     

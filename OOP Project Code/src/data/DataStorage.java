@@ -2,6 +2,8 @@ package data;
 
 import java.util.Vector;
 
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.IconifyAction;
+
 public class DataStorage {
     private Vector<Staff> staff = new Vector<>();
     private Vector<Customer> user = new Vector<>();
@@ -23,11 +25,12 @@ public class DataStorage {
     	readings.add(r);
     }
     public void updateReading(Readings r,int index){
+    	System.out.println(index);
     	readings.setElementAt(r, index);
     }
     
-    public void removeReading(){
-    	
+    public void removeReading(int index){
+    	readings.remove(index);
     }
     
     public void editUser(String type,String user, String val) {
