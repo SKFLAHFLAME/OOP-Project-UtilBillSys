@@ -57,12 +57,13 @@ public class Controller {
     }
     
     public void updateReading(String name, double price, String unit, double serviceCharge, int index){
+    	System.out.println(name+":"+price+":"+serviceCharge+":"+index);
     	Readings readings = new Readings(name, price, unit, serviceCharge);
     	ds.updateReading(readings, index);
     }
     
-    public void removeReading(){
-    	
+    public void removeReading(int index){
+    	ds.removeReading(index);
     }
     
 
