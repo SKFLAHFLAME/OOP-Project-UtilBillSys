@@ -36,7 +36,8 @@ public class SMenu extends JPanel{
         
         this.btnLogOut = new JButton("Log Out");
         this.btnLogOut.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
+        	@Override
+			public void actionPerformed(ActionEvent e) {
         		main.showStaffLogin();
         	}
         });
@@ -46,7 +47,8 @@ public class SMenu extends JPanel{
         
         this.btnEditUtilities = new JButton("Edit Utilities");
         this.btnEditUtilities.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
+        	@Override
+			public void actionPerformed(ActionEvent e) {
         		main.setPrepage(false);
         		main.showEditUtility();
         		
@@ -58,7 +60,8 @@ public class SMenu extends JPanel{
         
         this.btnViewCustomer = new JButton("View Customer");
         this.btnViewCustomer.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
+        	@Override
+			public void actionPerformed(ActionEvent e) {
         	}
         });
         this.btnViewCustomer.setFont(new Font("Tahoma", Font.PLAIN, 17));

@@ -14,7 +14,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.Checkbox;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 import javax.swing.JCheckBox;
@@ -85,7 +84,8 @@ public class SLogin extends JPanel{
         
         this.btnLogin = new Button("Login");
         this.btnLogin.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
+        	@Override
+			public void actionPerformed(ActionEvent e) {
         		String id = idField.getText();
         		String pass = new String(passwordField.getPassword());
                 if (main.getCont().verifyStaff(id, pass)){
@@ -106,7 +106,8 @@ public class SLogin extends JPanel{
         this.lblErrors = new JLabel("");
         this.lblErrors.setForeground(Color.RED);
         this.lblErrors.addPropertyChangeListener(new PropertyChangeListener() {
-        	public void propertyChange(PropertyChangeEvent evt) {
+        	@Override
+			public void propertyChange(PropertyChangeEvent evt) {
         		if(!lblErrors.getText().isEmpty()) {
         			chckbxShowPassword.setLocation(109,210);
         		}
@@ -118,7 +119,8 @@ public class SLogin extends JPanel{
         
         this.chckbxShowPassword = new JCheckBox("Show Password");
         this.chckbxShowPassword.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
+        	@Override
+			public void actionPerformed(ActionEvent e) {
         		if(chckbxShowPassword.isSelected()) {
         			passwordField.setEchoChar((char)0);
         		}

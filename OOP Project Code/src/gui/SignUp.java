@@ -2,29 +2,17 @@ package gui;
 
 import controller.MainFrame;
 import javax.swing.JPanel;
-import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Dimension;
-
-import javax.swing.Box;
-import javax.swing.JScrollPane;
 import javax.swing.JLabel;
-import javax.swing.JButton;
-
-import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Font;
-import java.awt.Label;
 import javax.swing.JTextField;
 import javax.swing.JCheckBox;
 import javax.swing.JScrollBar;
 import java.awt.Checkbox;
 import java.awt.Color;
-import java.awt.Panel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.AdjustmentListener;
-import java.awt.event.AdjustmentEvent;
 import javax.swing.JPasswordField;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -111,6 +99,7 @@ public class SignUp extends JPanel{
 		
 		this.btnSignUp = new Button("Sign Up");
 		this.btnSignUp.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				String name = txtName.getText();
 				String email = txtEmail.getText();
@@ -130,6 +119,7 @@ public class SignUp extends JPanel{
 		
 		this.lblErrors = new JLabel();
 		this.lblErrors.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (!lblErrors.getText().isEmpty()) {
 				chckbxShowPassword.setLocation(114, 280);}
@@ -166,6 +156,7 @@ public class SignUp extends JPanel{
 		
 		this.chckbxShowPassword = new JCheckBox("Show Password");
 		this.chckbxShowPassword.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (chckbxShowPassword.isSelected()) {
 					passwordField.setEchoChar((char)0);

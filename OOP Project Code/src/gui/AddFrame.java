@@ -85,6 +85,7 @@ public class AddFrame extends JFrame{
 		
 		this.btnCancel = new JButton("Cancel");
 		this.btnCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				dispose();
 			}
@@ -96,6 +97,7 @@ public class AddFrame extends JFrame{
 		this.btnAdd = new JButton("Add");
 		this.btnAdd.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		btnAdd.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				addReading();
 				main.getEu().redraw();

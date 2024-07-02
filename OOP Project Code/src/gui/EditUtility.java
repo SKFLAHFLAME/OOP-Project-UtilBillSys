@@ -6,20 +6,15 @@ import controller.MainFrame;
 import data.Readings;
 
 import javax.swing.JScrollPane;
-import javax.swing.JList;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JButton;
 
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeListener;
-import java.text.DecimalFormat;
 import java.util.Vector;
-import java.util.PrimitiveIterator.OfDouble;
 import java.beans.PropertyChangeEvent;
 
 public class EditUtility extends JPanel{
@@ -41,6 +36,7 @@ public class EditUtility extends JPanel{
 		
 		this.btnBack = new JButton("Back");
 		this.btnBack.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				main.closeAddFrame();
 				if (main.getPrepage()==true){
@@ -55,6 +51,7 @@ public class EditUtility extends JPanel{
 		
 		this.btnDelete = new JButton("Delete");
 		this.btnDelete.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				int edtRow= table.getSelectedRow();
 				System.out.println(edtRow);
@@ -68,6 +65,7 @@ public class EditUtility extends JPanel{
 		
 		this.btnAddUtility = new JButton("Add Utility");
 		this.btnAddUtility.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				addRow();
 				
@@ -79,6 +77,7 @@ public class EditUtility extends JPanel{
 		
 		this.btnUpdateUtility = new JButton("Update Utilities");
 		this.btnUpdateUtility.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				int c=0;
 				int c2=0;
@@ -105,6 +104,7 @@ public class EditUtility extends JPanel{
 		this.table.setRowHeight(table.getRowHeight()+10);
 		this.table.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		this.table.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent arg0) {
 				int editedRow=table.getEditingRow();
 				int editedCol=table.getEditingColumn();

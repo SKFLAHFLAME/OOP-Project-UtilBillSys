@@ -81,7 +81,12 @@ public class MainFrame extends JFrame{
     	frame.setVisible(true);
     }
     public void closeAddFrame(){
-    	frame.dispose();
+    	try {
+    		frame.dispose();
+		} catch (Exception e) {
+			return;
+		}
+    	
     }
 
 

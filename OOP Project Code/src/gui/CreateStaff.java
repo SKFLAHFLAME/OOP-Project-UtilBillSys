@@ -10,7 +10,6 @@ import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JCheckBox;
 import java.awt.event.ActionListener;
-import java.security.interfaces.ECPublicKey;
 import java.awt.event.ActionEvent;
 
 public class CreateStaff extends JPanel{
@@ -45,6 +44,7 @@ public class CreateStaff extends JPanel{
 		
 		this.btnBack = new JButton("Back");
 		this.btnBack.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				main.showAdminMenu();
 			}
@@ -55,6 +55,7 @@ public class CreateStaff extends JPanel{
 		
 		this.btnRegister = new JButton("Register");
 		this.btnRegister.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				addStaff();
 				main.showAdminMenu();
@@ -77,6 +78,7 @@ public class CreateStaff extends JPanel{
 		
 		this.chckbxShowPassword = new JCheckBox("Show Password");
 		this.chckbxShowPassword.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (chckbxShowPassword.isSelected()){
 					passwordField.setEchoChar((char)0);

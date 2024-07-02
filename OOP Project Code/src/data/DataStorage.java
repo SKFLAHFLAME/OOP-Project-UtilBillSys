@@ -2,8 +2,6 @@ package data;
 
 import java.util.Vector;
 
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.IconifyAction;
-
 public class DataStorage {
     private Vector<Staff> staff = new Vector<>();
     private Vector<Customer> user = new Vector<>();

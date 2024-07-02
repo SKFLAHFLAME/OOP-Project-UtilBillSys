@@ -2,7 +2,6 @@ package gui;
 
 import controller.MainFrame;
 import java.awt.Button;
-import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -11,7 +10,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -19,8 +17,6 @@ import javax.swing.JTextField;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 import javax.swing.JCheckBox;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 public class Login extends JPanel{
     MainFrame main;
@@ -132,7 +128,8 @@ public class Login extends JPanel{
         btnLogin.setFont(new Font("Dialog", Font.PLAIN, 14));
         btnLogin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnLogin.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
+        	@Override
+			public void actionPerformed(ActionEvent e) {
         		nextPage();
         	}
         });
@@ -143,7 +140,8 @@ public class Login extends JPanel{
         
         this.lblSuccess = new JLabel();
         this.lblSuccess.addPropertyChangeListener(new PropertyChangeListener() {
-        	public void propertyChange(PropertyChangeEvent evt) {
+        	@Override
+			public void propertyChange(PropertyChangeEvent evt) {
         		if (!lblSuccess.getText().isEmpty()) {
     				chckbxShowPass.setLocation(132,210);}
     			
@@ -157,7 +155,8 @@ public class Login extends JPanel{
         this.chckbxShowPass = new JCheckBox("Show Password");
         chckbxShowPass.setFont(new Font("Dialog", Font.PLAIN, 12));
         chckbxShowPass.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent arg0) {
+        	@Override
+			public void actionPerformed(ActionEvent arg0) {
         		if(chckbxShowPass.isSelected()) {
                 	passwordField.setEchoChar((char)0);
                 }
