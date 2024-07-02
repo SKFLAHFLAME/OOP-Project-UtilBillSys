@@ -10,7 +10,7 @@ public class MainFrame extends JFrame{
     private boolean prepage=false;
     private String[] currentAcct = new String[2];//( S/C , Username)
     public boolean flag;
-    AddFrame frame;
+    private AddFrame frame;
     private EditUtility eu;
 
     public MainFrame(){

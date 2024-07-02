@@ -7,9 +7,12 @@ import data.Readings;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JButton;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -35,6 +38,8 @@ public class EditUtility extends JPanel{
 		this.setLayout(null);
 		
 		this.btnBack = new JButton("Back");
+		btnBack.setBorderPainted(false);
+//		btnBack.setBackground(Color.LIGHT_GRAY);
 		this.btnBack.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -54,6 +59,12 @@ public class EditUtility extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				int edtRow= table.getSelectedRow();
+				try {
+					table.getCellEditor().cancelCellEditing();
+				} catch (Exception e) {
+					
+				}
+				
 				System.out.println(edtRow);
 				deleteRow(edtRow);
 				redraw();
@@ -110,6 +121,11 @@ public class EditUtility extends JPanel{
 				int editedCol=table.getEditingColumn();
 				if (editedRow==-1||editedCol==-1){return;}
 				Object item = table.getValueAt(editedRow, editedCol);
+				if (editedCol==1||editedCol==3){
+					if(item.equals("")){
+						item = 0.0;
+					}
+				}
 				Object[] i = {editedRow,editedCol,item};
 				changes.add(i);
 				System.out.println(item);
@@ -121,6 +137,7 @@ public class EditUtility extends JPanel{
 		main.setSize(500,500);
 	}
 	
+
 	public void addRow(){
 //		main.getCont().addReading("i", 0.0, "i", 0.0);
 //		redraw();
@@ -131,6 +148,24 @@ public class EditUtility extends JPanel{
 	public void deleteRow(int row){
 		if (row<0){return;}
 		main.getCont().removeReading(row);
+		int c=0;
+		int v=0;
+		for (Object[] x:changes){
+			if (x[0].equals(row)){
+				changes.remove(c);
+				v+=1;
+				c+=1;
+				return;
+			}
+			if((int)x[0]>row){
+				x[0]=(int)x[0]-1;
+			}
+			System.out.println(c+"   "+v+"    "+x[0]);
+			changes.setElementAt(x, c-v);
+			c+=1;
+		}
+		v=0;
+		c=0;
 	}
 	
 	public void redraw(){
@@ -150,7 +185,8 @@ public class EditUtility extends JPanel{
 		}
 		c=0;
 		for(Object[] i:changes){
-			data[(int) i[0]][(int) i[1]]=(String) i[2];
+			System.out.println(changes.size());
+			data[(int) i[0]][(int) i[1]]=String.valueOf(i[2]);
 			model.removeRow((int) i[0]);
 			model.insertRow((int) i[0], data[(int) i[0]]);
 		}
@@ -161,6 +197,11 @@ public class EditUtility extends JPanel{
 	}
 	
 	public void updateItems(){
+		try {
+			table.getCellEditor().stopCellEditing();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		redraw();
 //		change = new Object[main.getCont().allReadings().length+1][4];
 		int c=0;
