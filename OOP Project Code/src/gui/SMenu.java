@@ -17,6 +17,7 @@ public class SMenu extends JPanel{
     private JButton btnLogOut;
     private JButton btnEditUtilities;
     private JButton btnViewCustomer;
+    private JButton btnAccount;
 
     public SMenu(MainFrame m){
         this.main=m;
@@ -38,6 +39,7 @@ public class SMenu extends JPanel{
         this.btnLogOut.addActionListener(new ActionListener() {
         	@Override
 			public void actionPerformed(ActionEvent e) {
+                main.clearCurrentAcct();
         		main.showStaffLogin();
         	}
         });
@@ -67,6 +69,16 @@ public class SMenu extends JPanel{
         this.btnViewCustomer.setFont(new Font("Tahoma", Font.PLAIN, 17));
         this.btnViewCustomer.setBounds(238, 131, 152, 61);
         add(this.btnViewCustomer);
+        
+        this.btnAccount = new JButton("Account");
+        this.btnAccount.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent arg0) {
+        		main.setPrepage(false);
+        		main.showStaffAccount();
+        	}
+        });
+        this.btnAccount.setFont(new Font("Tahoma", Font.PLAIN, 15));
+        this.btnAccount.setBounds(341, 38, 97, 25);
+        add(this.btnAccount);
     }
-
 }

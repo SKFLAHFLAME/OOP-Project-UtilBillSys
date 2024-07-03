@@ -76,6 +76,12 @@ public class MainFrame extends JFrame{
         add(eu,"Util");
         card.show(this.getContentPane(), "Util");
     }
+    public void showStaffAccount(){
+    	SAccountPage ap=new SAccountPage(this);
+    	this.add(ap,"AP");
+    	card.show(getContentPane(), "AP");
+    }
+    
     public void showAddFrame(){
     	frame = new AddFrame(this);
     	frame.setVisible(true);
