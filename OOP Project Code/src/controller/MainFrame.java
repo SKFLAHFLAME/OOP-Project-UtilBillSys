@@ -2,6 +2,8 @@ package controller;
 
 import gui.*;
 import java.awt.CardLayout;
+import java.awt.Component;
+
 import javax.swing.JFrame;
 
 public class MainFrame extends JFrame{
@@ -12,6 +14,9 @@ public class MainFrame extends JFrame{
     public boolean flag;
     private AddFrame frame;
     private EditUtility eu;
+	private ViewDraft vd;
+	private EditDraft ed;
+	private EditMeterReading emr;
 
     public MainFrame(){
         
@@ -76,6 +81,21 @@ public class MainFrame extends JFrame{
         add(eu,"Util");
         card.show(this.getContentPane(), "Util");
     }
+    public void showViewDraft(){
+		vd=new ViewDraft(this);
+		add(vd, "Draft");
+		card.show(this.getContentPane(), "Draft");
+	}
+    public void showEditDraft(){
+    	ed=new EditDraft(this);
+    	add(ed, "Edit");
+    	card.show(this.getContentPane(), "Edit");
+    }
+    public void showEditMeterReading(){
+    	emr=new EditMeterReading(this);
+    	add(emr, "EditMeterReading");
+    	card.show(this.getContentPane(), "EditMeterReading");
+    }
     public void showAddFrame(){
     	frame = new AddFrame(this);
     	frame.setVisible(true);
@@ -121,6 +141,7 @@ public class MainFrame extends JFrame{
 	public EditUtility getEu() {
 		return eu;
 	}
+	
 
     
 
