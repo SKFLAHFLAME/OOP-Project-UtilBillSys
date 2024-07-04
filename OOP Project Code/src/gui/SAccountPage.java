@@ -1,16 +1,14 @@
 package gui;
 
-import javax.swing.JPanel;
-
 import controller.MainFrame;
-import javax.swing.JLabel;
 import java.awt.Font;
-import javax.swing.JButton;
-import javax.swing.JTextField;
-import javax.swing.JPasswordField;
-import javax.swing.JCheckBox;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 public class SAccountPage extends JPanel{
 	MainFrame main;
@@ -21,10 +19,13 @@ public class SAccountPage extends JPanel{
 	private JTextField textField;
 	private JLabel lblAccountPage;
 	private JPasswordField passwordField;
+	private boolean editing=false;
 	public SAccountPage(MainFrame m){
 		this.main=m;
 		this.setLayout(null);
 		main.setSize(500,500);
+
+
 		
 		this.lblId = new JLabel("ID:");
 		this.lblId.setFont(new Font("Tahoma", Font.PLAIN, 20));
@@ -49,6 +50,26 @@ public class SAccountPage extends JPanel{
 		add(this.btnBack);
 		
 		this.btnEdit = new JButton("Edit");
+		this.btnEdit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String id = textField.getText();
+				String pass;
+                if(editing==true) {//edit to not edit
+					editing = false;
+
+					showNormalScreen();
+					
+					btnEdit.setText("Edit");					
+                } else {//not edit to edit
+					editing = true;
+
+					showEditScreen();
+
+
+					btnEdit.setText("Finish");
+                }
+            }
+		});
 		this.btnEdit.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		this.btnEdit.setBounds(348, 252, 131, 40);
 		add(this.btnEdit);
@@ -68,5 +89,15 @@ public class SAccountPage extends JPanel{
 		this.passwordField.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		this.passwordField.setBounds(131, 139, 348, 40);
 		add(this.passwordField);
+
 	}
+
+	public void showEditScreen(){
+
+	}
+
+	public void showNormalScreen(){
+
+	}
+
 }

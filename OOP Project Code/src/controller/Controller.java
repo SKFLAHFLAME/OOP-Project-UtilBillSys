@@ -1,7 +1,5 @@
 package controller;
 
-import javax.swing.DefaultDesktopManager;
-
 import data.Customer;
 import data.DataStorage;
 import data.Readings;
@@ -44,11 +42,29 @@ public class Controller {
         else {return false;}
     }
 
+    public void editUser(String uname, String newFName, String newEmail, String newUName, String newPass, String newAddress){
+        
+    }
+
+    public void editStaff(String id, String newID, String newPassword){ 
+        if (!isStaff(id)){return;}
+        Staff s = new Staff(newID, newPassword);
+        ds.editStaff(id, s);
+    }
+
     public Readings[] allReadings(){
     	Readings[] r=ds.getAllReadings();
     	return r;
     }
-    
+    public String[] getStaff(String id){
+        Staff s = ds.getStaff(id);
+        String[] x = {s.getUsername(),s.getPassword()};
+        return x;
+    }
+    public Customer getCustomer(String name){
+        return ds.getUser(name);
+    }
+
     public void addUser(String name, String password){
         Customer c = new Customer(name, password);
         ds.addUser(c);
@@ -70,11 +86,6 @@ public class Controller {
     
     public void removeReading(int index){
     	ds.removeReading(index);
-    }
-    
-
-    public void editUser(){
-        
     }
 
     public DataStorage getDS() {

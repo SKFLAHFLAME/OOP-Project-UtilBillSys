@@ -19,6 +19,26 @@ public class DataStorage {
     public void addUser(Customer cust){
         user.add(cust);
     }
+
+    public void editUser(String uname, Customer acct){
+        int i=0;
+        for(Customer c:user){
+            if (c.getUsername().equals(uname)){
+                user.setElementAt(acct, i);
+            }
+            i+=1;
+        }
+    }
+
+    public void editStaff(String id, Staff acct){
+        int c=0;
+        for (Staff s:staff){
+            if(s.getUsername().equals(id)){
+                staff.setElementAt(acct, c);
+            }
+            c+=1;
+        }
+    }
     public void addReading(Readings r){
     	readings.add(r);
     }
