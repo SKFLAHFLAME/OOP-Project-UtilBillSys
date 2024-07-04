@@ -9,6 +9,8 @@ import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JCheckBox;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class SAccountPage extends JPanel{
 	MainFrame main;
@@ -35,6 +37,13 @@ public class SAccountPage extends JPanel{
 		add(this.lblPassword);
 		
 		this.btnBack = new JButton("Back");
+		this.btnBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (main.getCurrentAcct()[0].equals("S")) {
+					main.showStaffMenu();
+				}else if (main.getCurrentAcct()[0].equals("A")) {main.showAdminMenu();}
+			}
+		});
 		this.btnBack.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		this.btnBack.setBounds(12, 252, 131, 40);
 		add(this.btnBack);
