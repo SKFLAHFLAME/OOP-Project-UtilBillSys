@@ -91,9 +91,10 @@ public class SLogin extends JPanel{
                 if (main.getCont().verifyStaff(id, pass)){
                     if (id.equals("admin")){
                         lblErrors.setText("Admin Login");
+                        main.setCurrentAcct("A", "admin");
                         main.showAdminMenu();
                     }
-                    else{lblErrors.setText("Success");main.showStaffMenu();}
+                    else{lblErrors.setText("Success");main.setCurrentAcct("S", id);main.showStaffMenu();}
                 }
                 else {lblErrors.setText("ID or Password Incorrect! Try Again.");}
                 

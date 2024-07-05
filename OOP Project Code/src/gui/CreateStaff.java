@@ -57,8 +57,12 @@ public class CreateStaff extends JPanel{
 		this.btnRegister.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				addStaff();
-				main.showAdminMenu();
+				if(main.getCurrentAcct()[0].equals("A")){
+					System.out.println("Successful");
+					addStaff();
+					main.showAdminMenu();
+				}
+				else{System.out.println("Not Admin");}
 			}
 		});
 		this.btnRegister.setFont(new Font("Tahoma", Font.PLAIN, 15));
