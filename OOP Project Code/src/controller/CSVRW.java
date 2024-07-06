@@ -13,27 +13,33 @@ public class CSVRW {
 		Scanner scanner = new Scanner(file);
 		scanner.useDelimiter(", ");
 		Vector<String[]> data = new Vector<>();
+		int x=0;
 		while(scanner.hasNext()){
-			StringTokenizer st = new StringTokenizer(scanner.nextLine(), ", ");
-			int c =0;
-			String[] a=new String[2];
+			String line = scanner.nextLine();
+			StringTokenizer st = new StringTokenizer(line, ", ");
+			Vector<String> v = new Vector<>();
+			int c=0;
 			while (st.hasMoreTokens()){
-				a[c] = st.nextToken();
+				v.add(st.nextToken());
 				c+=1;
 			}
+			String[] a = new String[c];
+			v.toArray(a);
 			c=0;
 			data.add(a);
 		}
-		for (String[] x :data){
-			for (String y:x){
-				System.out.print(y+",");
-			}
-			System.out.println();
-
-		}
+		String[][] finaldata = new String[data.size()][2];
+		data.toArray(finaldata);
 		scanner.close();
+		//Testing method
+		// for (String[]e:finaldata){
+		// 	for (String y :e){
+		// 		System.out.print(y+", ");
+		// 	}
+		// 	System.out.println();
+		// }
 
-		return null;
+		return finaldata;
 		
 	}
 	
@@ -42,7 +48,7 @@ public class CSVRW {
 	}
 	public static void main(String[] args) throws FileNotFoundException {
 		CSVRW csvrw = new CSVRW();
-		csvrw.csvReader("OOP Project Code/src/datafiles/Staff.csv");
+		csvrw.csvReader("/home/sam/git/OOP-Project-UtilBillSys/OOP Project Code/src/datafiles/Staff.csv");
 	}
 
 }
