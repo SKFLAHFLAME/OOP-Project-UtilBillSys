@@ -30,7 +30,7 @@ public class MainFrame extends JFrame{
         this.setLayout(card);
             
         this.showLogin();
-        getCont().initialiseUsers();
+        getCont().initialiseItems();
             
         this.setVisible(true);
         

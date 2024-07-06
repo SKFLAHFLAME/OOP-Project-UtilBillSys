@@ -4,12 +4,13 @@ import data.Customer;
 import data.DataStorage;
 import data.Readings;
 import data.Staff;
+import java.io.FileNotFoundException;
 
 public class Controller {
     private DataStorage ds = new DataStorage();
     
     
-    public void initialiseUsers(){
+    public void initialiseItems(){
         ds.addUser(new Customer("John_Doe", "password"));
         ds.addStaff(new Staff("1234ABC", "password"));
         this.addReading("Gas", 0.24, "kWh", 2);
@@ -94,6 +95,18 @@ public class Controller {
 
     public void setDS(DataStorage ds) {
         this.ds = ds;
+    }
+
+    public void initialiseData(){
+        CSVRW d = new CSVRW();
+        try {
+            d.csvReader("OOP Project Code/src/datafiles/Staff.csv");
+        } catch (FileNotFoundException ex) {
+        }
+        
+    }
+    public void transferData(){
+        
     }
 
 }
