@@ -2,6 +2,8 @@ package controller;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -11,7 +13,7 @@ public class CSVRW {
 	public String[][] csvReader(String filepath) throws FileNotFoundException {
 		File file = new File(filepath);
 		Scanner scanner = new Scanner(file);
-		scanner.useDelimiter(", ");
+		scanner.useDelimiter(",");
 		Vector<String[]> data = new Vector<>();
 		int x=0;
 		while(scanner.hasNext()){
@@ -32,23 +34,34 @@ public class CSVRW {
 		data.toArray(finaldata);
 		scanner.close();
 		//Testing method
-		// for (String[]e:finaldata){
-		// 	for (String y :e){
-		// 		System.out.print(y+", ");
-		// 	}
-		// 	System.out.println();
-		// }
+		for (String[]e:finaldata){
+			for (String y :e){
+				System.out.print(y+",");
+			}
+			System.out.println();
+		}
 
 		return finaldata;
 		
 	}
 	
-	public void csvWriter(String filepath, String[][] data) {
+	public void csvWriter(String filepath, String[][] data) throws IOException {
+		FileWriter writer = new FileWriter(filepath);
+		for(String[] d : data) {
+			for (String s:d){
+				writer.append(s+",");
+			}
+			writer.append("\n");
+		}
+		writer.close();
 		
 	}
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main(String[] args) throws FileNotFoundException, IOException {
 		CSVRW csvrw = new CSVRW();
 		csvrw.csvReader("/home/sam/git/OOP-Project-UtilBillSys/OOP Project Code/src/datafiles/Staff.csv");
+		String[][] x={{"JohnDoe", "password"},{"Sally", "abc"},{"Frank", "ABC123"}};
+        csvrw.csvWriter("OOP Project Code/src/datafiles/Customer.csv", x);
+		csvrw.csvReader("OOP Project Code/src/datafiles/Customer.csv");
 	}
 
 }
