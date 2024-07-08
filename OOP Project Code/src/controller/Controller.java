@@ -1,5 +1,7 @@
 package controller;
 
+import java.io.FileNotFoundException;
+
 import data.Customer;
 import data.DataStorage;
 import data.Readings;
@@ -7,6 +9,7 @@ import data.Staff;
 
 public class Controller {
     private DataStorage ds = new DataStorage();
+    private CSVRW csv = new CSVRW();
     
     
     public void initialiseItems(){
@@ -94,6 +97,10 @@ public class Controller {
 
     public void setDS(DataStorage ds) {
         this.ds = ds;
+    }
+    
+    public String[][] readCSV(String filepath) throws FileNotFoundException {
+    	return csv.csvReader(filepath);
     }
 
     public void saveData(){
