@@ -34,12 +34,12 @@ public class CSVRW {
 		data.toArray(finaldata);
 		scanner.close();
 		//Testing method
-		for (String[]e:finaldata){
-			for (String y :e){
-				System.out.print(y+",");
-			}
-			System.out.println();
-		}
+		// for (String[]e:finaldata){
+		// 	for (String y :e){
+		// 		System.out.print(y+",");
+		// 	}
+		// 	System.out.println();
+		// }
 
 		return finaldata;
 		
