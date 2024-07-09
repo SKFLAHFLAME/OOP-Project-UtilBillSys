@@ -18,7 +18,7 @@ public class CSVRW {
 		int x=0;
 		while(scanner.hasNext()){
 			String line = scanner.nextLine();
-			StringTokenizer st = new StringTokenizer(line, ", ");
+			StringTokenizer st = new StringTokenizer(line, ",");
 			Vector<String> v = new Vector<>();
 			int c=0;
 			while (st.hasMoreTokens()){
@@ -34,12 +34,13 @@ public class CSVRW {
 		data.toArray(finaldata);
 		scanner.close();
 		//Testing method
-		// for (String[]e:finaldata){
-		// 	for (String y :e){
-		// 		System.out.print(y+",");
-		// 	}
-		// 	System.out.println();
-		// }
+		for (String[]e:finaldata){
+			System.out.println(e.length);
+			for (String y :e){
+				System.out.print(y+"\t");
+			}
+			System.out.println();
+		}
 
 		return finaldata;
 		
@@ -58,10 +59,17 @@ public class CSVRW {
 	}
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		CSVRW csvrw = new CSVRW();
-		csvrw.csvReader("/home/sam/git/OOP-Project-UtilBillSys/OOP Project Code/src/datafiles/Staff.csv");
+		csvrw.csvReader("OOP Project Code/src/datafiles/Staff.csv");
 		String[][] x={{"JohnDoe", "password"},{"Sally", "abc"},{"Frank", "ABC123"}};
         csvrw.csvWriter("OOP Project Code/src/datafiles/Customer.csv", x);
 		csvrw.csvReader("OOP Project Code/src/datafiles/Customer.csv");
+		csvrw.csvReader("OOP Project Code/src/datafiles/UserReadings.csv");
+		String[][] y = {{"Name", "Entry_Number", "Gas"+"(Cu_cM)", "Water"+"(Cu_M)"+"Electricity"+"(kWh)"}, 
+		{"John", "1", "2", "10", "30"}, 
+		{"Smith", "1", "-", "20", "80"}, 
+		{"Smith", "2", "-", "30", "75"}};
+		csvrw.csvWriter("OOP Project Code/src/datafiles/UserReadings.csv", y);
+		csvrw.csvReader("OOP Project Code/src/datafiles/UserReadings.csv");
 	}
 
 }
