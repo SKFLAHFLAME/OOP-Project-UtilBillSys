@@ -15,12 +15,14 @@ import java.awt.event.ActionEvent;
 
 public class EditMeterReading extends JPanel{
 	private JTextField textField;
+	private JComboBox mrBox;
+	private String[] valueArr = {"Electricity", "Gas", "Water"};
 	public EditMeterReading(MainFrame main) {
 		setLayout(null);
 		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setBounds(161, 50, 260, 26);
-		add(comboBox);
+		this.mrBox = new JComboBox(this.valueArr);
+		mrBox.setBounds(161, 50, 260, 26);
+		add(mrBox);
 		
 		JLabel lblMeterReading = new JLabel("Meter Reading:");
 		lblMeterReading.setBounds(15, 145, 107, 20);
@@ -50,6 +52,11 @@ public class EditMeterReading extends JPanel{
 		add(lblEditmr);
 		
 		JButton btnUpdate = new JButton("Update");
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+			}
+		});
 		btnUpdate.setBounds(320, 255, 115, 29);
 		add(btnUpdate);
 	}
