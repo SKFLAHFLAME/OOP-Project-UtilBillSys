@@ -2,11 +2,11 @@ package controller;
 
 import gui.*;
 import java.awt.CardLayout;
-import java.awt.Component;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.JFrame;
-
-public class MainFrame extends JFrame{
+public class MainFrame extends JFrame implements WindowListener{
     private CardLayout card;
     private Controller cont;
     private boolean prepage=false;
@@ -31,9 +31,10 @@ public class MainFrame extends JFrame{
             
         card = new CardLayout();
         this.setLayout(card);
+        this.addWindowListener(this);
             
         this.showLogin();
-        getCont().initialiseUsers();
+        getCont().initialiseItems();
             
         this.setVisible(true);
         
@@ -152,6 +153,55 @@ public class MainFrame extends JFrame{
 
 	public EditUtility getEu() {
 		return eu;
+	}
+	
+	
+	
+	
+	
+	
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		getCont().syncData();
+		System.out.println("Added");
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+        getCont().saveData();
+        System.out.println("Saved");
+		
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		System.out.println("Exited");
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		
+		
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+
+		
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+
+		
 	}
 	
 
