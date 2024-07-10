@@ -11,6 +11,8 @@ import javax.swing.JComboBox;
 
 public class AddMeterReading extends JPanel {
 	private JTextField textField;
+	private JComboBox mrBox;
+	private String[] valueArr = {"Electricity", "Gas", "Water"};
 	public AddMeterReading() {
 		setLayout(null);
 		
@@ -23,9 +25,9 @@ public class AddMeterReading extends JPanel {
 		lblMeterReading.setBounds(15, 161, 114, 20);
 		add(lblMeterReading);
 		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setBounds(172, 72, 240, 26);
-		add(comboBox);
+		this.mrBox = new JComboBox(this.valueArr);
+		mrBox.setBounds(172, 72, 240, 26);
+		add(mrBox);
 		
 		JLabel lblUtility = new JLabel("Utility:");
 		lblUtility.setBounds(15, 75, 69, 20);

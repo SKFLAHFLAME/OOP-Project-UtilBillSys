@@ -10,6 +10,8 @@ import controller.MainFrame;
 
 import javax.swing.JButton;
 import java.awt.Font;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class EditMeterReading extends JPanel{
 	private JTextField textField;
@@ -34,6 +36,11 @@ public class EditMeterReading extends JPanel{
 		textField.setColumns(10);
 		
 		JButton btnBack = new JButton("Back");
+		btnBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				main.showEditDraft();
+			}
+		});
 		btnBack.setBounds(7, 255, 115, 29);
 		add(btnBack);
 		

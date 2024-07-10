@@ -64,7 +64,7 @@ public class Controller {
     public Customer getCustomer(String name){
         return ds.getUser(name);
     }
-
+    
     public void addUser(String name, String password){
         Customer c = new Customer(name, password);
         ds.addUser(c);
@@ -95,5 +95,7 @@ public class Controller {
     public void setDS(DataStorage ds) {
         this.ds = ds;
     }
+    
+    
 
 }

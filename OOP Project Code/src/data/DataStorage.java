@@ -168,6 +168,5 @@ public class DataStorage {
         readings.toArray(r);
         return r;
     }
-
     
 }
