@@ -17,6 +17,7 @@ public class MainFrame extends JFrame{
 	private ViewDraft vd;
 	private EditDraft ed;
 	private EditMeterReading emr;
+	private AddMeterReading amr;
 
     public MainFrame(){
         
@@ -95,6 +96,11 @@ public class MainFrame extends JFrame{
     	emr=new EditMeterReading(this);
     	add(emr, "EditMeterReading");
     	card.show(this.getContentPane(), "EditMeterReading");
+    }
+    public void showAddMeterReading(){
+    	amr=new AddMeterReading(this);
+    	add(amr, "AddMeterReading");
+    	card.show(this.getContentPane(), "AddMeterReading");
     }
     public void showStaffAccount(){
     	SAccountPage ap=new SAccountPage(this);

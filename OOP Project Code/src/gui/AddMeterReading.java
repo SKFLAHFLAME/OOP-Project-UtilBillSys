@@ -5,15 +5,20 @@ import javax.swing.JScrollPane;
 import javax.swing.JList;
 import javax.swing.JButton;
 import javax.swing.JTextField;
+
+import controller.MainFrame;
+
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JComboBox;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class AddMeterReading extends JPanel {
 	private JTextField textField;
 	private JComboBox mrBox;
 	private String[] valueArr = {"Electricity", "Gas", "Water"};
-	public AddMeterReading() {
+	public AddMeterReading(MainFrame main) {
 		setLayout(null);
 		
 		JLabel lblAddMeterReading = new JLabel("Add Meter Reading");
@@ -39,6 +44,11 @@ public class AddMeterReading extends JPanel {
 		textField.setColumns(10);
 		
 		JButton btnBack = new JButton("Back");
+		btnBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				main.showEditDraft();
+			}
+		});
 		btnBack.setBounds(15, 255, 115, 29);
 		add(btnBack);
 		

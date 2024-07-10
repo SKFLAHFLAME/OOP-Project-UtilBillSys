@@ -69,13 +69,18 @@ public class EditDraft extends JPanel{
 		JButton btnAdd = new JButton("Add");
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				main.showEditMeterReading();
+				main.showAddMeterReading();
 			}
 		});
 		btnAdd.setBounds(170, 234, 115, 29);
 		add(btnAdd);
 		
 		JButton btnUpdate = new JButton("Update");
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				main.showEditMeterReading();
+			}
+		});
 		btnUpdate.setBounds(300, 234, 115, 29);
 		add(btnUpdate);
 		
