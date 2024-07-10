@@ -6,7 +6,7 @@ public class DataStorage {
     private Vector<Staff> staff = new Vector<>();
     private Vector<Customer> user = new Vector<>();
     private Vector<Readings> readings = new Vector<>();
-    private Vector<String[]> userReading = new Vector<>();
+    private Vector<String[]> userReading = new Vector<>();//UName, Entry_No, Readings...
 
     public DataStorage (){
         Staff admin = new Staff("admin", "admin");
