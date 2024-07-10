@@ -7,6 +7,7 @@ import javax.swing.JButton;
 import javax.swing.JTextField;
 
 import controller.MainFrame;
+import data.Readings;
 
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -15,11 +16,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 public class AddMeterReading extends JPanel {
+	MainFrame main;
 	private JTextField textField;
 	private JComboBox mrBox;
-	private String[] valueArr = {"Electricity", "Gas", "Water"};
-	public AddMeterReading(MainFrame main) {
+	private String[] valueArr;
+	public AddMeterReading(MainFrame m) {
+		main =m;
 		setLayout(null);
+		initReadingNames();
 		
 		JLabel lblAddMeterReading = new JLabel("Add Meter Reading");
 		lblAddMeterReading.setFont(new Font("Tahoma", Font.BOLD, 30));
@@ -55,5 +59,16 @@ public class AddMeterReading extends JPanel {
 		JButton btnAdd = new JButton("Add");
 		btnAdd.setBounds(320, 255, 115, 29);
 		add(btnAdd);
+	}
+	
+	private void initReadingNames(){
+		Readings[] r=main.getCont().allReadings();
+		valueArr=new String[r.length];
+		int c=0;
+		for(Readings x:r){
+			String n = x.getUtilityName();
+			valueArr[c]=n;
+			c+=1;
+		}
 	}
 }

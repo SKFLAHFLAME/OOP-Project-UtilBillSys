@@ -7,6 +7,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import controller.MainFrame;
+import data.Readings;
 
 import javax.swing.JButton;
 import java.awt.Font;
@@ -14,11 +15,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 public class EditMeterReading extends JPanel{
+	MainFrame main;
 	private JTextField textField;
 	private JComboBox mrBox;
-	private String[] valueArr = {"Electricity", "Gas", "Water"};
-	public EditMeterReading(MainFrame main) {
+	private String[] valueArr;
+	public EditMeterReading(MainFrame m) {
+		main=m;
 		setLayout(null);
+		initReadingNames();
 		
 		this.mrBox = new JComboBox(this.valueArr);
 		mrBox.setBounds(161, 50, 260, 26);
@@ -59,5 +63,16 @@ public class EditMeterReading extends JPanel{
 		});
 		btnUpdate.setBounds(320, 255, 115, 29);
 		add(btnUpdate);
+	}
+	
+	private void initReadingNames(){
+		Readings[] r=main.getCont().allReadings();
+		valueArr=new String[r.length];
+		int c=0;
+		for(Readings x:r){
+			String n = x.getUtilityName();
+			valueArr[c]=n;
+			c+=1;
+		}
 	}
 }
