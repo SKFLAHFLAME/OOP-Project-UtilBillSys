@@ -4,7 +4,6 @@ import gui.*;
 import java.awt.CardLayout;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
 import javax.swing.JFrame;
 public class MainFrame extends JFrame implements WindowListener{
     private CardLayout card;
@@ -34,7 +33,7 @@ public class MainFrame extends JFrame implements WindowListener{
         this.addWindowListener(this);
             
         this.showLogin();
-        getCont().initialiseItems();
+        // getCont().initialiseItems();
             
         this.setVisible(true);
         
@@ -166,7 +165,7 @@ public class MainFrame extends JFrame implements WindowListener{
 		getCont().syncData();
 		System.out.println("Added");
 	}
-
+ 
 	@Override
 	public void windowClosing(WindowEvent e) {
         getCont().saveData();

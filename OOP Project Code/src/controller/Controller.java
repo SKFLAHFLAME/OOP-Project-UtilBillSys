@@ -1,11 +1,11 @@
 package controller;
 
-import java.io.FileNotFoundException;
-
 import data.Customer;
 import data.DataStorage;
 import data.Readings;
 import data.Staff;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class Controller {
     private DataStorage ds = new DataStorage();
@@ -68,8 +68,13 @@ public class Controller {
         return ds.getUser(name);
     }
     
-    public void addUser(String name, String password){
-        Customer c = new Customer(name, password);
+    public void addUser(String username, String password){
+        Customer c = new Customer(username, password);
+        ds.addUser(c);
+    }
+
+    public void addUser(String username, String password,String fullName, String email){
+        Customer c = new Customer(fullName, email, username, password);
         ds.addUser(c);
     }
     public void addStaff(String id, String pass){
@@ -104,14 +109,76 @@ public class Controller {
     }
 
     public void saveData(){
+        Customer[] customer = ds.getAllUser();
+        Staff[] staffs = ds.getAllStaff(); 
+        Readings[] readings = ds.getAllReadings();
+        String[][] userReadings = ds.getAllUserReadings();
+
+        //Diff Types to String[][]
+        //Staff 
+        String[][] staffData = new String[staffs.length-1][2];
+        int c=0;
+        for (int i = 0; i < staffs.length; i++) {
+            if (staffs[i].getUsername().equals("admin")){continue;}
+            staffData[c][0] = staffs[i].getUsername();
+            staffData[c][1] = staffs[i].getPassword();
+            c+=1;
+        }
+
+        //Customer
+        String[][] customerData = new String[customer.length][4];
+        for (int i = 0; i < customer.length; i++) {
+            customerData[i][0] = customer[i].getUsername();
+            customerData[i][1] = customer[i].getPassword();
+            customerData[i][2] = customer[i].getName();
+            customerData[i][3] = customer[i].getEmail();
+        }
+
+        //Readings
+        String[][] readingsData = new String[readings.length][4];
+        for (int i = 0; i < readings.length; i++) {
+            readingsData[i][0] = readings[i].getUtilityName();
+            readingsData[i][1] = Double.toString(readings[i].getPrice());
+            readingsData[i][2] = readings[i].getUnit();
+            readingsData[i][3] = Double.toString(readings[i].getServiceCharge());
+        }
+
+        //store into csv files
+        try {
+            csv.csvWriter("OOP Project Code/src/datafiles/Staff.csv", staffData);
+            csv.csvWriter("OOP Project Code/src/datafiles/Customer.csv", customerData);
+            csv.csvWriter("OOP Project Code/src/datafiles/Readings.csv", readingsData);
+            // csv.csvWriter("user_readings.csv", userReadings);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
     public void syncData(){
+        try {
+            //Read files for data
+            String[][] customers = csv.csvReader("OOP Project Code/src/datafiles/Customer.csv");
+            String[][] staffAcct = csv.csvReader("OOP Project Code/src/datafiles/Staff.csv");
+            String[][] readings = csv.csvReader("OOP Project Code/src/datafiles/Readings.csv");
+            
+            //Creating and adding csv contents into vectors
+            //customer
+            for(String[]c:customers){
+                this.addUser(c[0], c[1], c[2],c[3]);
+            }
+            
+            //Staff
+            for(String[]s:staffAcct){
+                this.addStaff(s[0], s[1]);
+            }
+            
+            //Readings
+            for(String[]r:readings){
+                this.addReading(r[0], Double.parseDouble(r[1]), r[2], Double.parseDouble(r[3]));
+            }
+        } catch (FileNotFoundException ex) {
+        }
 
-    }
-
-    public void addData(){
-        
     }
 
 }

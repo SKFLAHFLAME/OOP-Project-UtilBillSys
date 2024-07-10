@@ -33,14 +33,14 @@ public class CSVRW {
 		String[][] finaldata = new String[data.size()][2];
 		data.toArray(finaldata);
 		scanner.close();
-		//Testing method
-		for (String[]e:finaldata){
-			System.out.println(e.length);
-			for (String y :e){
-				System.out.print(y+"\t");
-			}
-			System.out.println();
-		}
+		// //Testing method
+		// for (String[]e:finaldata){
+		// 	System.out.println(e.length);
+		// 	for (String y :e){
+		// 		System.out.print(y+"\t");
+		// 	}
+		// 	System.out.println();
+		// }
 
 		return finaldata;
 		
@@ -50,6 +50,7 @@ public class CSVRW {
 		FileWriter writer = new FileWriter(filepath);
 		for(String[] d : data) {
 			for (String s:d){
+				// if(s.isEmpty()){s="-";}
 				writer.append(s+",");
 			}
 			writer.append("\n");
@@ -71,5 +72,4 @@ public class CSVRW {
 		csvrw.csvWriter("OOP Project Code/src/datafiles/UserReadings.csv", y);
 		csvrw.csvReader("OOP Project Code/src/datafiles/UserReadings.csv");
 	}
-
 }

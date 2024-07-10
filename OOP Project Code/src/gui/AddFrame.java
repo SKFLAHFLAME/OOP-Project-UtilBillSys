@@ -15,7 +15,6 @@ import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 
-import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
 
 import controller.MainFrame;
 
@@ -203,7 +202,6 @@ public class AddFrame extends JFrame{
 				int c=0;
 				for(String[] s : fileContents){
 					if(c==0&&Header==true){c+=1;continue;}
-					System.out.println(s[1].replaceFirst("$", "0"));
 					addReading(s[0], s[1], s[2], s[3].split("%")[0]);
 					c+=1;
 				}
@@ -352,6 +350,8 @@ public class AddFrame extends JFrame{
 		} catch (Exception e) {
 			serCharge =0.0;
 		}
+		if(name.isEmpty()){name="-";}
+		if(unit.isEmpty()){unit="-";}
 		
 		main.getCont().addReading(name, price, unit, serCharge);
 	}

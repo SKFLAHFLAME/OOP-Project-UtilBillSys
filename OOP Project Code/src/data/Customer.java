@@ -1,7 +1,5 @@
 package data;
 
-import java.util.Vector;
-
 public class Customer extends Account{
     // private String address;
 	private double[] draft;
@@ -12,13 +10,13 @@ public class Customer extends Account{
 
     public Customer(){
         super();
-        this.email = null;
-        this.name = null;
+        this.email = "Nil";
+        this.name = "Nil";
     }
     public Customer(String uname, String pass){
         super(uname,pass);
-        this.email = null;
-        this.name = null;
+        this.email = "Nil";
+        this.name = "Nil";
     }
     
     public Customer(String fname, String email, String uname, String pass){

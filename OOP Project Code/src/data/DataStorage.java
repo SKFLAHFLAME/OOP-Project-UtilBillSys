@@ -169,5 +169,11 @@ public class DataStorage {
         readings.toArray(r);
         return r;
     }
+
+    public String[][] getAllUserReadings(){
+        String[][] arr = new String[userReading.size()][];
+        userReading.toArray(arr);
+        return arr;
+    }
     
 }
