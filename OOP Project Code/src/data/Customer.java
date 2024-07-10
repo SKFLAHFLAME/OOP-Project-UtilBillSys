@@ -4,7 +4,7 @@ import java.util.Vector;
 
 public class Customer extends Account{
     // private String address;
-    private Vector<Readings> userReadings = new Vector<>();
+	private double[] draft;
     private String name;
 	private String email;
     private String address;
@@ -28,15 +28,12 @@ public class Customer extends Account{
     }
 
 
-    public Vector<Readings> getUserReadings() {
-        return userReadings;
+    public void setReadingLength(int length){
+    	draft = new double[length];
     }
-    public void setUserReadings(Vector<Readings> userReadings) {
-        this.userReadings = userReadings;
-    }
-    public void addReading(String utilityName, double readings){
-        Readings r = new Readings();
-        this.userReadings.add(r);
+    
+    public void addReading(int index, double readings){
+        draft[index] = readings;
     }
     
     
@@ -61,5 +58,11 @@ public class Customer extends Account{
     }
     public void setAddress(String address) {
         this.address = address;
-    }  
+    }
+	public double[] getDraft() {
+		return draft;
+	}
+	public void setDraft(double[] draft) {
+		this.draft = draft;
+	}  
 }

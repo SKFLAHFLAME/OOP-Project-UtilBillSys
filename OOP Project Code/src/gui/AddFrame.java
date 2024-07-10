@@ -12,6 +12,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.SwingConstants;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 
 import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
@@ -42,7 +43,7 @@ public class AddFrame extends JFrame{
 	private JTextField textPField;
 	private JButton btnCancel;
 	private JButton btnAdd;
-	private JButton btnAddFile;
+	private JButton btnUseFile;
 	private JButton btnAddManually;
 	private JButton btnCancel_1;
 	private JButton btnAdd_1;
@@ -52,7 +53,11 @@ public class AddFrame extends JFrame{
 	private JList list;
 	
 
+	private String[][] fileContents= new String[0][0];
+	private String[] lines = new String[0];
 	private String fileSelected;
+	private boolean Header=false;
+	private JLabel lbldoNotUse;
 	
 	public AddFrame(MainFrame m){
 		main=m;
@@ -154,7 +159,11 @@ public class AddFrame extends JFrame{
 		btnAdd.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				addReading();
+				String name= textNField.getText();
+				String price = textPField.getText();
+				String unit = textUField.getText();
+				String serCharge=textSCField.getText();
+				addReading(name,price,unit,serCharge);
 				main.getEu().redraw();
 				dispose();
 			}
@@ -163,16 +172,16 @@ public class AddFrame extends JFrame{
 		panel1.add(this.btnAdd);
 
 
-		this.btnAddFile = new JButton("Add File");
-		this.btnAddFile.addActionListener(new ActionListener() {
+		this.btnUseFile = new JButton("Use File");
+		this.btnUseFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				panel2.setVisible(true);
 				panel1.setVisible(false);
 			}
 		});
-		this.btnAddFile.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		this.btnAddFile.setBounds(93, 268, 106, 29);
-		this.panel1.add(this.btnAddFile);
+		this.btnUseFile.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		this.btnUseFile.setBounds(93, 268, 106, 29);
+		this.panel1.add(this.btnUseFile);
 
 	}
 
@@ -190,10 +199,17 @@ public class AddFrame extends JFrame{
 		this.btnAdd_1 = new JButton("Add");
 		this.btnAdd_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (fileSelected==null){
-					lblError.setText("No File Uploaded");
-					return;
+				if (fileSelected==null){lblError.setText("No File Uploaded");return;}
+				int c=0;
+				for(String[] s : fileContents){
+					if(c==0&&Header==true){c+=1;continue;}
+					System.out.println(s[1].replaceFirst("$", "0"));
+					addReading(s[0], s[1], s[2], s[3].split("%")[0]);
+					c+=1;
 				}
+				c=0;
+				main.getEu().redraw();
+				dispose();
 			}
 		});
 		this.btnAdd_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
@@ -205,6 +221,7 @@ public class AddFrame extends JFrame{
 		this.btnUploadFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				fileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+				fileChooser.setFileFilter(new FileNameExtensionFilter(".txt , .csv", "csv","txt"));
 				panel2.add(fileChooser);
 				int r = fileChooser.showOpenDialog(null);
 				if (r == JFileChooser.APPROVE_OPTION){
@@ -222,7 +239,7 @@ public class AddFrame extends JFrame{
 			}
 		});
 		this.btnUploadFile.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		this.btnUploadFile.setBounds(76, 13, 141, 25);
+		this.btnUploadFile.setBounds(12, 13, 115, 25);
 		this.panel2.add(this.btnUploadFile);
 		
 
@@ -264,6 +281,11 @@ public class AddFrame extends JFrame{
 		this.btnCancel_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		this.btnCancel_1.setBounds(12, 313, 103, 39);
 		this.panel2.add(this.btnCancel_1);
+		
+		this.lbldoNotUse = new JLabel("*Do NOT put Units*");
+		this.lbldoNotUse.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		this.lbldoNotUse.setBounds(125, 13, 157, 25);
+		this.panel2.add(this.lbldoNotUse);
 
 
 
@@ -276,13 +298,15 @@ public class AddFrame extends JFrame{
 	//! Populate List Method
 	private void populateList() throws FileNotFoundException{
 		if (fileSelected == null){System.out.println("No File to populate with");return;}
-		String[][] fileContents = main.getCont().readCSV(fileSelected);
-		String[] lines=new String[fileContents.length];
+		fileContents = main.getCont().readCSV(fileSelected);
+		lines=new String[fileContents.length];
 		int c=0;
 		for (String[] line : fileContents){
+			System.out.println(line[0]);
+			if (line[0].equals("Header")){Header = true;}
 			String l="";
 			for (String var: line){
-				l=l+var+"     ";
+				l=l+var+"  |  ";
 			}
 			lines[c]=l;
 			c+=1;
@@ -291,12 +315,14 @@ public class AddFrame extends JFrame{
 		DefaultListModel<String> model = new DefaultListModel<>();
 		for (String line:lines){
 			System.out.println(line);
-			if (c==0){
-				model.addElement("Header: "+line);
+			System.out.println(Header);
+			if (c==0&&Header==true){
+
+				model.addElement(line);
 				c+=1;
 				continue;
 			}
-			model.addElement("Reading "+c+": "+line);
+			model.addElement("Reading "+c+"| "+line);
 			c+=1;
 		}
 		list.setModel(model);
@@ -313,18 +339,16 @@ public class AddFrame extends JFrame{
 //		}
 //		return true;
 //	}
-	public void addReading(){
-		String name = textNField.getText();
-		String unit = textUField.getText(); 
+	public void addReading(String name, String priceString, String unit, String serviceCharge){
 		Double price;
 		Double serCharge;
 		try {
-			price = Double.valueOf(textPField.getText());
+			price = Double.parseDouble(priceString);
 		} catch (Exception e) {
 			price = 0.0;
 		}
 		try {
-			serCharge = Double.valueOf(textSCField.getText());
+			serCharge = Double.parseDouble(serviceCharge);
 		} catch (Exception e) {
 			serCharge =0.0;
 		}
