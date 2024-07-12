@@ -1,19 +1,15 @@
 package gui;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JList;
-import javax.swing.JButton;
-import javax.swing.JTextField;
-
 import controller.MainFrame;
 import data.Readings;
-
-import javax.swing.JLabel;
 import java.awt.Font;
-import javax.swing.JComboBox;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 public class AddMeterReading extends JPanel {
 	MainFrame main;
@@ -61,8 +57,9 @@ public class AddMeterReading extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String name= (String)mrBox.getSelectedItem();
-				int MR = Integer.valueOf(textField.getText());
-				main.getCont().addMeterReading(name, MR);
+				double MR = Double.parseDouble(textField.getText());
+				main.getCont().addMeterReading(main.getCurrentAcct()[1],name, MR);
+				main.showEditDraft();
 			}
 		});
 		btnAdd.setBounds(320, 255, 115, 29);

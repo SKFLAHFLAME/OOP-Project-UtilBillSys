@@ -13,10 +13,10 @@ public class Controller {
     
     
     public void initialiseItems(){
-        ds.addUser(new Customer("John_Doe", "password"));
-        ds.addStaff(new Staff("1234ABC", "password"));
-        this.addReading("Gas", 0.24, "kWh", 2);
-    	this.addReading("Water", 1.40, "Cu_M", 10);
+        // ds.addUser(new Customer("John_Doe", "password"));
+        // ds.addStaff(new Staff("1234ABC", "password"));
+        // this.addReading("Gas", 0.24, "kWh", 2);
+    	// this.addReading("Water", 1.40, "Cu_M", 10);
     }
 
     public boolean isUser(String name) {
@@ -45,8 +45,10 @@ public class Controller {
         else {return false;}
     }
 
-    public void editUser(String uname, String newFName, String newEmail, String newUName, String newPass, String newAddress){
-        
+    public void editUser(String oldUName, String newFName, String newEmail, String newUName, String newPass, String newAddress){
+        if(!this.isUser(oldUName)){return;}
+        Customer c = new Customer(newFName, newEmail, newUName, newPass, newAddress);
+        ds.editUser(oldUName, c);
     }
 
     public void editStaff(String id, String newID, String newPassword){ 
@@ -77,6 +79,10 @@ public class Controller {
         Customer c = new Customer(fullName, email, username, password);
         ds.addUser(c);
     }
+    public void addUser(String username, String password,String fullName, String email,String address){
+        Customer c = new Customer(fullName, email, username, password, address);
+        ds.addUser(c);
+    }
     public void addStaff(String id, String pass){
     	Staff s= new Staff(id,pass);
     	ds.addStaff(s);
@@ -85,9 +91,6 @@ public class Controller {
     	Readings readings = new Readings(name, price, unit, serviceCharge);
     	ds.addReading(readings);
     }
-    public void addMeterReading(String name, int mR) {
-		
-	}
 
     
     public void updateReading(String name, double price, String unit, double serviceCharge, int index){
@@ -100,6 +103,11 @@ public class Controller {
     	ds.removeReading(index);
     }
 
+    //!Meter Readings
+    public void addMeterReading(String uName, String readingName, Double meterReading) {
+		ds.addMeterReading(uName, readingName, meterReading);
+	}
+
     public DataStorage getDS() {
         return ds;
     }
@@ -107,7 +115,11 @@ public class Controller {
     public void setDS(DataStorage ds) {
         this.ds = ds;
     }
-    
+
+
+
+
+    //!CSV methods
     public String[][] readCSV(String filepath) throws FileNotFoundException {
     	return csv.csvReader(filepath);
     }

@@ -1,13 +1,16 @@
 package data;
 
+import java.util.HashMap;
+
 public class Customer extends Account{
     // private String address;
-	private double[] draft;
+	private HashMap<String, Double> draft = new HashMap<>();
     private String name;
 	private String email;
     private String address;
     
 
+    //!Constructors
     public Customer(){
         super();
         this.email = "Nil";
@@ -24,18 +27,43 @@ public class Customer extends Account{
         this.email = email;
         this.name = fname;
     }
+    
+    public Customer(String fname, String email, String uName, String pass, String address) {
+        super(uName,pass);
+        this.email = email;
+        this.name = fname;
+        this.address = address;
+    }
 
 
-    public void setReadingLength(int length){
-    	draft = new double[length];
+
+
+
+
+    //!Meter Reading Methods
+    public void addMeterReading(String readingName, Double meterReading){
+        draft.put(readingName, meterReading);
+    }
+
+    public void editMeterReading(String readingName, Double newMeterReading){
+        draft.replace(readingName, newMeterReading);
+    }
+
+    public void editReadingName(String oldReadingName, String newReadingName){
+        if(!draft.containsKey(oldReadingName)){return;}
+        draft.put(newReadingName, draft.remove(oldReadingName));
     }
     
-    public void addReading(int index, double readings){
-        draft[index] = readings;
+    public void deleteMeterReading(String readingName){
+        draft.remove(readingName);
     }
-    
-    
 
+    public void clearDraft(){
+        draft.clear();
+    }
+
+
+    //!Setters and getters
     public String getEmail() {
 		return email;
 	}
@@ -56,11 +84,13 @@ public class Customer extends Account{
     }
     public void setAddress(String address) {
         this.address = address;
+    } 
+
+    public HashMap<String, Double> getDraft() {
+        return draft;
     }
-	public double[] getDraft() {
-		return draft;
-	}
-	public void setDraft(double[] draft) {
-		this.draft = draft;
-	}  
+
+    public void setDraft(HashMap<String, Double> draft) {
+        this.draft = draft;
+    }
 }
