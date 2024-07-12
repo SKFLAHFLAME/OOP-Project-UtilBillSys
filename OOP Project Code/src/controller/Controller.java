@@ -85,6 +85,10 @@ public class Controller {
     	Readings readings = new Readings(name, price, unit, serviceCharge);
     	ds.addReading(readings);
     }
+    public void addMeterReading(String name, int mR) {
+		
+	}
+
     
     public void updateReading(String name, double price, String unit, double serviceCharge, int index){
     	System.out.println(name+":"+price+":"+serviceCharge+":"+index);

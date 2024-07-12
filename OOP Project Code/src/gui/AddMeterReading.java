@@ -61,7 +61,8 @@ public class AddMeterReading extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String name= (String)mrBox.getSelectedItem();
-				String MR = textField.getText();
+				int MR = Integer.valueOf(textField.getText());
+				main.getCont().addMeterReading(name, MR);
 			}
 		});
 		btnAdd.setBounds(320, 255, 115, 29);
