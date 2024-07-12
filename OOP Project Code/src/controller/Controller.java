@@ -107,6 +107,10 @@ public class Controller {
     public void addMeterReading(String uName, String readingName, Double meterReading) {
 		ds.addMeterReading(uName, readingName, meterReading);
 	}
+    public boolean hasDraft(String UName){
+        return ds.hasDraft(UName);
+    }
+
 
     public DataStorage getDS() {
         return ds;

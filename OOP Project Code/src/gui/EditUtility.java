@@ -1,24 +1,20 @@
 package gui;
 
-import javax.swing.JPanel;
-
 import controller.MainFrame;
 import data.Readings;
-
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Arrays;
+import java.util.Vector;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.JButton;
-
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeListener;
-import java.util.Vector;
-import java.beans.PropertyChangeEvent;
 
 public class EditUtility extends JPanel{
 	MainFrame main;
@@ -31,6 +27,7 @@ public class EditUtility extends JPanel{
 	private JTable table;
 	private Vector<Object[]> changes = new Vector<>();
 	private String[][]data;
+	private boolean unsaved = false;
 //	private Vector<Object[]> finaldata=new Vector<>();
 	private DefaultTableModel model;
 	public EditUtility(MainFrame m){
@@ -44,6 +41,14 @@ public class EditUtility extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				main.closeAddFrame();
+				if (!changes.isEmpty()){
+					String[] options = {"Save", "No","Cancel"};
+					int selection = JOptionPane.showOptionDialog(null, "You have unsaved changes Save?", "Unsaved changes", 0,3,null,options,options[0]);
+					if(selection == 2){return;}
+					else if (selection ==0){updateItems();}
+				}
+				
+
 				if (main.getPrepage()==true){
 					main.showAdminMenu();
 				}
@@ -64,7 +69,9 @@ public class EditUtility extends JPanel{
 				} catch (Exception e) {
 					
 				}
-				
+				String[] options = {"Yes", "No"};
+				int sel = JOptionPane.showOptionDialog(null, "Confirm Delete?", "Delete", 0, 3, null, options, options[0]);
+				if(sel == 1){return;}
 				System.out.println(edtRow);
 				deleteRow(edtRow);
 				redraw();
@@ -120,6 +127,7 @@ public class EditUtility extends JPanel{
 				int editedRow=table.getEditingRow();
 				int editedCol=table.getEditingColumn();
 				if (editedRow==-1||editedCol==-1){return;}
+				unsaved = true;
 				Object item = table.getValueAt(editedRow, editedCol);
 				if (editedCol==1||editedCol==3){
 					if(item.equals("")){
@@ -147,7 +155,6 @@ public class EditUtility extends JPanel{
 	
 	public void deleteRow(int row){
 		if (row<0){return;}
-		main.getCont().removeReading(row);
 		int c=0;
 		int v=0;
 		for (Object[] x:changes){
@@ -155,7 +162,7 @@ public class EditUtility extends JPanel{
 				changes.remove(c);
 				v+=1;
 				c+=1;
-				return;
+				continue;
 			}
 			if((int)x[0]>row){
 				x[0]=(int)x[0]-1;
@@ -164,8 +171,18 @@ public class EditUtility extends JPanel{
 			changes.setElementAt(x, c-v);
 			c+=1;
 		}
-		v=0;
-		c=0;
+
+		main.getCont().removeReading(row);
+
+	}
+	public boolean isEqual(String[][] data2){
+		if (data.length == data2.length){return false;}
+		for (int i =0; i<data.length; i++){
+			String[] d1 = data[i];
+			String[] d2 = data2[i];
+			if(!Arrays.equals(d1, d2)){return false;}
+		}
+		return true;
 	}
 	
 	public void redraw(){
@@ -186,7 +203,11 @@ public class EditUtility extends JPanel{
 		c=0;
 		for(Object[] i:changes){
 			System.out.println(changes.size());
-			data[(int) i[0]][(int) i[1]]=String.valueOf(i[2]);
+			System.out.println(String.join(","+i));
+			// try {
+				data[(int) i[0]][(int) i[1]]=String.valueOf(i[2]);
+			// } catch (Exception e) {
+			// }
 			model.removeRow((int) i[0]);
 			model.insertRow((int) i[0], data[(int) i[0]]);
 		}
@@ -215,10 +236,15 @@ public class EditUtility extends JPanel{
 //		c=0;
 		for(Object[] s: data){
 //			System.out.println(s[0].toString()+","+ Double.valueOf(s[1].toString())+", "+ s[2].toString()+", "+ Double.valueOf(s[3].toString())+", "+ c);
-			main.getCont().updateReading(s[0].toString(), Double.valueOf(s[1].toString()), s[2].toString(), Double.valueOf(s[3].toString()), c);
+			try {
+				main.getCont().updateReading(s[0].toString(), Double.valueOf(s[1].toString()), s[2].toString(), Double.valueOf(s[3].toString()), c);
+			} catch (Exception e){
+
+			}
 			c+=1;
 		}
 		c=0;
+		this.unsaved = false;
 		redraw();
 	}
 }
