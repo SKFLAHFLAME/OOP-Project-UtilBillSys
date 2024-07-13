@@ -1,8 +1,11 @@
 package data;
 
+import java.util.HashMap;
+
 public class Customer extends Account{
     // private String address;
 	private double[] draft;
+	private HashMap<String, Double> d = new HashMap<>();
     private String name;
 	private String email;
     private String address;
