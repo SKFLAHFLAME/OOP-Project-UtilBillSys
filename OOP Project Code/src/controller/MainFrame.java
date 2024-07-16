@@ -33,11 +33,13 @@ public class MainFrame extends JFrame implements WindowListener{
         this.addWindowListener(this);
             
         this.showLogin();
-        // getCont().initialiseItems();
+        getCont().initialiseItems();
             
         this.setVisible(true);
         
     }
+    
+    //! Show Panels
 
     public void showCustMenu(){
         CMenu m = new CMenu(this);
@@ -106,6 +108,16 @@ public class MainFrame extends JFrame implements WindowListener{
     	SAccountPage ap=new SAccountPage(this);
     	this.add(ap,"AP");
     	card.show(getContentPane(), "AP");
+    }
+    public void showAllStaff() {
+    	ViewStaff vs = new ViewStaff(this);
+    	add(vs,"vs");
+    	card.show(getContentPane(), "vs");
+    }
+    public void showAllCustomers() {
+    	ViewAllCustomer vs = new ViewAllCustomer(this);
+    	add(vs,"vs");
+    	card.show(getContentPane(), "vs");
     }
     
     public void showAddFrame(){

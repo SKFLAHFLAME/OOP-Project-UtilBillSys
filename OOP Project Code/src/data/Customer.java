@@ -1,6 +1,7 @@
 package data;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import java.util.HashMap;
 
@@ -54,6 +55,18 @@ public class Customer extends Account{
     public void editReadingName(String oldReadingName, String newReadingName){
         if(!draft.containsKey(oldReadingName)){return;}
         draft.put(newReadingName, draft.remove(oldReadingName));
+    }
+
+    public String[][] getDraftArray(){
+        String[][] r = new String[draft.size()][2];
+        int c=0;
+        for (Entry<String, Double> reading: draft.entrySet()){
+            r[c][0] = reading.getKey();
+            r[c][1] = String.valueOf(reading.getValue());
+            c+=1;
+        }
+        return r;
+
     }
     
     public void deleteMeterReading(String readingName){

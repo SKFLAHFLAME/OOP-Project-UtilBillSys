@@ -64,6 +64,7 @@ public class SMenu extends JPanel{
         this.btnViewCustomer.addActionListener(new ActionListener() {
         	@Override
 			public void actionPerformed(ActionEvent e) {
+        		main.showAllCustomers();
         	}
         });
         this.btnViewCustomer.setFont(new Font("Tahoma", Font.PLAIN, 17));

@@ -8,7 +8,7 @@ public class DataStorage {
     private Vector<Staff> staff = new Vector<>();
     private Vector<Customer> user = new Vector<>();
     private Vector<Readings> readings = new Vector<>();
-    private Vector<String[]> userReading = new Vector<>();//UName, Entry_No, Readings...
+    private Vector<String[][]> userReading = new Vector<>();//UName, Entry_No, Readings...
 
     public DataStorage (){
         Staff admin = new Staff("admin", "admin");
@@ -130,7 +130,7 @@ public class DataStorage {
 
 
     //!userReading Methods
-    public void addUserReading(String[] userReading){
+    public void addUserReading(String[][] userReading){
         this.userReading.add(userReading);
     }
 
@@ -138,23 +138,26 @@ public class DataStorage {
 
 
 
-    public String[][] getUserReadings(String userName){
-        Vector<String[]> ureading = new Vector<>();
-        for(String[] r: userReading){
-            if(r[0].equals(userName)){
+    public String[][][] getUserReadings(String userName){
+        Vector<String[][]> ureading = new Vector<>();
+        for(String[][] r: userReading){
+            if(r[0][0].equals(userName)){
                 ureading.add(r);
             }
         }
         
-        String[][] arr=new String[readings.size()][this.userReading.size()+2];
+        String[][][] arr=new String[userReading.size()][this.readings.size()+2][3];
         ureading.toArray(arr);
         //sort by Entry_Number
-        Arrays.sort(arr, (a,b)-> Integer.compare(Integer.parseInt(a[1]), Integer.parseInt(b[1])));
+        try {
+        	Arrays.sort(arr, (a,b)-> Integer.compare(Integer.parseInt(a[0][1]), Integer.parseInt(b[0][1])));
+		} catch (Exception e) {
+		}
         return arr;
     }
 
-    public String[][] getAllUserReadings(){
-        String[][] arr = new String[userReading.size()][];
+    public String[][][] getAllUserReadings(){
+        String[][][] arr = new String[userReading.size()][][];
         userReading.toArray(arr);
         return arr;
     }
