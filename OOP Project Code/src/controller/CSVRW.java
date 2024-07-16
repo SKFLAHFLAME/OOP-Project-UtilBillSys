@@ -59,17 +59,18 @@ public class CSVRW {
 		
 	}
 	public static void main(String[] args) throws FileNotFoundException, IOException {
-		CSVRW csvrw = new CSVRW();
-		csvrw.csvReader("OOP Project Code/src/datafiles/Staff.csv");
-		String[][] x={{"JohnDoe", "password"},{"Sally", "abc"},{"Frank", "ABC123"}};
-        csvrw.csvWriter("OOP Project Code/src/datafiles/Customer.csv", x);
-		csvrw.csvReader("OOP Project Code/src/datafiles/Customer.csv");
-		csvrw.csvReader("OOP Project Code/src/datafiles/UserReadings.csv");
-		String[][] y = {{"Name", "Entry_Number", "Gas"+"(Cu_cM)", "Water"+"(Cu_M)"+"Electricity"+"(kWh)"}, 
-		{"John", "1", "2", "10", "30"}, 
-		{"Smith", "1", "-", "20", "80"}, 
-		{"Smith", "2", "-", "30", "75"}};
-		csvrw.csvWriter("OOP Project Code/src/datafiles/UserReadings.csv", y);
-		csvrw.csvReader("OOP Project Code/src/datafiles/UserReadings.csv");
+		// CSVRW csvrw = new CSVRW();
+		// csvrw.csvReader("OOP Project Code/src/datafiles/Staff.csv");
+		// String[][] x={{"JohnDoe", "password"},{"Sally", "abc"},{"Frank", "ABC123"}};
+        // csvrw.csvWriter("OOP Project Code/src/datafiles/Customer.csv", x);
+		// csvrw.csvReader("OOP Project Code/src/datafiles/Customer.csv");
+		// csvrw.csvReader("OOP Project Code/src/datafiles/UserReadings.csv");
+		// String[][] y = {{"Name", "Entry_Number", "Gas"+"(Cu_cM)", "Water"+"(Cu_M)"+"Electricity"+"(kWh)"}, 
+		// {"John", "1", "2", "10", "30"}, 
+		// {"Smith", "1", "-", "20", "80"}, 
+		// {"Smith", "2", "-", "30", "75"}};
+		// csvrw.csvWriter("OOP Project Code/src/datafiles/UserReadings.csv", y);
+		// csvrw.csvReader("OOP Project Code/src/datafiles/UserReadings.csv");
+		System.out.println(System.currentTimeMillis());
 	}
 }
