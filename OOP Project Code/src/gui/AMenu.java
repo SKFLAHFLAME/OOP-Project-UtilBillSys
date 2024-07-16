@@ -68,10 +68,10 @@ public class AMenu extends JPanel{
         	}
         });
         this.btnEditUtilities.setFont(new Font("Tahoma", Font.PLAIN, 17));
-        this.btnEditUtilities.setBounds(170, 105, 140, 59);
+        this.btnEditUtilities.setBounds(162, 105, 128, 59);
         add(this.btnEditUtilities);
         
-        this.btnViewBills = new JButton("View Bills");
+        this.btnViewBills = new JButton("View Customers");
         this.btnViewBills.addActionListener(new ActionListener() {
         	@Override
 			public void actionPerformed(ActionEvent e) {
@@ -79,7 +79,7 @@ public class AMenu extends JPanel{
         	}
         });
         this.btnViewBills.setFont(new Font("Tahoma", Font.PLAIN, 17));
-        this.btnViewBills.setBounds(321, 106, 117, 57);
+        this.btnViewBills.setBounds(303, 106, 135, 57);
         add(this.btnViewBills);
         
         this.btnEditStaff = new JButton("Edit Staff");

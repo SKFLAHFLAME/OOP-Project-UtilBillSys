@@ -4,8 +4,12 @@ import data.Customer;
 import data.DataStorage;
 import data.Readings;
 import data.Staff;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.StringTokenizer;
 
 public class Controller {
@@ -22,6 +26,8 @@ public class Controller {
         String [][] x2 = {{"John", "2","16/8/24"},{"Gas","13","100"},{"Water", "46", "170"},{"Electricity","60", "30"}};
         ds.addUserReading(x);
         ds.addUserReading(x2);
+        String [][] m = {{"Mark", "1","16/7/24"},{"Gas","13","100"}};
+        ds.addUserReading(m);
     }
 
     public boolean isUser(String name) {
@@ -118,13 +124,34 @@ public class Controller {
     	ds.removeReading(index);
     }
     
+    public double calculateReading(String readingName, String meterReading){
+    	Readings reading = ds.getReadings(readingName);
+    	return Double.valueOf(meterReading)*reading.getPrice()*reading.getServiceCharge();
+    }
+    
     
     //! User Readings
     public void submitUserReading(String userName){
+    	DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    	LocalDateTime now = LocalDateTime.now();
+    	String date = dtf.format(now);
+    	
         String[][][] userReadings=ds.getUserReadings(userName);
         String[][] draft = ds.getDraft(userName);
-        String[] initials = {userName, String.valueOf(userReadings.length+1)};
-        // String[][] final = new String[draft.length+1][3];
+        String[] initials = {userName, String.valueOf(userReadings.length+1), date};
+        
+        String[][] bill = new String[draft.length+1][3];
+        bill[0] = initials;
+        for(int i=0; i<draft.length;i++){
+        	String[] temp = new String[3];
+        	temp[0] = draft[i][0];
+        	temp[1] = draft[i][1];
+        	Readings r = ds.getReadings(draft[i][0]);
+        	temp[2] = String.valueOf(this.calculateReading(draft[i][0], draft[i][1]));
+        	
+        }
+        
+
 
     }
     public void add(String[][] userReading){
@@ -160,6 +187,8 @@ public class Controller {
     	return csv.csvReader(filepath);
     }
 
+
+
     public void saveData(){
         Customer[] customer = ds.getAllUser();
         Staff[] staffs = ds.getAllStaff(); 
@@ -190,6 +219,7 @@ public class Controller {
             for (String [] string : draft) {
                 d= d+ string[0]+":"+string[1]+"-";
             }
+            if (d.isEmpty()){d="null";}
             customerData[i][5] = d;
         }
 
@@ -208,9 +238,11 @@ public class Controller {
 
         //store into csv files
         String cdir = System.getProperty("java.class.path");
-        String[] cp = cdir.split(System.getProperty("file.separator"));
+        if (!(System.getProperty("file.separator")=="/")){
+            cdir = cdir.replace("\\", "/");}
+        String[] cp = cdir.split("/");
         cp[cp.length-1] = "src";
-        cdir = String.join(System.getProperty("file.separator"), cp);
+        cdir = String.join("/", cp);
         
         try {
             csv.csvWriter(cdir+"/datafiles/Staff.csv", staffData);
@@ -221,13 +253,18 @@ public class Controller {
             e.printStackTrace();
         }
     }
+
+
+
     public void syncData(){
         try {
             //Read files for data
         	String cdir = System.getProperty("java.class.path");
-            String[] cp = cdir.split(System.getProperty("file.separator"));
+            if (!(System.getProperty("file.separator")=="/")){
+                cdir = cdir.replace("\\", "/");}
+            String[] cp = cdir.split("/");
             cp[cp.length-1] = "src";
-            cdir = String.join(System.getProperty("file.separator"), cp);
+            cdir = String.join("/", cp);
             
             String[][] customers = csv.csvReader(cdir+"/datafiles/Customer.csv");
             String[][] staffAcct = csv.csvReader(cdir+"/datafiles/Staff.csv");
@@ -238,6 +275,7 @@ public class Controller {
             //!customer
             for(String[]c:customers){
                 this.addUser(c[0], c[1], c[2],c[3],c[4]);
+                if (c[5].equals("null")){continue;}
                 StringTokenizer st = new StringTokenizer(c[5],"-");
                 while (st.hasMoreTokens()){
                     String reading = st.nextToken();
