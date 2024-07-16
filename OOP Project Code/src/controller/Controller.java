@@ -7,8 +7,6 @@ import data.Staff;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.StringTokenizer;
-import java.sql.Time;
-import java.util.Date;
 
 public class Controller {
     private DataStorage ds = new DataStorage();
@@ -126,8 +124,8 @@ public class Controller {
         String[][][] userReadings=ds.getUserReadings(userName);
         String[][] draft = ds.getDraft(userName);
         String[] initials = {userName, String.valueOf(userReadings.length+1)};
-        String[][] final = new String[draft.length+1][3];
-        
+        // String[][] final = new String[draft.length+1][3];
+
     }
     public void add(String[][] userReading){
         ds.addUserReading(userReading);
