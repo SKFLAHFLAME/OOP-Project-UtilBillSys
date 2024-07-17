@@ -148,8 +148,10 @@ public class Controller {
         	temp[1] = draft[i][1];
         	Readings r = ds.getReadings(draft[i][0]);
         	temp[2] = String.valueOf(this.calculateReading(draft[i][0], draft[i][1]));
+        	bill[i+1] = temp;
         	
         }
+        ds.addUserReading(bill);
         
 
 
