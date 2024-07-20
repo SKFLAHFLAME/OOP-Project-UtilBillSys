@@ -77,6 +77,8 @@ public class DataStorage {
         for (Staff s:staff){
             if (s.getUsername().equals(id)){
                 staff.remove(c);
+                c+=1;
+                break;
             }
             c+=1;
         }

@@ -17,6 +17,9 @@ import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 import javax.swing.JCheckBox;
+import javax.swing.JButton;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class SLogin extends JPanel{
     MainFrame main;
@@ -26,9 +29,9 @@ public class SLogin extends JPanel{
     private JLabel lblPassword;
     private JTextField idField;
     private JPasswordField passwordField;
-    private Button btnLogin;
     private JLabel lblErrors;
     private JCheckBox chckbxShowPassword;
+    private JButton btnLogin;
 
     public SLogin(MainFrame m){
         this.main = m;
@@ -79,29 +82,9 @@ public class SLogin extends JPanel{
         
         this.passwordField = new JPasswordField();
         this.passwordField.setFont(new Font("Dialog", Font.PLAIN, 15));
+        passwordField.setEchoChar((char)0x2022);
         this.passwordField.setBounds(109, 145, 326, 37);
         add(this.passwordField);
-        
-        this.btnLogin = new Button("Login");
-        this.btnLogin.addActionListener(new ActionListener() {
-        	@Override
-			public void actionPerformed(ActionEvent e) {
-        		String id = idField.getText();
-        		String pass = new String(passwordField.getPassword());
-                if (main.getCont().verifyStaff(id, pass)){
-                    if (id.equals("admin")){
-                        lblErrors.setText("Admin Login");
-                        main.setCurrentAcct("A", "admin");
-                        main.showAdminMenu();
-                    }
-                    else{lblErrors.setText("Success");main.setCurrentAcct("S", id);main.showStaffMenu();}
-                }
-                else {lblErrors.setText("ID or Password Incorrect! Try Again.");}
-                
-        	}
-        });
-        this.btnLogin.setBounds(320, 208, 115, 31);
-        add(this.btnLogin);
         
         
         this.lblErrors = new JLabel("");
@@ -130,6 +113,26 @@ public class SLogin extends JPanel{
         });
         this.chckbxShowPassword.setBounds(109, 191, 136, 25);
         add(this.chckbxShowPassword);
+        
+        this.btnLogin = new JButton("Login");
+        this.btnLogin.setFont(new Font("Tahoma", Font.PLAIN, 16));
+        this.btnLogin.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		String id = idField.getText();
+        		String pass = new String(passwordField.getPassword());
+                if (main.getCont().verifyStaff(id, pass)){
+                    if (id.equals("admin")){
+                        lblErrors.setText("Admin Login");
+                        main.setCurrentAcct("A", "admin");
+                        main.showAdminMenu();
+                    }
+                    else{lblErrors.setText("Success");main.setCurrentAcct("S", id);main.showStaffMenu();}
+                }
+                else {lblErrors.setText("ID or Password Incorrect! Try Again.");}
+        	}
+        });
+        this.btnLogin.setBounds(333, 193, 102, 37);
+        add(this.btnLogin);
         
     }
 }

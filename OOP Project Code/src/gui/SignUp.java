@@ -18,6 +18,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import javax.swing.JButton;
 
 public class SignUp extends JPanel{
 	MainFrame main;
@@ -31,10 +32,10 @@ public class SignUp extends JPanel{
 	private JTextField txtUName;
 	private JPasswordField passwordField;
 	private Checkbox cbShPa;
-	private Button btnSignUp;
 	private JLabel lblErrors;
 	private JLabel lblGoLogin;
 	private JCheckBox chckbxShowPassword;
+	private JButton btnSignUp;
 	
 	public SignUp(MainFrame m) {
 		this.main = m;
@@ -81,41 +82,9 @@ public class SignUp extends JPanel{
 		
 		this.passwordField = new JPasswordField();
 		this.passwordField.setFont(new Font("Dialog", Font.PLAIN, 15));
+		passwordField.setEchoChar((char)0x2022);
 		this.passwordField.setBounds(114, 214, 340, 35);
 		add(this.passwordField);
-		
-//		this.cbShPa = new Checkbox("Show Password");
-//		this.cbShPa.addMouseListener(new MouseAdapter() {
-//			@Override
-//			public void mouseClicked(MouseEvent e) {
-//				if (cbShPa.getState()) {
-//					passwordField.setEchoChar((char)0);
-//				}
-//				else {passwordField.setEchoChar((char)0x2022);}
-//				}
-//		});
-//		this.cbShPa.setBounds(114, 261, 115, 23);
-//		add(this.cbShPa);
-		
-		this.btnSignUp = new Button("Sign Up");
-		this.btnSignUp.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String name = txtName.getText();
-				String email = txtEmail.getText();
-				String uName = txtUName.getText();
-				String pass = new String(passwordField.getPassword());
-				if (!uName.isEmpty() && !pass.isEmpty()) {
-					if(!uName.contains(" ")&&!pass.contains(" ")){
-					main.getCont().addUser(uName, pass);
-					main.showLogin();}
-					else{lblErrors.setText("Fields contains Spaces");}
-				}
-				else {lblErrors.setText("Fields are Blank");}
-			}
-		});
-		this.btnSignUp.setBounds(364, 261, 90, 35);
-		add(this.btnSignUp);
 		
 		this.lblErrors = new JLabel();
 		this.lblErrors.addPropertyChangeListener(new PropertyChangeListener() {
@@ -165,8 +134,28 @@ public class SignUp extends JPanel{
 				
 			}
 		});
-		this.chckbxShowPassword.setBounds(114, 258, 133, 25);
+		this.chckbxShowPassword.setBounds(114, 256, 133, 25);
 		add(this.chckbxShowPassword);
+		
+		this.btnSignUp = new JButton("Sign Up");
+		this.btnSignUp.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		this.btnSignUp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String name = txtName.getText();
+				String email = txtEmail.getText();
+				String uName = txtUName.getText();
+				String pass = new String(passwordField.getPassword());
+				if (!uName.isEmpty() && !pass.isEmpty()) {
+					if(!uName.contains(" ")&&!pass.contains(" ")){
+					main.getCont().addUser(uName, pass);
+					main.showLogin();}
+					else{lblErrors.setText("Fields contains Spaces");}
+				}
+				else {lblErrors.setText("Fields are Blank");}
+			}
+		});
+		this.btnSignUp.setBounds(337, 260, 117, 35);
+		add(this.btnSignUp);
 		
 		
 		

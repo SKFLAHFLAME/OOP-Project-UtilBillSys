@@ -32,7 +32,7 @@ public class SMenu extends JPanel{
         	}
         });
         this.lblStaffPage.setFont(new Font("Tahoma", Font.PLAIN, 30));
-        this.lblStaffPage.setBounds(140, 13, 152, 61);
+        this.lblStaffPage.setBounds(164, 13, 152, 61);
         add(this.lblStaffPage);
         
         this.btnLogOut = new JButton("Log Out");
@@ -44,7 +44,7 @@ public class SMenu extends JPanel{
         	}
         });
         this.btnLogOut.setFont(new Font("Tahoma", Font.PLAIN, 15));
-        this.btnLogOut.setBounds(164, 262, 97, 25);
+        this.btnLogOut.setBounds(195, 256, 110, 33);
         add(this.btnLogOut);
         
         this.btnEditUtilities = new JButton("Edit Utilities");
@@ -57,7 +57,7 @@ public class SMenu extends JPanel{
         	}
         });
         this.btnEditUtilities.setFont(new Font("Tahoma", Font.PLAIN, 17));
-        this.btnEditUtilities.setBounds(12, 131, 152, 61);
+        this.btnEditUtilities.setBounds(26, 131, 152, 61);
         add(this.btnEditUtilities);
         
         this.btnViewCustomer = new JButton("View Customer");
@@ -68,18 +68,18 @@ public class SMenu extends JPanel{
         	}
         });
         this.btnViewCustomer.setFont(new Font("Tahoma", Font.PLAIN, 17));
-        this.btnViewCustomer.setBounds(238, 131, 152, 61);
+        this.btnViewCustomer.setBounds(307, 131, 152, 61);
         add(this.btnViewCustomer);
         
         this.btnAccount = new JButton("Account");
         this.btnAccount.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent arg0) {
         		main.setPrepage(false);
-        		main.showStaffAccount();
+        		main.showStaffAccount(main.getCurrentAcct()[1]);
         	}
         });
         this.btnAccount.setFont(new Font("Tahoma", Font.PLAIN, 15));
-        this.btnAccount.setBounds(341, 38, 97, 25);
+        this.btnAccount.setBounds(351, 37, 97, 25);
         add(this.btnAccount);
     }
 }
