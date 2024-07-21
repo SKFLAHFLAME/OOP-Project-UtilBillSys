@@ -26,6 +26,7 @@ public class CreateStaff extends JPanel{
 	public CreateStaff(MainFrame m){
 		this.main=m;
 		this.setLayout(null);
+		main.setSize(470,340);
 		
 		this.lblRegisterStaff = new JLabel("Register Staff");
 		this.lblRegisterStaff.setFont(new Font("Tahoma", Font.PLAIN, 25));
@@ -46,7 +47,7 @@ public class CreateStaff extends JPanel{
 		this.btnBack.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				main.showAdminMenu();
+				main.showAllStaff();
 			}
 		});
 		this.btnBack.setFont(new Font("Tahoma", Font.PLAIN, 15));
@@ -60,7 +61,7 @@ public class CreateStaff extends JPanel{
 				if(main.getCurrentAcct()[0].equals("A")){
 					System.out.println("Successful");
 					addStaff();
-					main.showAdminMenu();
+					main.showAllStaff();
 				}
 				else{System.out.println("Not Admin");}
 			}

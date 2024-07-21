@@ -5,6 +5,10 @@ import java.awt.CardLayout;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import javax.swing.JFrame;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
+
 public class MainFrame extends JFrame implements WindowListener{
     private CardLayout card;
     private Controller cont;
@@ -24,6 +28,22 @@ public class MainFrame extends JFrame implements WindowListener{
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
             
+        try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedLookAndFeelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
         this.cont = new Controller();
         
             
@@ -98,8 +118,8 @@ public class MainFrame extends JFrame implements WindowListener{
     	add(amr, "AddMeterReading");
     	card.show(this.getContentPane(), "AddMeterReading");
     }
-    public void showStaffAccount(){
-    	SAccountPage ap=new SAccountPage(this);
+    public void showStaffAccount(String id){
+    	SAccountPage ap=new SAccountPage(this, id);
     	this.add(ap,"AP");
     	card.show(getContentPane(), "AP");
     }

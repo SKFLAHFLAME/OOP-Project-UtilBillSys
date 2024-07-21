@@ -13,7 +13,6 @@ public class AMenu extends JPanel{
     MainFrame main;
     private JLabel lblAdminPage;
     private JButton btnLogOut;
-    private JButton btnAddStaff;
     private JButton btnEditUtilities;
     private JButton btnViewBills;
     private JButton btnEditStaff;
@@ -47,17 +46,6 @@ public class AMenu extends JPanel{
         this.btnLogOut.setBounds(170, 262, 97, 25);
         add(this.btnLogOut);
         
-        this.btnAddStaff = new JButton("Add Staff");
-        this.btnAddStaff.addActionListener(new ActionListener() {
-        	@Override
-			public void actionPerformed(ActionEvent arg0) {
-        		main.showSSignUp();
-        	}
-        });
-        this.btnAddStaff.setFont(new Font("Tahoma", Font.PLAIN, 17));
-        this.btnAddStaff.setBounds(12, 105, 140, 25);
-        add(this.btnAddStaff);
-        
         this.btnEditUtilities = new JButton("Edit Utilities");
         this.btnEditUtilities.addActionListener(new ActionListener() {
         	@Override
@@ -89,14 +77,14 @@ public class AMenu extends JPanel{
         	}
         });
         this.btnEditStaff.setFont(new Font("Tahoma", Font.PLAIN, 17));
-        this.btnEditStaff.setBounds(12, 136, 140, 25);
+        this.btnEditStaff.setBounds(12, 105, 140, 56);
         add(this.btnEditStaff);
         
         this.btnAccount = new JButton("Account");
         this.btnAccount.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent arg0) {
         		main.setPrepage(true);
-        		main.showStaffAccount();
+        		main.showStaffAccount(main.getCurrentAcct()[1]);
         	}
         });
         this.btnAccount.setFont(new Font("Tahoma", Font.PLAIN, 15));

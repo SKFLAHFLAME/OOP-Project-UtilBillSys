@@ -97,7 +97,7 @@ public class ViewAllCustomer extends JPanel{
 		
 		this.lblcaseSensetive = new JLabel("*Case Sensetive");
 		this.lblcaseSensetive.setForeground(Color.BLUE);
-		this.lblcaseSensetive.setBounds(87, 388, 80, 14);
+		this.lblcaseSensetive.setBounds(87, 388, 132, 25);
 		add(this.lblcaseSensetive);
 		main.setSize(400,500);
 		
@@ -141,6 +141,7 @@ public class ViewAllCustomer extends JPanel{
 	}
 
 	public void searchTree(String search){
+		if (search.equals("")){populateTree();return;}
 		Customer[] accts = main.getCont().getAllCustomers();
 		Vector<Customer> filtered = new Vector<>();
 		// Filter accts

@@ -17,6 +17,7 @@ import javax.swing.JTextField;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 import javax.swing.JCheckBox;
+import javax.swing.JButton;
 
 public class Login extends JPanel{
     MainFrame main;
@@ -115,6 +116,7 @@ public class Login extends JPanel{
         
         passwordField = new JPasswordField();
         passwordField.setFont(new Font("Dialog", Font.PLAIN, 15));
+        passwordField.setEchoChar((char)0x2022);
         passwordField.setBounds(132, 144, 307, 38);
         add(passwordField);
         
@@ -123,19 +125,6 @@ public class Login extends JPanel{
         textField.setBounds(132, 89, 307, 38);
         add(textField);
         textField.setColumns(10);
-
-        Button btnLogin = new Button("Login");
-        btnLogin.setFont(new Font("Dialog", Font.PLAIN, 14));
-        btnLogin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btnLogin.addActionListener(new ActionListener() {
-        	@Override
-			public void actionPerformed(ActionEvent e) {
-        		nextPage();
-        	}
-        });
-        btnLogin.setSize(105, 32);
-        btnLogin.setLocation(334, 203);
-        add(btnLogin);
         
         
         this.lblSuccess = new JLabel();
@@ -167,6 +156,16 @@ public class Login extends JPanel{
         });
         chckbxShowPass.setBounds(132, 191, 138, 25);
         add(chckbxShowPass);
+        
+        JButton btnLogin = new JButton("Login");
+        btnLogin.setFont(new Font("Tahoma", Font.PLAIN, 16));
+        btnLogin.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		nextPage();
+        	}
+        });
+        btnLogin.setBounds(341, 193, 98, 38);
+        add(btnLogin);
         
         // this.lblEye = new JLabel(new ImageIcon(Login.class.getResource("/files/eyeO.jpg")));
         // this.lblEye.addMouseListener(new MouseAdapter() {

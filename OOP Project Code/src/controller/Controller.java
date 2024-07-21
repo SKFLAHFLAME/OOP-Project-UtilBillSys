@@ -108,6 +108,10 @@ public class Controller {
     	Staff s= new Staff(id,pass);
     	ds.addStaff(s);
     }
+    public void removeStaff(String id){
+    	ds.removeStaff(id);
+    }
+    
     public void addReading(String name, double price, String unit, double serviceCharge){
     	Readings readings = new Readings(name, price, unit, serviceCharge);
     	ds.addReading(readings);
@@ -156,7 +160,7 @@ public class Controller {
 
 
     }
-    public void add(String[][] userReading){
+    public void addUserReading(String[][] userReading){
         ds.addUserReading(userReading);
     }
 
