@@ -41,7 +41,7 @@ public class CMenu extends JPanel{
         	@Override
         	public void actionPerformed(ActionEvent arg0) {
         		main.setPrepage(true);
-        		main.showViewDraft();
+        		main.showEditDraft();
         	}
         });
         btnViewCurrentDraft.setFont(new Font("Tahoma", Font.PLAIN, 17));

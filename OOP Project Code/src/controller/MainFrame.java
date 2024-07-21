@@ -13,7 +13,6 @@ public class MainFrame extends JFrame implements WindowListener{
     public boolean flag;
     private AddFrame frame;
     private EditUtility eu;
-	private ViewDraft vd;
 	private EditDraft ed;
 	private EditMeterReading emr;
 	private AddMeterReading amr;
@@ -84,11 +83,6 @@ public class MainFrame extends JFrame implements WindowListener{
         add(eu,"Util");
         card.show(this.getContentPane(), "Util");
     }
-    public void showViewDraft(){
-		vd=new ViewDraft(this);
-		add(vd, "Draft");
-		card.show(this.getContentPane(), "Draft");
-	}
     public void showEditDraft(){
     	ed=new EditDraft(this);
     	add(ed, "Edit");

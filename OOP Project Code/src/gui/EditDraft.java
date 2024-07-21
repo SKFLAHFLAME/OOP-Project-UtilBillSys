@@ -16,6 +16,8 @@ import controller.MainFrame;
 import data.Readings;
 
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Vector;
 import java.awt.event.ActionEvent;
 
@@ -33,19 +35,46 @@ public class EditDraft extends JPanel{
 	private JTable table;
 	private Vector<Object[]> changes = new Vector<>();
 	private String[][]data;
+	private boolean unsaved = false;
 //	private Vector<Object[]> finaldata=new Vector<>();
 	private DefaultTableModel model;
-	private Object[] coloumnames={"Utility Name","Price (S$)","Unit"};
+	private Object[] coloumnames={"Utility Name","Meter Reading", "Price (S$)","Unit", "Total Price(S$)"};
+	
 	public EditDraft(MainFrame main) {
 		this.main=main;
 		setLayout(null);
 		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(33, 54, 382, 175);
-		add(scrollPane);
+		this.scrollPane = new JScrollPane();
+		this.scrollPane.setBounds(42, 36, 454, 292);
+		add(this.scrollPane);
 		
-		table = new JTable();
-		scrollPane.setViewportView(table);
+		this.model = new DefaultTableModel(coloumnames, 0);
+		this.table = new JTable(model);
+		this.table.setRowHeight(table.getRowHeight()+10);
+		this.table.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		this.table.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent arg0) {
+				int editedRow=table.getEditingRow();
+				int editedCol=table.getEditingColumn();
+				if (editedRow==-1||editedCol==-1){return;}
+				unsaved = true;
+				Object item = table.getValueAt(editedRow, editedCol);
+				if (editedCol==1||editedCol==3){
+					if(item.equals("")){
+						item = 0.0;
+					}
+				}
+				Object[] i = {editedRow,editedCol,item};
+				changes.add(i);
+				System.out.println(item);
+				System.out.println(i[0]+", "+i[1]+", "+i[2]", "+i[3]", "+i[4]);
+			}
+		});
+		redraw();
+		this.scrollPane.setViewportView(this.table);
+		main.setSize(500,500);
+	
 		
 		JButton btnDelete = new JButton("Delete");
 		btnDelete.addActionListener(new ActionListener() {
@@ -63,7 +92,7 @@ public class EditDraft extends JPanel{
 					redraw();
 				}
 			});
-		btnDelete.setBounds(33, 234, 115, 29);
+		btnDelete.setBounds(15, 344, 115, 29);
 		add(btnDelete);
 		
 		JButton btnAdd = new JButton("Add");
@@ -72,7 +101,7 @@ public class EditDraft extends JPanel{
 				main.showAddMeterReading();
 			}
 		});
-		btnAdd.setBounds(170, 234, 115, 29);
+		btnAdd.setBounds(218, 344, 115, 29);
 		add(btnAdd);
 		
 		JButton btnUpdate = new JButton("Update");
@@ -81,7 +110,7 @@ public class EditDraft extends JPanel{
 				main.showEditMeterReading();
 			}
 		});
-		btnUpdate.setBounds(300, 234, 115, 29);
+		btnUpdate.setBounds(436, 344, 115, 29);
 		add(btnUpdate);
 		
 		JLabel lblEditDraft = new JLabel("Edit Draft");
@@ -92,10 +121,10 @@ public class EditDraft extends JPanel{
 		JButton btnBack = new JButton("back");
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				main.showViewDraft();
+				main.showCustMenu();
 			}
 		});
-		btnBack.setBounds(0, 271, 115, 29);
+		btnBack.setBounds(218, 390, 115, 29);
 		add(btnBack);
 	}
 		public void deleteRow(int row){
@@ -124,15 +153,16 @@ public class EditDraft extends JPanel{
 		public void redraw(){
 			this.model.setRowCount(0);
 			int c=0;
-			data= new String[main.getCont().allReadings().length][4];
+			data= new String[main.getCont().allReadings().length][5];
 			for (Readings r:main.getCont().allReadings()){
-				Object[] x = {r.getUtilityName(),String.format("%.2f", r.getPrice()),r.getUnit(),r.getServiceCharge()};
+				Object[] x = {r.getUtilityName(),String.format("%.2f", r.getPrice()),r.getUnit(),r.getMeterReading(),r.getTotalPrice()};
 //				finaldata.insertElementAt(x, c);
-				System.out.println(x[0]+", "+x[1]+", "+x[2]+", "+x[3]+": "+c);
+				System.out.println(x[0]+", "+x[1]+", "+x[2]+", "+x[3]+","+x[4]": "+c);
 				data[c][0]=r.getUtilityName();
 				data[c][1]=String.valueOf(r.getPrice());
 				data[c][2]=r.getUnit();
-				data[c][3]=String.valueOf(r.getServiceCharge());
+				data[c][3]=String.valueOf(r.getMeterReading());
+				data[c][5] = String.valueOf(r.getTotalPrice());
 				model.addRow(x);
 				c+=1;
 			}
