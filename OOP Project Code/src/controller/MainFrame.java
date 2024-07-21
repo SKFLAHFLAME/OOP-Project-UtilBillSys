@@ -18,7 +18,6 @@ public class MainFrame extends JFrame implements WindowListener{
     private AddFrame frame;
     private EditUtility eu;
 	private EditDraft ed;
-	private EditMeterReading emr;
 	private AddMeterReading amr;
 
     public MainFrame(){
@@ -107,11 +106,6 @@ public class MainFrame extends JFrame implements WindowListener{
     	ed=new EditDraft(this);
     	add(ed, "Edit");
     	card.show(this.getContentPane(), "Edit");
-    }
-    public void showEditMeterReading(){
-    	emr=new EditMeterReading(this);
-    	add(emr, "EditMeterReading");
-    	card.show(this.getContentPane(), "EditMeterReading");
     }
     public void showAddMeterReading(){
     	amr=new AddMeterReading(this);
