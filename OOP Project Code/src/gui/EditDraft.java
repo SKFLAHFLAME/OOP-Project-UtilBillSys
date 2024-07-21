@@ -68,7 +68,7 @@ public class EditDraft extends JPanel{
 				Object[] i = {editedRow,editedCol,item};
 				changes.add(i);
 				System.out.println(item);
-				System.out.println(i[0]+", "+i[1]+", "+i[2]", "+i[3]", "+i[4]);
+				System.out.println(i[0]+", "+i[1]+", "+i[2]);
 			}
 		});
 		redraw();
@@ -107,7 +107,7 @@ public class EditDraft extends JPanel{
 		JButton btnUpdate = new JButton("Update");
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				main.showEditMeterReading();
+				
 			}
 		});
 		btnUpdate.setBounds(436, 344, 115, 29);
@@ -162,7 +162,7 @@ public class EditDraft extends JPanel{
 				data[c][1]=String.valueOf(r.getPrice());
 				data[c][2]=r.getUnit();
 				data[c][3]=String.valueOf(r.getMeterReading());
-				data[c][5] = String.valueOf(r.getTotalPrice());
+				data[c][4] = String.valueOf(r.getTotalPrice());
 				model.addRow(x);
 				c+=1;
 			}

@@ -4,6 +4,7 @@ import data.Customer;
 import data.DataStorage;
 import data.Readings;
 import data.Staff;
+import data.MReadings;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -66,6 +67,9 @@ public class Controller {
         if (!isStaff(id)){return;}
         Staff s = new Staff(newID, newPassword);
         ds.editStaff(id, s);
+    }
+    public MReadings[] allMReadings() {
+        return ds.getAllMReadings();
     }
 
     public Readings[] allReadings(){
@@ -310,7 +314,7 @@ public class Controller {
             for(String[] ur:userReadings){
                 
             }
-
+            
 
         } catch (FileNotFoundException ex) {
 
