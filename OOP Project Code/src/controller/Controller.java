@@ -277,7 +277,6 @@ public class Controller {
         	Vector<String> x = new Vector<>();
         	for (String[] items : ur){
         		String it = String.join(":", items);
-        		System.out.println(it);
         		x.add(it);
         		c+=1;
         	}
@@ -295,6 +294,7 @@ public class Controller {
         String[] cp = cdir.split("/");
         cp[cp.length-1] = "src";
         cdir = String.join("/", cp);
+        System.out.println(cdir);
         
         try {
             csv.csvWriter(cdir+"/datafiles/Staff.csv", staffData);
@@ -317,6 +317,7 @@ public class Controller {
             String[] cp = cdir.split("/");
             cp[cp.length-1] = "src";
             cdir = String.join("/", cp);
+            System.out.println(cdir);
             
             String[][] customers = csv.csvReader(cdir+"/datafiles/Customer.csv");
             String[][] staffAcct = csv.csvReader(cdir+"/datafiles/Staff.csv");
