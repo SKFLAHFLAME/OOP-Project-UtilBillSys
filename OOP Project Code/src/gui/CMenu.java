@@ -41,12 +41,21 @@ public class CMenu extends JPanel{
         	@Override
         	public void actionPerformed(ActionEvent arg0) {
         		main.setPrepage(true);
-        		main.showViewDraft();
+        		main.showEditDraft();
         	}
         });
         btnViewCurrentDraft.setFont(new Font("Tahoma", Font.PLAIN, 17));
         btnViewCurrentDraft.setBounds(109, 176, 194, 54);
         add(btnViewCurrentDraft);
+        
+        JButton btnLogOut = new JButton("Log out");
+        btnLogOut.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent arg0) {
+        		main.clearCurrentAcct();
+        		main.showLogin();
+        	}
+        });
+        btnLogOut.setBounds(152, 271, 115, 29);
+        add(btnLogOut);
     }
-
 }

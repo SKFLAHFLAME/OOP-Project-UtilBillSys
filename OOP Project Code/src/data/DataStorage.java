@@ -10,6 +10,7 @@ public class DataStorage {
     private Vector<Readings> readings = new Vector<>();
     private Vector<String[][]> userReading = new Vector<>();//UName, Entry_No, Readings...
 
+
     public DataStorage (){
         Staff admin = new Staff("admin", "admin");
         staff.add(admin);
