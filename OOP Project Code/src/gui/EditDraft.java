@@ -3,6 +3,7 @@ package gui;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -17,6 +18,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Vector;
 import java.awt.event.ActionEvent;
+import java.awt.Color;
 
 public class EditDraft extends JPanel {
     MainFrame main;
@@ -28,17 +30,17 @@ public class EditDraft extends JPanel {
     
     private String[][] draft;
     private JTable table;
-    private Vector<Object[]> changes = new Vector<>();
     private String[][] data;
     private boolean unsaved = false;
     private DefaultTableModel model;
     private Object[] columnNames = {"Utility Name", "Meter Reading", "Unit", "Price (S$)", "Service Charge", "Total Price(S$)"};
+    private JLabel lblError;
+    private JButton btnEdit;
 
     public EditDraft(MainFrame main) {
-    	System.out.println(main.getCurrentAcct()[1]);
         this.main = main;
+        main.setSize(580,480);
         setLayout(null);
-        draft = main.getCont().getDraft(main.getCurrentAcct()[1]);
 
         this.scrollPane = new JScrollPane();
         this.scrollPane.setBounds(15, 36, 536, 292);
@@ -72,24 +74,22 @@ public class EditDraft extends JPanel {
                 System.out.println(i[0] + ", " + i[1] + ", " + i[2]);
             }
         });
-        redraw();
         this.scrollPane.setViewportView(this.table);
-        main.setSize(500, 500);
 
         btnDelete = new JButton("Delete");
         btnDelete.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 int edtRow = table.getSelectedRow();
-                try {
-                    table.getCellEditor().cancelCellEditing();
-                } catch (Exception e) {
-                    // Handle exception if necessary
-                }
-
-                System.out.println(edtRow);
+                
+                String[] options = {"Yes", "No"};
+				int sel = JOptionPane.showOptionDialog(null, "Confirm Deletion?", "Delete", 0, 3, null, options, options[1]);
+				if(sel == 1){return;}
+                
                 deleteRow(edtRow);
-                redraw();
+                if (main.getCont().hasDraft(main.getCurrentAcct()[1])){
+                	main.showAddMeterReading();
+                }
             }
         });
         btnDelete.setBounds(15, 344, 115, 29);
@@ -101,12 +101,15 @@ public class EditDraft extends JPanel {
                 main.showAddMeterReading();
             }
         });
-        btnAdd.setBounds(218, 344, 115, 29);
+        btnAdd.setBounds(159, 344, 115, 29);
         add(btnAdd);
 
         JButton btnSubmit = new JButton("Submit");
         btnSubmit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+            	String[] options = {"Yes", "No"};
+				int sel = JOptionPane.showOptionDialog(null, "Confirm Submission? It will remove this draft", "Submit", 0, 3, null, options, options[1]);
+				if(sel == 1){return;}
                 main.getCont().submitUserReading(main.getCurrentAcct()[1]);
                 main.getCont().clearDraft(main.getCurrentAcct()[1]);;
                 main.showCustMenu();
@@ -128,6 +131,28 @@ public class EditDraft extends JPanel {
         });
         btnBack.setBounds(218, 390, 115, 29);
         add(btnBack);
+        
+        this.lblError = new JLabel("");
+        this.lblError.setFont(new Font("Tahoma", Font.ITALIC, 15));
+        this.lblError.setForeground(Color.RED);
+        this.lblError.setBounds(12, 386, 182, 35);
+        add(this.lblError);
+        
+        this.btnEdit = new JButton("Edit");
+        this.btnEdit.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		int sel = table.getSelectedRow();
+        		if (sel ==-1){return;}
+        		String name = (String) table.getValueAt(sel, 0);
+        		String mr= (String) table.getValueAt(sel, 1);
+        		main.showEditMeterReading(name, mr);
+        	}
+        });
+        this.btnEdit.setBounds(306, 344, 115, 29);
+        add(this.btnEdit);
+        
+
+        redraw();
     }
 
 	public void addRow(){
@@ -138,20 +163,32 @@ public class EditDraft extends JPanel {
 	}
 	
 	public void deleteRow(int row){
-		
+		if(row ==-1){
+			return;
+		}
+		String readingName=(String) table.getValueAt(row, 0);
+		main.getCont().removeMeterReading(main.getCurrentAcct()[1], readingName);
+		redraw();
 
 	}
 
     public void redraw() {
+    	draft = main.getCont().getDraft(main.getCurrentAcct()[1]);
         this.model.setRowCount(0);
-        int c = 0;
-        data = new String[main.getCont().allReadings().length][6];
         for (String[] d :draft) {
         	System.out.println(String.join(", ", d));
-        	Readings r = main.getCont().getReading(d[0]);
-            Object[] x = {d[0], d[1], r.getUnit(), String.format("%.2f", r.getPrice()), String.format("%.2f",r.getServiceCharge()), String.format("%.2f", main.getCont().calculateReading(r.getUtilityName(),String.valueOf(d[1])))};
-            model.addRow(x);
-            c += 1;
+        	try {
+        		Readings r = main.getCont().getReading(d[0]);
+                Object[] x = {d[0], d[1], r.getUnit(), String.format("%.2f", r.getPrice()), String.format("%.2f",r.getServiceCharge()), String.format("%.2f", main.getCont().calculateReading(r.getUtilityName(),String.valueOf(d[1])))};
+                model.addRow(x);
+			} catch (Exception e) {
+				lblError.setText(d[0]+" Not Avaliable, Deleted");
+				main.getCont().removeMeterReading(main.getCurrentAcct()[1], d[0]);
+				continue;
+				
+				
+			}
+        	
         }
 //        for (Object[] i : changes) {
 //            data[(int) i[0]][(int) i[1]] = String.valueOf(i[2]);
@@ -161,5 +198,4 @@ public class EditDraft extends JPanel {
         table.setModel(model);
         table.repaint();
     }
-    
 }

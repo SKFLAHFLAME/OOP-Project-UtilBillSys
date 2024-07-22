@@ -4,6 +4,8 @@ import javax.swing.JPanel;
 
 import controller.MainFrame;
 import javax.swing.JLabel;
+
+import java.awt.Color;
 import java.awt.Font;
 import javax.swing.JButton;
 import javax.swing.JTextField;
@@ -22,6 +24,7 @@ public class CreateStaff extends JPanel{
 	private JTextField textField;
 	private JPasswordField passwordField;
 	private JCheckBox chckbxShowPassword;
+	private JLabel lblErrors;
 	
 	public CreateStaff(MainFrame m){
 		this.main=m;
@@ -59,11 +62,12 @@ public class CreateStaff extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(main.getCurrentAcct()[0].equals("A")){
+					if (main.getCont().isStaff(textField.getText())){lblErrors.setText("ID Already Used");return;}
 					System.out.println("Successful");
 					addStaff();
 					main.showAllStaff();
 				}
-				else{System.out.println("Not Admin");}
+				else{lblErrors.setText("Not Admin");}
 			}
 		});
 		this.btnRegister.setFont(new Font("Tahoma", Font.PLAIN, 15));
@@ -94,6 +98,12 @@ public class CreateStaff extends JPanel{
 		this.chckbxShowPassword.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		this.chckbxShowPassword.setBounds(111, 168, 129, 34);
 		add(this.chckbxShowPassword);
+		
+		this.lblErrors = new JLabel("");
+		this.lblErrors.setFont(new Font("Tahoma", Font.ITALIC, 16));
+		lblErrors.setForeground(Color.RED);
+		this.lblErrors.setBounds(246, 170, 179, 34);
+		add(this.lblErrors);
 	}
 	public void addStaff(){
 		String id = textField.getText();

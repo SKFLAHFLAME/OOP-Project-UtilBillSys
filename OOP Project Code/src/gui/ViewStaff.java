@@ -62,7 +62,7 @@ public class ViewStaff extends JPanel{
 		this.btnRemove.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String[] options = {"Yes", "No"};
-				int sel = JOptionPane.showOptionDialog(null, "Confirm Delete?", "Delete", 0, 3, null, options, options[0]);
+				int sel = JOptionPane.showOptionDialog(null, "Confirm Delete?", "Delete", 0, 3, null, options, options[1]);
 				if (sel == 1){return;}
 				if (list.getSelectedIndex()==-1){return;}
 				String selectedID = (String) list.getSelectedValue();

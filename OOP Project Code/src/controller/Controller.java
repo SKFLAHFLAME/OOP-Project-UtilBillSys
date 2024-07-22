@@ -5,12 +5,16 @@ import data.DataStorage;
 import data.Readings;
 import data.Staff;
 
+import java.awt.event.MouseWheelEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.StringTokenizer;
+import java.util.Vector;
+
+import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
 
 public class Controller {
     private DataStorage ds = new DataStorage();
@@ -22,20 +26,29 @@ public class Controller {
         // ds.addStaff(new Staff("1234ABC", "password"));
         // this.addReading("Gas", 0.24, "kWh", 2);
     	// this.addReading("Water", 1.40, "Cu_M", 10);
-        String[][] x = {{"John", "1","15/7/24"}, {"Gas","10", "90"},{"Water", "30", "120"}};
-        String [][] x2 = {{"John", "2","16/8/24"},{"Gas","13","100"},{"Water", "46", "170"},{"Electricity","60", "30"}};
-        ds.addUserReading(x);
-        ds.addUserReading(x2);
-        String [][] m = {{"Mark", "1","16/7/24"},{"Gas","13","100"}};
-        ds.addUserReading(m);
+//        String[][] x = {{"John", "1","15/7/24"}, {"Gas","10", "90"},{"Water", "30", "120"}};
+//        String [][] x2 = {{"John", "2","16/8/24"},{"Gas","13","100"},{"Water", "46", "170"},{"Electricity","60", "30"}};
+//        ds.addUserReading(x);
+//        ds.addUserReading(x2);
+//        String [][] m = {{"Mark", "1","16/7/24"},{"Gas","13","100"}};
+//        ds.addUserReading(m);
     }
 
     public boolean isUser(String name) {
-        return name.equals(ds.getUser(name).getUsername());
+    	try {
+    		return name.equals(ds.getUser(name).getUsername());
+		} catch (Exception e) {
+			return false;
+		}
+        
     }
     
     public boolean isStaff(String id){
-    	return id.equals(ds.getStaff(id).getUsername());
+    	try {
+			return id.equals(ds.getStaff(id).getUsername());
+		} catch (Exception e) {
+			return false;
+		}
     }
 
     public boolean verifyUser(String name, String password){
@@ -84,6 +97,7 @@ public class Controller {
     public Customer getCustomer(String name){
         return ds.getUser(name);
     }
+    
     public Customer[] getAllCustomers() {
     	return ds.getAllUser();
     }
@@ -133,7 +147,7 @@ public class Controller {
     
     public double calculateReading(String readingName, String meterReading){
     	Readings reading = ds.getReadings(readingName);
-    	return Double.valueOf(meterReading)*reading.getPrice()*reading.getServiceCharge();
+    	return Double.valueOf(meterReading)*reading.getPrice()+(Double.valueOf(meterReading)*reading.getPrice()*reading.getServiceCharge()/100);
     }
     public double getStandardPrice() {
         return 129.0; // Temporarily returning a fixed value for testing
@@ -147,8 +161,9 @@ public class Controller {
     	String date = dtf.format(now);
     	
         String[][][] userReadings=ds.getUserReadings(userName);
+        System.out.println(userReadings.length);
         String[][] draft = ds.getDraft(userName);
-        String[] initials = {userName, String.valueOf(userReadings.length), date};
+        String[] initials = {userName, String.valueOf(userReadings.length+1), date};
         
         String[][] bill = new String[draft.length+1][3];
         bill[0] = initials;
@@ -157,7 +172,7 @@ public class Controller {
         	temp[0] = draft[i][0];
         	temp[1] = draft[i][1];
         	Readings r = ds.getReadings(draft[i][0]);
-        	temp[2] = String.valueOf(this.calculateReading(draft[i][0], draft[i][1]));
+        	temp[2] = String.format("%.2f", this.calculateReading(draft[i][0], draft[i][1]));
         	bill[i+1] = temp;
         	
         }
@@ -181,6 +196,10 @@ public class Controller {
     public boolean hasDraft(String UName){
         return ds.hasDraft(UName);
     }
+    public void removeMeterReading(String userName, String readingName){
+    	ds.removeMeterReading(userName, readingName);
+    }
+    
     public String[][] getDraft(String userName){
     	return ds.getDraft(userName);
     }
@@ -222,6 +241,7 @@ public class Controller {
             staffData[c][1] = staffs[i].getPassword();
             c+=1;
         }
+        c=0;
 
         //!Customer (UserName, Password, Full Name, Email, Address, Draft)
         String[][] customerData = new String[customer.length][6];
@@ -250,10 +270,25 @@ public class Controller {
         }
 
         //!UserReadings
-        String[][][] userR = new String[userReadings.length][][];
+        String[][] userR = new String[userReadings.length][];
+        for (int i=0;i<userReadings.length; i++){
+        	String[][] ur = userReadings[i];
+        	c=0;
+        	Vector<String> x = new Vector<>();
+        	for (String[] items : ur){
+        		String it = String.join(":", items);
+        		System.out.println(it);
+        		x.add(it);
+        		c+=1;
+        	}
+        	String[] y = new String[x.size()];
+        	x.toArray(y);
+        	userR[i]=y;
+        	c=0;
+        }
 
 
-        //store into csv files
+        //store into CSV files
         String cdir = System.getProperty("java.class.path");
         if (!(System.getProperty("file.separator")=="/")){
             cdir = cdir.replace("\\", "/");}
@@ -266,7 +301,7 @@ public class Controller {
             csv.csvWriter(cdir+"/datafiles/Staff.csv", staffData);
             csv.csvWriter(cdir+"/datafiles/Customer.csv", customerData);
             csv.csvWriter(cdir+"/datafiles/Readings.csv", readingsData);
-            // csv.csvWriter("user_readings.csv", userReadings);
+            csv.csvWriter(cdir+"/datafiles/UserReadings.csv", userR);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -321,7 +356,18 @@ public class Controller {
 
             //!User Readings
             for(String[] ur:userReadings){
-                
+            	if(ur.length==0){
+            		continue;
+            	}
+                Vector<String[]> bill = new Vector<>();
+                int c=0;
+                for(String item : ur){
+                	String [] t = item.split(":");
+                	bill.add(t);
+                }
+                String[][] b = new String[bill.size()][];
+                bill.toArray(b);
+                ds.addUserReading(b);
             }
             
 
