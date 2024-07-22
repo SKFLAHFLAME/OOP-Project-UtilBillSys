@@ -142,7 +142,7 @@ public class EditDraft extends JPanel {
         this.btnEdit.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		int sel = table.getSelectedRow();
-        		if (sel ==-1){return;}
+        		if (sel ==-1||sel==model.getRowCount()-1){return;}
         		String name = (String) table.getValueAt(sel, 0);
         		String mr= (String) table.getValueAt(sel, 1);
         		main.showEditMeterReading(name, mr);
@@ -175,12 +175,14 @@ public class EditDraft extends JPanel {
     public void redraw() {
     	draft = main.getCont().getDraft(main.getCurrentAcct()[1]);
         this.model.setRowCount(0);
+        double total=0;
         for (String[] d :draft) {
         	System.out.println(String.join(", ", d));
         	try {
         		Readings r = main.getCont().getReading(d[0]);
                 Object[] x = {d[0], d[1], r.getUnit(), String.format("%.2f", r.getPrice()), String.format("%.2f",r.getServiceCharge()), String.format("%.2f", main.getCont().calculateReading(r.getUtilityName(),String.valueOf(d[1])))};
                 model.addRow(x);
+                total+=main.getCont().calculateReading(r.getUtilityName(),String.valueOf(d[1]));
 			} catch (Exception e) {
 				lblError.setText(d[0]+" Not Avaliable, Deleted");
 				main.getCont().removeMeterReading(main.getCurrentAcct()[1], d[0]);
@@ -190,6 +192,8 @@ public class EditDraft extends JPanel {
 			}
         	
         }
+        Object[] tot= {"Total","","","","",String.format("%.2f", total)};
+        model.addRow(tot);
 //        for (Object[] i : changes) {
 //            data[(int) i[0]][(int) i[1]] = String.valueOf(i[2]);
 //            model.removeRow((int) i[0]);
