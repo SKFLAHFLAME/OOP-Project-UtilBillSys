@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -41,7 +42,7 @@ public class EditUtility extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				main.closeAddFrame();
-				if (!changes.isEmpty()){
+				if (unsaved == true){
 					String[] options = {"Save", "No","Cancel"};
 					int selection = JOptionPane.showOptionDialog(null, "You have unsaved changes Save?", "Unsaved changes", 0,3,null,options,options[0]);
 					if(selection == 2){return;}
@@ -64,13 +65,14 @@ public class EditUtility extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				int edtRow= table.getSelectedRow();
+				if(edtRow == -1){return;}
 				try {
 					table.getCellEditor().cancelCellEditing();
 				} catch (Exception e) {
 					
 				}
 				String[] options = {"Yes", "No"};
-				int sel = JOptionPane.showOptionDialog(null, "Confirm Delete?", "Delete", 0, 3, null, options, options[0]);
+				int sel = JOptionPane.showOptionDialog(null, "Confirm Delete?", "Delete", 0, 3, null, options, options[1]);
 				if(sel == 1){return;}
 				System.out.println(edtRow);
 				deleteRow(edtRow);
@@ -157,9 +159,12 @@ public class EditUtility extends JPanel{
 		if (row<0){return;}
 		int c=0;
 		int v=0;
-		for (Object[] x:changes){
+		Vector<Object[]> temp = new Vector<>();
+		Iterator<Object[]> iterator = changes.iterator();
+		while(iterator.hasNext()){
+			Object[] x = iterator.next();
 			if (x[0].equals(row)){
-				changes.remove(c);
+//				changes.remove(c);
 				v+=1;
 				c+=1;
 				continue;
@@ -168,9 +173,14 @@ public class EditUtility extends JPanel{
 				x[0]=(int)x[0]-1;
 			}
 			System.out.println(c+"   "+v+"    "+x[0]);
-			changes.setElementAt(x, c-v);
+//			changes.setElementAt(x, c-v);
+			temp.add(x);
 			c+=1;
 		}
+		changes = new Vector<>();
+		changes = (Vector<Object[]>) temp.clone();
+		System.out.println(changes.isEmpty());
+		if (changes.isEmpty()){unsaved = false;}
 
 		main.getCont().removeReading(row);
 
@@ -221,7 +231,6 @@ public class EditUtility extends JPanel{
 		try {
 			table.getCellEditor().stopCellEditing();
 		} catch (Exception e) {
-			// TODO: handle exception
 		}
 		redraw();
 //		change = new Object[main.getCont().allReadings().length+1][4];

@@ -31,11 +31,20 @@ public class Controller {
     }
 
     public boolean isUser(String name) {
-        return name.equals(ds.getUser(name).getUsername());
+    	try {
+    		return name.equals(ds.getUser(name).getUsername());
+		} catch (Exception e) {
+			return false;
+		}
+        
     }
     
     public boolean isStaff(String id){
-    	return id.equals(ds.getStaff(id).getUsername());
+    	try {
+			return id.equals(ds.getStaff(id).getUsername());
+		} catch (Exception e) {
+			return false;
+		}
     }
 
     public boolean verifyUser(String name, String password){
@@ -84,6 +93,7 @@ public class Controller {
     public Customer getCustomer(String name){
         return ds.getUser(name);
     }
+    
     public Customer[] getAllCustomers() {
     	return ds.getAllUser();
     }
