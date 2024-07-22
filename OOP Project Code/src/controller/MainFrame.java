@@ -174,11 +174,6 @@ public class MainFrame extends JFrame implements WindowListener{
 		return eu;
 	}
 	
-	
-	
-	
-	
-	
 
 	@Override
 	public void windowOpened(WindowEvent e) {

@@ -201,7 +201,7 @@ public class Login extends JPanel{
         String pass = new String(passwordField.getPassword());
         if (main.getCont().verifyUser(name, pass)) {
             lblSuccess.setText("Success!");
-            main.setCurrentAcct("Customer", name);
+            main.setCurrentAcct("C", name);
             main.showCustMenu();
         }
         else{

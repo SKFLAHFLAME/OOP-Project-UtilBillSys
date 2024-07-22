@@ -8,7 +8,6 @@ public class DataStorage {
     private Vector<Staff> staff = new Vector<>();
     private Vector<Customer> user = new Vector<>();
     private Vector<Readings> readings = new Vector<>();
-    private Vector<MReadings> mReadings = new Vector<>();
     private Vector<String[][]> userReading = new Vector<>();//UName, Entry_No, Readings...
 
 
@@ -248,20 +247,6 @@ public class DataStorage {
     }
 
 
-    public MReadings getMReading(String utilityName) {
-        for (MReadings m : mReadings) {
-            if (m.getUtilityName().equals(utilityName)) {
-                return m;
-            }
-        }
-        return null;
-    }
-
-    public MReadings[] getAllMReadings() {
-        MReadings[] m = new MReadings[mReadings.size()];
-        mReadings.toArray(m);
-        return m;
-    }
     
     // public void editUser(String type,String user, String val) {
     //     type = type.toLowerCase();

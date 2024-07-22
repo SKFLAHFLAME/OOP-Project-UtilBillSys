@@ -106,7 +106,7 @@ public class ViewAllCustomer extends JPanel{
 	public void populateTree() {
 		Customer[] accts = main.getCont().getAllCustomers();
 		customer.removeAllChildren();
-		int allTotal=0;
+		double allTotal=0;
 		for (Customer a : accts) {
 			DefaultMutableTreeNode username = new DefaultMutableTreeNode(a.getUsername());
 			customer.add(username);
@@ -118,15 +118,15 @@ public class ViewAllCustomer extends JPanel{
 			DefaultMutableTreeNode userR = new DefaultMutableTreeNode("View All Bills");
 			String[][][] userReadings = main.getCont().getUserReading(a.getUsername());//get all userReadings of user
 			for (String[][] ur: userReadings){//go thru each bill
-				int total=0;
+				double total=0;
 				if(ur==null){continue;}
 				if (ur[0][0]==null){continue;}
 				DefaultMutableTreeNode bill= new DefaultMutableTreeNode("Bill "+ur[0][1]+":"+ur[0][2]);
 				for (int i =0; i<ur.length-1; i++){// go thru each reading
 					if (ur[i][0]==null){continue;}
 					bill.add(new DefaultMutableTreeNode(ur[i+1][0]+": "+ ur[i+1][1]));
-					total+=Integer.valueOf(ur[i+1][2]);
-					allTotal+=Integer.valueOf(ur[i+1][2]);
+					total+=Double.valueOf(ur[i+1][2]);
+					allTotal+=Double.valueOf(ur[i+1][2]);
 				}
 				bill.add(new DefaultMutableTreeNode("Total: $"+total));//total of bill
 				userR.add(bill);

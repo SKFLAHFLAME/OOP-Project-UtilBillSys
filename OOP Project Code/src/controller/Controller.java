@@ -4,7 +4,7 @@ import data.Customer;
 import data.DataStorage;
 import data.Readings;
 import data.Staff;
-import data.MReadings;
+import data.UMReadings;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -68,9 +68,6 @@ public class Controller {
         Staff s = new Staff(newID, newPassword);
         ds.editStaff(id, s);
     }
-    public MReadings[] allMReadings() {
-        return ds.getAllMReadings();
-    }
 
     public Readings[] allReadings(){
     	Readings[] r=ds.getAllReadings();
@@ -93,6 +90,9 @@ public class Controller {
     }
     public Readings[] getAllReadings(){
         return ds.getAllReadings();
+    }
+    public Readings getReading(String readingName){
+    	return ds.getReadings(readingName);
     }
     
     public void addUser(String username, String password){
@@ -136,7 +136,10 @@ public class Controller {
     	Readings reading = ds.getReadings(readingName);
     	return Double.valueOf(meterReading)*reading.getPrice()*reading.getServiceCharge();
     }
-    
+    public double getStandardPrice() {
+        return 129.0; // Temporarily returning a fixed value for testing
+    }
+
     
     //! User Readings
     public void submitUserReading(String userName){
@@ -146,7 +149,7 @@ public class Controller {
     	
         String[][][] userReadings=ds.getUserReadings(userName);
         String[][] draft = ds.getDraft(userName);
-        String[] initials = {userName, String.valueOf(userReadings.length+1), date};
+        String[] initials = {userName, String.valueOf(userReadings.length), date};
         
         String[][] bill = new String[draft.length+1][3];
         bill[0] = initials;
@@ -179,7 +182,15 @@ public class Controller {
     public boolean hasDraft(String UName){
         return ds.hasDraft(UName);
     }
-
+    public String[][] getDraft(String userName){
+    	return ds.getDraft(userName);
+    }
+    
+    public void clearDraft(String userName){
+    	ds.removeDraft(userName);
+    }
+    
+    
 
     public DataStorage getDS() {
         return ds;
@@ -188,10 +199,7 @@ public class Controller {
     public void setDS(DataStorage ds) {
         this.ds = ds;
     }
-
-
-
-
+ 
     //!CSV methods
     public String[][] readCSV(String filepath) throws FileNotFoundException {
     	return csv.csvReader(filepath);

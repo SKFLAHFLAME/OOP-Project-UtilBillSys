@@ -2,6 +2,7 @@ package gui;
 
 import controller.MainFrame;
 import data.Readings;
+
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -56,10 +57,11 @@ public class AddMeterReading extends JPanel {
 		btnAdd.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String name= (String)mrBox.getSelectedItem();
-				double MR = Double.parseDouble(textField.getText());
-				main.getCont().addMeterReading(main.getCurrentAcct()[1],name, MR);
-				main.showEditDraft();
+                String readingName = (String) mrBox.getSelectedItem();
+                double meterReading = Double.parseDouble(textField.getText()); 
+                
+                main.getCont().addMeterReading(main.getCurrentAcct()[1],readingName, meterReading);
+                main.showEditDraft();
 			}
 		});
 		btnAdd.setBounds(320, 255, 115, 29);
