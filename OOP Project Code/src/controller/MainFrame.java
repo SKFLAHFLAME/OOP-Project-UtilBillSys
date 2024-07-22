@@ -19,6 +19,7 @@ public class MainFrame extends JFrame implements WindowListener{
     private EditUtility eu;
 	private EditDraft ed;
 	private AddMeterReading amr;
+	private EditMeterReading emr;
 
     public MainFrame(){
         
@@ -111,6 +112,11 @@ public class MainFrame extends JFrame implements WindowListener{
     	amr=new AddMeterReading(this);
     	add(amr, "AddMeterReading");
     	card.show(this.getContentPane(), "AddMeterReading");
+    }
+    public void showEditMeterReading(String preName, String mr){
+    	emr=new EditMeterReading(this,preName,mr);
+    	add(emr, "EditMeterReading");
+    	card.show(this.getContentPane(), "EditMeterReading");
     }
     public void showStaffAccount(String id){
     	SAccountPage ap=new SAccountPage(this, id);

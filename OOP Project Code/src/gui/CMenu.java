@@ -14,11 +14,12 @@ public class CMenu extends JPanel{
     JLabel loc;
 	private JButton btnShowHistoryScreen;
 	private JButton btnViewCurrentDraft;
+	private JButton btnAccount;
 
     public CMenu(MainFrame main){
         this.main = main;
         this.setLayout(null);
-        main.setSize(500,340);
+        main.setSize(500,360);
         
         this.loc = new JLabel("Customer");
         this.loc.addMouseListener(new MouseAdapter() {
@@ -40,8 +41,15 @@ public class CMenu extends JPanel{
         btnViewCurrentDraft.addActionListener(new ActionListener() {
         	@Override
         	public void actionPerformed(ActionEvent arg0) {
-        		main.setPrepage(true);
-        		main.showEditDraft();
+        		if (main.getCont().hasDraft(main.getCurrentAcct()[1])){
+            		main.setPrepage(true);
+            		main.showAddMeterReading();
+            	}
+        		else {
+        			main.setPrepage(false);
+        			main.showEditDraft();
+        		}
+        		
         	}
         });
         btnViewCurrentDraft.setFont(new Font("Tahoma", Font.PLAIN, 17));
@@ -57,5 +65,9 @@ public class CMenu extends JPanel{
         });
         btnLogOut.setBounds(152, 271, 115, 29);
         add(btnLogOut);
+        
+        this.btnAccount = new JButton("Account");
+        this.btnAccount.setBounds(341, 35, 97, 25);
+        add(this.btnAccount);
     }
 }

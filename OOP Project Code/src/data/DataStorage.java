@@ -149,7 +149,7 @@ public class DataStorage {
             }
         }
         
-        String[][][] arr=new String[userReading.size()][this.readings.size()+2][3];
+        String[][][] arr=new String[ureading.size()][this.readings.size()+2][3];
         ureading.toArray(arr);
         //sort by Entry_Number
         try {
@@ -168,7 +168,7 @@ public class DataStorage {
     //! user draft Methods
     public boolean hasDraft(String userName){
         Customer c = this.getUser(userName);
-        return c.getDraft().isEmpty();
+        return c.getDraft().size()==0;
     }
 
     public void addMeterReading(String userName, String readingName, Double meterReading){

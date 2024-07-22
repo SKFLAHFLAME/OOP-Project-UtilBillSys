@@ -1,68 +1,122 @@
-   package gui;
-
-import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
+package gui;
 
 import controller.MainFrame;
 import data.Readings;
 
-import javax.swing.JButton;
 import java.awt.Font;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
-public class EditMeterReading extends JPanel{
+import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
+
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
+public class EditMeterReading extends JPanel {
 	MainFrame main;
 	private JTextField textField;
 	private JComboBox mrBox;
 	private String[] valueArr;
-	public EditMeterReading(MainFrame m) {
-		main=m;
+	private JLabel lblUnit;
+	private String previous;
+	private boolean noUnit=false;
+	public EditMeterReading(MainFrame m, String CurrentName, String Reading) {
+		main =m;
 		setLayout(null);
+		main.setSize(460, 350);
 		initReadingNames();
 		
-		this.mrBox = new JComboBox(this.valueArr);
-		mrBox.setBounds(161, 50, 260, 26);
-		add(mrBox);
+		JLabel lblAddMeterReading = new JLabel("Add Meter Reading");
+		lblAddMeterReading.setFont(new Font("Tahoma", Font.BOLD, 30));
+		lblAddMeterReading.setBounds(15, 16, 337, 43);
+		add(lblAddMeterReading);
 		
 		JLabel lblMeterReading = new JLabel("Meter Reading:");
-		lblMeterReading.setBounds(15, 145, 107, 20);
+		lblMeterReading.setBounds(15, 161, 114, 20);
 		add(lblMeterReading);
 		
+		this.mrBox = new JComboBox(this.valueArr);
+		this.mrBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				String unit = main.getCont().getReading((String) mrBox.getSelectedItem()).getUnit();
+				lblUnit.setText(unit);
+				if(unit.equals("-")){
+					textField.setEditable(false);
+					previous = textField.getText();
+					noUnit = true;
+					textField.setText("1");
+					return;
+				}
+				if (noUnit==false){previous = textField.getText();}
+				textField.setEditable(true);
+				textField.setText(previous);
+				noUnit = false;
+				
+			}
+			
+		});
+		mrBox.setBounds(172, 72, 240, 26);
+		add(mrBox);
+
+		
 		JLabel lblUtility = new JLabel("Utility:");
-		lblUtility.setBounds(15, 53, 69, 20);
+		lblUtility.setBounds(15, 75, 69, 20);
 		add(lblUtility);
 		
 		textField = new JTextField();
-		textField.setBounds(161, 142, 260, 26);
+		this.textField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent arg0) {
+				char key = arg0.getKeyChar();
+				if(Character.isDigit(key)||(key==KeyEvent.VK_PERIOD&&!textField.getText().contains("."))){
+		            return;}
+				arg0.consume();
+			}
+		});
+		textField.setBounds(172, 158, 188, 26);
 		add(textField);
 		textField.setColumns(10);
+		textField.setText(Reading);
 		
 		JButton btnBack = new JButton("Back");
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if(main.getPrepage()==true){
+					main.showCustMenu();
+					return;
+				}
 				main.showEditDraft();
 			}
 		});
-		btnBack.setBounds(7, 255, 115, 29);
+		btnBack.setBounds(15, 255, 115, 29);
 		add(btnBack);
 		
-		JLabel lblEditmr = new JLabel("EditMeterReading");
-		lblEditmr.setFont(new Font("Tahoma", Font.BOLD, 20));
-		lblEditmr.setBounds(15, 16, 107, 20);
-		add(lblEditmr);
-		
-		JButton btnUpdate = new JButton("Update");
-		btnUpdate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				
+		JButton btnAdd = new JButton("Update");
+		btnAdd.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+                String readingName = (String) mrBox.getSelectedItem();
+                double meterReading = Double.parseDouble(textField.getText()); 
+                
+                main.getCont().removeMeterReading(main.getCurrentAcct()[1], CurrentName);
+                main.getCont().addMeterReading(main.getCurrentAcct()[1],readingName, meterReading);
+                main.setPrepage(false);
+                main.showEditDraft();
 			}
 		});
-		btnUpdate.setBounds(320, 255, 115, 29);
-		add(btnUpdate);
+		btnAdd.setBounds(320, 255, 115, 29);
+		add(btnAdd);
+		
+		this.lblUnit = new JLabel("Unit");
+		this.lblUnit.setBounds(370, 161, 42, 20);
+		add(this.lblUnit);
+		lblUnit.setText(main.getCont().getReading((String) mrBox.getSelectedItem()).getUnit());
+		mrBox.setSelectedItem(CurrentName);
 	}
 	
 	private void initReadingNames(){
