@@ -196,7 +196,7 @@ public class DataStorage {
         int i=0;
         for(Customer c : user){
             if(c.getUsername().equals(userName)){
-                c.editReadingName(readingName, newReadingName);;
+                c.editReadingName(readingName, newReadingName);
                 user.setElementAt(c, i);
             }
             i+=1;

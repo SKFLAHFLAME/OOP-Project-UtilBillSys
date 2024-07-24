@@ -33,17 +33,17 @@ public class EditDraft extends JPanel {
     private String[][] data;
     private boolean unsaved = false;
     private DefaultTableModel model;
-    private Object[] columnNames = {"Utility Name", "Meter Reading", "Unit", "Price (S$)", "Service Charge", "Total Price(S$)"};
+    private Object[] columnNames = {"Utility Name", "Meter Reading", "Unit", "Price (S$)", "Service Charge(%)", "Total Price(S$)"};
     private JLabel lblError;
     private JButton btnEdit;
 
     public EditDraft(MainFrame main) {
         this.main = main;
-        main.setSize(580,480);
+        main.setSize(780,570);
         setLayout(null);
 
         this.scrollPane = new JScrollPane();
-        this.scrollPane.setBounds(15, 36, 536, 292);
+        this.scrollPane.setBounds(15, 45, 720, 325);
         add(this.scrollPane);
 
         this.model = new DefaultTableModel(columnNames, 0){
@@ -53,6 +53,13 @@ public class EditDraft extends JPanel {
         };
         this.table = new JTable(model);
         this.table.setRowHeight(table.getRowHeight() + 10);
+        table.getColumnModel().getColumn(0).setPreferredWidth(60);
+        table.getColumnModel().getColumn(1).setPreferredWidth(50);
+        table.getColumnModel().getColumn(2).setPreferredWidth(10);
+        table.getColumnModel().getColumn(3).setPreferredWidth(20);
+        table.getColumnModel().getColumn(4).setPreferredWidth(80);
+        table.getColumnModel().getColumn(5).setPreferredWidth(80);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         this.table.setFont(new Font("Tahoma", Font.PLAIN, 18));
         this.table.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
@@ -77,6 +84,7 @@ public class EditDraft extends JPanel {
         this.scrollPane.setViewportView(this.table);
 
         btnDelete = new JButton("Delete");
+        btnDelete.setFont(new Font("Tahoma", Font.PLAIN, 20));
         btnDelete.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -84,7 +92,7 @@ public class EditDraft extends JPanel {
                 
                 String[] options = {"Yes", "No"};
 				int sel = JOptionPane.showOptionDialog(null, "Confirm Deletion?", "Delete", 0, 3, null, options, options[1]);
-				if(sel == 1){return;}
+				if(sel != 1){return;}
                 
                 deleteRow(edtRow);
                 if (main.getCont().hasDraft(main.getCurrentAcct()[1])){
@@ -92,35 +100,38 @@ public class EditDraft extends JPanel {
                 }
             }
         });
-        btnDelete.setBounds(15, 344, 115, 29);
+        btnDelete.setBounds(40, 400, 115, 50);
         add(btnDelete);
 
         JButton btnAdd = new JButton("Add");
+        btnAdd.setFont(new Font("Tahoma", Font.PLAIN, 20));
         btnAdd.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 main.showAddMeterReading();
             }
         });
-        btnAdd.setBounds(159, 344, 115, 29);
+        btnAdd.setBounds(200, 400, 115, 50);
         add(btnAdd);
 
         JButton btnSubmit = new JButton("Submit");
+        btnSubmit.setFont(new Font("Tahoma", Font.PLAIN, 20));
         btnSubmit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	String[] options = {"Yes", "No"};
 				int sel = JOptionPane.showOptionDialog(null, "Confirm Submission? It will remove this draft", "Submit", 0, 3, null, options, options[1]);
-				if(sel == 1){return;}
+				if(sel != 0){return;}
                 main.getCont().submitUserReading(main.getCurrentAcct()[1]);
                 main.getCont().clearDraft(main.getCurrentAcct()[1]);;
                 main.showCustMenu();
             }
         });
-        btnSubmit.setBounds(436, 344, 115, 29);
+        btnSubmit.setBounds(600, 400, 115, 44);
         add(btnSubmit);
-
+        
+        
         JLabel lblEditDraft = new JLabel("Edit Draft");
         lblEditDraft.setFont(new Font("Tahoma", Font.PLAIN, 20));
-        lblEditDraft.setBounds(32, 16, 93, 20);
+        lblEditDraft.setBounds(15, 16, 110, 20);
         add(lblEditDraft);
 
         btnBack = new JButton("Back");
@@ -129,7 +140,7 @@ public class EditDraft extends JPanel {
                 main.showCustMenu();
             }
         });
-        btnBack.setBounds(218, 390, 115, 29);
+        btnBack.setBounds(298, 455, 115, 29);
         add(btnBack);
         
         this.lblError = new JLabel("");
@@ -139,6 +150,7 @@ public class EditDraft extends JPanel {
         add(this.lblError);
         
         this.btnEdit = new JButton("Edit");
+        btnEdit.setFont(new Font("Tahoma", Font.PLAIN, 20));
         this.btnEdit.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		int sel = table.getSelectedRow();
@@ -148,7 +160,7 @@ public class EditDraft extends JPanel {
         		main.showEditMeterReading(name, mr);
         	}
         });
-        this.btnEdit.setBounds(306, 344, 115, 29);
+        this.btnEdit.setBounds(400, 400, 115, 50);
         add(this.btnEdit);
         
 

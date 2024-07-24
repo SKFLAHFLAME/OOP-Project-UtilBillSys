@@ -20,6 +20,7 @@ public class MainFrame extends JFrame implements WindowListener{
 	private EditDraft ed;
 	private AddMeterReading amr;
 	private EditMeterReading emr;
+	private ViewHistoryScreen vhs;
 
     public MainFrame(){
         
@@ -133,7 +134,11 @@ public class MainFrame extends JFrame implements WindowListener{
     	add(vs,"vs");
     	card.show(getContentPane(), "vs");
     }
-    
+    public void showViewHistoryScreen(){
+    	vhs = new ViewHistoryScreen(this);
+    	add(vhs, "vhs");
+    	card.show(getContentPane(), "vhs");
+    }
     public void showAddFrame(){
     	frame = new AddFrame(this);
     	frame.setVisible(true);

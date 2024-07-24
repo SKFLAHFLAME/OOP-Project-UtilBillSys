@@ -31,10 +31,10 @@ public class EditMeterReading extends JPanel {
 		main.setSize(460, 350);
 		initReadingNames();
 		
-		JLabel lblAddMeterReading = new JLabel("Add Meter Reading");
-		lblAddMeterReading.setFont(new Font("Tahoma", Font.BOLD, 30));
-		lblAddMeterReading.setBounds(15, 16, 337, 43);
-		add(lblAddMeterReading);
+		JLabel lblEditMeterReading = new JLabel("Edit Meter Reading");
+		lblEditMeterReading.setFont(new Font("Tahoma", Font.BOLD, 30));
+		lblEditMeterReading.setBounds(15, 16, 337, 43);
+		add(lblEditMeterReading);
 		
 		JLabel lblMeterReading = new JLabel("Meter Reading:");
 		lblMeterReading.setBounds(15, 161, 114, 20);
