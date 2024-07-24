@@ -32,7 +32,7 @@ import java.awt.Color;
 public class ViewHistoryScreen extends JPanel{
 	MainFrame main;
 	private DefaultTreeModel model;
-	private DefaultMutableTreeNode customer = new DefaultMutableTreeNode(main.getCont().getCustomer(getName()));
+	private DefaultMutableTreeNode customer = new DefaultMutableTreeNode("Bill");
 	
 	private JScrollPane scrollPane;
 	private JLabel lblCustomerDetails;
@@ -114,9 +114,9 @@ public class ViewHistoryScreen extends JPanel{
 			DefaultMutableTreeNode username = new DefaultMutableTreeNode(a.getUsername());
 			customer.add(username);
 			
-			username.add(new DefaultMutableTreeNode("Full Name: "+a.getName()));
+/*			username.add(new DefaultMutableTreeNode("Full Name: "+a.getName()));
 			username.add(new DefaultMutableTreeNode("Email: "+a.getEmail()));
-			username.add(new DefaultMutableTreeNode("Address: "+a.getAddress()));
+			username.add(new DefaultMutableTreeNode("Address: "+a.getAddress()));*/
 			
 			DefaultMutableTreeNode userR = new DefaultMutableTreeNode("View All Bills");
 			String[][][] userReadings = main.getCont().getUserReading(a.getUsername());//get all userReadings of user
@@ -141,8 +141,8 @@ public class ViewHistoryScreen extends JPanel{
 			userR.add(new DefaultMutableTreeNode("User Total: $"+String.format("%.2f", utotal)));
 			username.add(userR);
 		}
-		String t=String.format("%.2f", allTotal);
-		customer.add(new DefaultMutableTreeNode("Total Customers Bills: $"+t));
+/*		String t=String.format("%.2f", allTotal);
+		customer.add(new DefaultMutableTreeNode("Total Customers Bills: $"+t));*/
 		
 		model.reload();
 		tree.setModel(model);
