@@ -41,6 +41,10 @@ public class EditUtility extends JPanel{
 		this.btnBack.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				try {
+					table.getCellEditor().stopCellEditing();
+				} catch (Exception e) {
+				}
 				main.closeAddFrame();
 				if (unsaved == true){
 					String[] options = {"Save", "No","Cancel"};
@@ -121,6 +125,8 @@ public class EditUtility extends JPanel{
 		
 		this.model = new DefaultTableModel(coloumnames, 0);
 		this.table = new JTable(model);
+		table. getTableHeader(). setReorderingAllowed(false);
+		table.getTableHeader().setResizingAllowed(false);
 		this.table.setRowHeight(table.getRowHeight()+10);
 		this.table.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		this.table.addPropertyChangeListener(new PropertyChangeListener() {
@@ -143,6 +149,9 @@ public class EditUtility extends JPanel{
 			}
 		});
 		redraw();
+		table.getColumnModel().getColumn(0).setPreferredWidth(100);
+		table.getColumnModel().getColumn(1).setPreferredWidth(2);
+		table.getColumnModel().getColumn(2).setPreferredWidth(2);
 		this.scrollPane.setViewportView(this.table);
 		main.setSize(500,500);
 	}

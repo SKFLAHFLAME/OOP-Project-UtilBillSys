@@ -29,10 +29,10 @@ import java.awt.event.InputMethodListener;
 import java.awt.event.InputMethodEvent;
 import java.awt.Color;
 
-public class ViewAllCustomer extends JPanel{
+public class ViewHistoryScreen extends JPanel{
 	MainFrame main;
 	private DefaultTreeModel model;
-	private DefaultMutableTreeNode customer = new DefaultMutableTreeNode("Customers");
+	private DefaultMutableTreeNode customer = new DefaultMutableTreeNode(main.getCont().getCustomer(getName()));
 	
 	private JScrollPane scrollPane;
 	private JLabel lblCustomerDetails;
@@ -41,9 +41,8 @@ public class ViewAllCustomer extends JPanel{
 	private JTextField txtSearch;
 	private JLabel lblSearch;
 	private JLabel lblcaseSensetive;
-	private JButton btnSearchByDate;
 	
-	public ViewAllCustomer(MainFrame m) {
+	public ViewHistoryScreen(MainFrame m) {
 		main=m;
 		this.setLayout(null);
 		
@@ -73,7 +72,7 @@ public class ViewAllCustomer extends JPanel{
 			}
 		});
 		this.btnBack.setFont(new Font("Dialog", Font.BOLD, 14));
-		this.btnBack.setBounds(12, 411, 123, 40);
+		this.btnBack.setBounds(135, 423, 117, 25);
 		add(this.btnBack);
 		
 		this.txtSearch = new JTextField();
@@ -103,16 +102,6 @@ public class ViewAllCustomer extends JPanel{
 		this.lblcaseSensetive.setForeground(Color.BLUE);
 		this.lblcaseSensetive.setBounds(87, 388, 132, 25);
 		add(this.lblcaseSensetive);
-		
-		this.btnSearchByDate = new JButton("Search By Date");
-		this.btnSearchByDate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				main.showAllBills();
-			}
-		});
-		this.btnSearchByDate.setFont(new Font("Tahoma", Font.BOLD, 14));
-		this.btnSearchByDate.setBounds(239, 411, 139, 40);
-		add(this.btnSearchByDate);
 		main.setSize(400,500);
 		
 	}

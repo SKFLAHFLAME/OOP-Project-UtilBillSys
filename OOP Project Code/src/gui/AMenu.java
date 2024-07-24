@@ -17,6 +17,7 @@ public class AMenu extends JPanel{
     private JButton btnViewBills;
     private JButton btnEditStaff;
     private JButton btnAccount;
+    private JButton btnEditDate;
     
     public AMenu(MainFrame m){
         this.main = m;
@@ -90,6 +91,16 @@ public class AMenu extends JPanel{
         this.btnAccount.setFont(new Font("Tahoma", Font.PLAIN, 15));
         this.btnAccount.setBounds(321, 57, 97, 25);
         add(this.btnAccount);
+        
+        this.btnEditDate = new JButton("Edit Date");
+        this.btnEditDate.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		main.showEditDate();
+        	}
+        });
+        this.btnEditDate.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        this.btnEditDate.setBounds(12, 57, 97, 25);
+        add(this.btnEditDate);
 
 
 
