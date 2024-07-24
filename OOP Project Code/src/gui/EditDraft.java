@@ -92,11 +92,7 @@ public class EditDraft extends JPanel {
                 
                 String[] options = {"Yes", "No"};
 				int sel = JOptionPane.showOptionDialog(null, "Confirm Deletion?", "Delete", 0, 3, null, options, options[1]);
-<<<<<<< HEAD
-				if(sel != 1){return;}
-=======
 				if(sel != 0){return;}
->>>>>>> branch 'branch-s' of https://github.com/SKFLAHFLAME/OOP-Project-UtilBillSys
                 
                 deleteRow(edtRow);
                 if (main.getCont().hasDraft(main.getCurrentAcct()[1])){

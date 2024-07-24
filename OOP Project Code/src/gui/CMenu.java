@@ -33,6 +33,19 @@ public class CMenu extends JPanel{
         this.add(loc);
         
         this.btnShowHistoryScreen = new JButton("Show History Screen");
+        btnShowHistoryScreen.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		if (main.getCont().hasDraft(main.getCurrentAcct()[1])){
+        			main.showViewHistoryScreen();
+        		}
+        		else{
+        			JOptionPane.showMessageDialog(null, 
+                            "No History", 
+                            "History", 
+                            JOptionPane.WARNING_MESSAGE);
+        		}
+        	}
+        });
         btnShowHistoryScreen.setFont(new Font("Tahoma", Font.PLAIN, 17));
         btnShowHistoryScreen.setBounds(109, 83, 194, 54);
         add(btnShowHistoryScreen);
