@@ -46,6 +46,7 @@ public class MainFrame extends JFrame implements WindowListener{
 		}
         
         this.cont = new Controller();
+//    	getCont().setSystemDate("7", "2020");
         
             
         card = new CardLayout();

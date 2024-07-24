@@ -296,7 +296,7 @@ public class AddFrame extends JFrame{
 	//! Populate List Method
 	private void populateList() throws FileNotFoundException{
 		if (fileSelected == null){System.out.println("No File to populate with");return;}
-		fileContents = main.getCont().readCSV(fileSelected);
+		fileContents = main.getCont().csvReader(fileSelected);
 		lines=new String[fileContents.length];
 		int c=0;
 		for (String[] line : fileContents){
