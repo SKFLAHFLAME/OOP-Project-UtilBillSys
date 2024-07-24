@@ -84,7 +84,7 @@ public class EditDraft extends JPanel {
                 
                 String[] options = {"Yes", "No"};
 				int sel = JOptionPane.showOptionDialog(null, "Confirm Deletion?", "Delete", 0, 3, null, options, options[1]);
-				if(sel == 1){return;}
+				if(sel != 0){return;}
                 
                 deleteRow(edtRow);
                 if (main.getCont().hasDraft(main.getCurrentAcct()[1])){
@@ -109,7 +109,7 @@ public class EditDraft extends JPanel {
             public void actionPerformed(ActionEvent e) {
             	String[] options = {"Yes", "No"};
 				int sel = JOptionPane.showOptionDialog(null, "Confirm Submission? It will remove this draft", "Submit", 0, 3, null, options, options[1]);
-				if(sel == 1){return;}
+				if(sel != 0){return;}
                 main.getCont().submitUserReading(main.getCurrentAcct()[1]);
                 main.getCont().clearDraft(main.getCurrentAcct()[1]);;
                 main.showCustMenu();

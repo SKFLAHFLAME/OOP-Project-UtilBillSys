@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
 
+import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
+
 public class DataStorage {
     private Vector<Staff> staff = new Vector<>();
     private Vector<Customer> user = new Vector<>();
@@ -154,6 +156,25 @@ public class DataStorage {
         //sort by Entry_Number
         try {
         	Arrays.sort(arr, (a,b)-> Integer.compare(Integer.parseInt(a[0][1]), Integer.parseInt(b[0][1])));
+		} catch (Exception e) {
+		}
+        return arr;
+    }
+    
+    public String[][][] getUserReadings(String month,String year){
+        Vector<String[][]> ureading = new Vector<>();
+        for(String[][] r: userReading){
+        	String[] d = r[0][2].split("/");
+            if(d[d.length-2].equals(month) && d[d.length-1].equals(year)){
+                ureading.add(r);
+            }
+        }
+        
+        String[][][] arr=new String[ureading.size()][this.readings.size()+2][3];
+        ureading.toArray(arr);
+        //sort by Username
+        try {
+        	Arrays.sort(arr, (a,b)-> a[0][0].compareTo(b[0][0]));
 		} catch (Exception e) {
 		}
         return arr;

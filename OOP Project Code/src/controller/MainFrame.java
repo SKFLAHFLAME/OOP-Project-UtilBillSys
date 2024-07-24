@@ -4,6 +4,9 @@ import gui.*;
 import java.awt.CardLayout;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -20,9 +23,10 @@ public class MainFrame extends JFrame implements WindowListener{
 	private EditDraft ed;
 	private AddMeterReading amr;
 	private EditMeterReading emr;
+	private String[] systemDate = new String[2];
+	
 
     public MainFrame(){
-        
         this.setTitle("Utility Billing System");
         this.setSize(400,300);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -45,6 +49,7 @@ public class MainFrame extends JFrame implements WindowListener{
 		}
         
         this.cont = new Controller();
+    	getCont().setSystemDate("7", "2020");
         
             
         card = new CardLayout();
@@ -130,6 +135,16 @@ public class MainFrame extends JFrame implements WindowListener{
     }
     public void showAllCustomers() {
     	ViewAllCustomer vs = new ViewAllCustomer(this);
+    	add(vs,"vs");
+    	card.show(getContentPane(), "vs");
+    }
+    public void showAllBills() {
+    	ViewAllBills vs = new ViewAllBills(this);
+    	add(vs,"vs");
+    	card.show(getContentPane(), "vs");
+    }
+    public void showEditDate() {
+    	EditSysDate vs = new EditSysDate(this);
     	add(vs,"vs");
     	card.show(getContentPane(), "vs");
     }
@@ -226,6 +241,8 @@ public class MainFrame extends JFrame implements WindowListener{
 	
 
     
-
+	public static void main(String[] args) {
+        MainFrame gui = new MainFrame();
+    }
     
 }

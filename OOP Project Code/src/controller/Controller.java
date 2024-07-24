@@ -19,6 +19,7 @@ import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
 public class Controller {
     private DataStorage ds = new DataStorage();
     private CSVRW csv = new CSVRW();
+    private String[] systemDate = new String[2];//MM, YYYY
     
     
     public void initialiseItems(){
@@ -188,6 +189,10 @@ public class Controller {
     public String[][][] getUserReading(String userName) {
     	return ds.getUserReadings(userName);
     }
+    
+    public String[][][] getUserReading(String month, String year) {
+    	return ds.getUserReadings(month,year);
+    }
 
     //!Meter Readings
     public void addMeterReading(String uName, String readingName, Double meterReading) {
@@ -207,6 +212,26 @@ public class Controller {
     public void clearDraft(String userName){
     	ds.removeDraft(userName);
     }
+    
+    //! Date Methods
+    public String[] getSystemDate() {
+		return systemDate;
+	}
+
+	public void setSystemDate(String[] systemDate) {
+		this.systemDate = systemDate;
+	}
+	public void setSystemDate(String month, String Year){
+		String[] temp = {String.format("%02d",Integer.valueOf(month)),Year};
+		System.out.println(String.join(":", temp));
+		systemDate = temp;
+	}
+	
+	public void syncDate(){
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/yyyy");
+    	LocalDateTime now = LocalDateTime.now();
+    	systemDate = dtf.format(now).split("/");
+	}
     
     
 
@@ -375,5 +400,7 @@ public class Controller {
         }
 
     }
+
+	
 
 }
