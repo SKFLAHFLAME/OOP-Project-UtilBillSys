@@ -228,7 +228,10 @@ public class MainFrame extends JFrame implements WindowListener{
 
 		
 	}
-	
+	public static void main(String[] args)
+	{
+		MainFrame ex = new MainFrame();
+	}
 
     
 
