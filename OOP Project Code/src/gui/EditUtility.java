@@ -77,7 +77,7 @@ public class EditUtility extends JPanel{
 				}
 				String[] options = {"Yes", "No"};
 				int sel = JOptionPane.showOptionDialog(null, "Confirm Delete?", "Delete", 0, 3, null, options, options[1]);
-				if(sel == 1){return;}
+				if(sel != 0){return;}
 				System.out.println(edtRow);
 				deleteRow(edtRow);
 				redraw();

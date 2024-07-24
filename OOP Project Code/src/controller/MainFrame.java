@@ -4,8 +4,6 @@ import gui.*;
 import java.awt.CardLayout;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import javax.swing.JFrame;
 import javax.swing.UIManager;
@@ -49,7 +47,7 @@ public class MainFrame extends JFrame implements WindowListener{
 		}
         
         this.cont = new Controller();
-    	getCont().setSystemDate("7", "2020");
+//    	getCont().setSystemDate("7", "2020");
         
             
         card = new CardLayout();

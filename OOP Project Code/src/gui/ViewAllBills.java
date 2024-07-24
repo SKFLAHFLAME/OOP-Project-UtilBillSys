@@ -5,11 +5,13 @@ import javax.swing.JPanel;
 import controller.MainFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.text.StyledEditorKit.ForegroundAction;
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.util.Vector;
 import java.awt.event.ActionEvent;
 
 public class ViewAllBills extends JPanel{
@@ -17,16 +19,29 @@ public class ViewAllBills extends JPanel{
 	private JScrollPane scrollPane;
 	private JTree tree;
 	private JLabel lblMonth;
-	private JComboBox comboBox;
+	private JComboBox comboMonth;
 	private JLabel lblYear;
-	private JComboBox comboBox_1;
+	private JComboBox comboYear;
 	private JButton btnSearch;
 	private JButton btnBack;
 	private JButton btnSearchByName;
 	
+	private String[] date;
+	private String[] month = {"January", "February", "March","April","May","June","July","August","September","October","November","December"};
+	private String[] year;
+	
 	public ViewAllBills(MainFrame m){
 		main = m;
 		this.setLayout(null);
+		
+		//init month/year array
+		date = main.getCont().getSystemDate();
+		Vector<String> temp = new Vector<>();
+		for (int i=2000; i<=Integer.valueOf(date[1]);i++){
+			temp.add(""+i);
+		}
+		year = new String[temp.size()];
+		temp.toArray(year);
 		
 		this.scrollPane = new JScrollPane();
 		this.scrollPane.setBounds(12, 45, 366, 259);
@@ -40,20 +55,20 @@ public class ViewAllBills extends JPanel{
 		this.lblMonth.setBounds(12, 317, 60, 32);
 		add(this.lblMonth);
 		
-		this.comboBox = new JComboBox();
-		this.comboBox.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		this.comboBox.setBounds(74, 317, 117, 39);
-		add(this.comboBox);
+		this.comboMonth = new JComboBox(month);
+		this.comboMonth.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		this.comboMonth.setBounds(74, 317, 117, 32);
+		add(this.comboMonth);
 		
 		this.lblYear = new JLabel("Year:");
 		this.lblYear.setFont(new Font("Tahoma", Font.PLAIN, 17));
 		this.lblYear.setBounds(12, 362, 54, 38);
 		add(this.lblYear);
 		
-		this.comboBox_1 = new JComboBox();
-		this.comboBox_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		this.comboBox_1.setBounds(74, 362, 117, 44);
-		add(this.comboBox_1);
+		this.comboYear = new JComboBox(year);
+		this.comboYear.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		this.comboYear.setBounds(74, 362, 117, 32);
+		add(this.comboYear);
 		
 		this.btnSearch = new JButton("Search");
 		this.btnSearch.setFont(new Font("Tahoma", Font.PLAIN, 17));
