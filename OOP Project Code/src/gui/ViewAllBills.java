@@ -27,7 +27,7 @@ public class ViewAllBills extends JPanel{
 	private JButton btnSearchByName;
 	
 	private String[] date;
-	private String[] month = {"January", "February", "March","April","May","June","July","August","September","October","November","December"};
+	private String[] month = {"January","February","March","April","May","June","July","August","September","October","November","December"};
 	private String[] year;
 	
 	public ViewAllBills(MainFrame m){

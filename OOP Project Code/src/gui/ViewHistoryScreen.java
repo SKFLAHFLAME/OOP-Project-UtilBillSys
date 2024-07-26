@@ -28,11 +28,12 @@ import java.lang.reflect.Array;
 import java.awt.event.InputMethodListener;
 import java.awt.event.InputMethodEvent;
 import java.awt.Color;
+import java.awt.Component;
 
 public class ViewHistoryScreen extends JPanel{
 	MainFrame main;
 	private DefaultTreeModel model;
-	private DefaultMutableTreeNode customer = new DefaultMutableTreeNode("Bill");
+	private DefaultMutableTreeNode userName;
 	
 	private JScrollPane scrollPane;
 	private JLabel lblCustomerDetails;
@@ -41,16 +42,19 @@ public class ViewHistoryScreen extends JPanel{
 	private JTextField txtSearch;
 	private JLabel lblSearch;
 	private JLabel lblcaseSensetive;
+	private JButton btnSearchByDate;
 	
 	public ViewHistoryScreen(MainFrame m) {
 		main=m;
+		main.setSize(480,580);
 		this.setLayout(null);
+		userName = new DefaultMutableTreeNode(main.getCurrentAcct()[1]);
 		
 		this.scrollPane = new JScrollPane();
 		this.scrollPane.setBounds(12, 59, 366, 288);
 		add(this.scrollPane);
 		
-		model = new DefaultTreeModel(customer);
+		model = new DefaultTreeModel(userName);
 		this.tree = new JTree(model);
 		this.tree.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		this.scrollPane.setViewportView(this.tree);
@@ -74,8 +78,8 @@ public class ViewHistoryScreen extends JPanel{
 		this.btnBack.setFont(new Font("Dialog", Font.BOLD, 14));
 		this.btnBack.setBounds(135, 423, 117, 25);
 		add(this.btnBack);
-		
-		this.txtSearch = new JTextField();
+
+/*		this.txtSearch = new JTextField();
 		this.txtSearch.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
 				String text = txtSearch.getText();
@@ -102,94 +106,41 @@ public class ViewHistoryScreen extends JPanel{
 		this.lblcaseSensetive.setForeground(Color.BLUE);
 		this.lblcaseSensetive.setBounds(87, 388, 132, 25);
 		add(this.lblcaseSensetive);
-		main.setSize(400,500);
 		
+		this.btnSearchByDate = new JButton("Search By Date");
+		this.btnSearchByDate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				main.showAllBills();
+			}
+		});
+		this.btnSearchByDate.setFont(new Font("Tahoma", Font.BOLD, 14));
+		this.btnSearchByDate.setBounds(239, 411, 139, 40);
+		add(this.btnSearchByDate);
+		main.setSize(400,500);
+		*/
 	}
+
 	
 	public void populateTree() {
-		Customer[] accts = main.getCont().getAllCustomers();
-		customer.removeAllChildren();
-		double allTotal=0;
-		for (Customer a : accts) {
-			DefaultMutableTreeNode username = new DefaultMutableTreeNode(a.getUsername());
-			customer.add(username);
-			
-/*			username.add(new DefaultMutableTreeNode("Full Name: "+a.getName()));
-			username.add(new DefaultMutableTreeNode("Email: "+a.getEmail()));
-			username.add(new DefaultMutableTreeNode("Address: "+a.getAddress()));*/
-			
-			DefaultMutableTreeNode userR = new DefaultMutableTreeNode("View All Bills");
-			String[][][] userReadings = main.getCont().getUserReading(a.getUsername());//get all userReadings of user
-			double utotal = 0;
-			for (String[][] ur: userReadings){//go thru each bill
-				double total=0;
-				if(ur==null){continue;}
-				if (ur[0][0]==null){continue;}
-				DefaultMutableTreeNode bill= new DefaultMutableTreeNode("Bill "+ur[0][1]+":"+ur[0][2]);
-				for (int i =0; i<ur.length-1; i++){// go thru each reading
-					if (ur[i][0]==null){continue;}
-					bill.add(new DefaultMutableTreeNode(ur[i+1][0]+": "+ ur[i+1][1]));
-					total+=Double.valueOf(ur[i+1][2]);
-					allTotal+=Double.valueOf(ur[i+1][2]);
-				}
-				String t = String.format("%.2f", total);
-				utotal+= total;
-				bill.add(new DefaultMutableTreeNode("Total: $"+t));//total of bill
-				userR.add(bill);
-				
+		String[][][] userReadings = main.getCont().getUserReading(main.getCurrentAcct()[1]);//get all userReadings of user
+		double utotal = 0;
+		for (String[][] ur: userReadings){//go thru each bill
+			double total=0;
+			if(ur==null){continue;}
+			if (ur[0][0]==null){continue;}
+			DefaultMutableTreeNode bill= new DefaultMutableTreeNode("Bill "+ur[0][1]+":"+ur[0][2]);
+			for (int i =0; i<ur.length-1; i++){// go thru each reading
+				if (ur[i][0]==null){continue;}
+				bill.add(new DefaultMutableTreeNode(ur[i+1][0]+": "+ ur[i+1][1]));
+				total+=Double.valueOf(ur[i+1][2]);
 			}
-			userR.add(new DefaultMutableTreeNode("User Total: $"+String.format("%.2f", utotal)));
-			username.add(userR);
+			String t = String.format("%.2f", total);
+			utotal+= total;
+			bill.add(new DefaultMutableTreeNode("Total: $"+t));//total of bill	
+			userName.add(bill);
 		}
-/*		String t=String.format("%.2f", allTotal);
-		customer.add(new DefaultMutableTreeNode("Total Customers Bills: $"+t));*/
-		
-		model.reload();
-		tree.setModel(model);
-	}
-
-	public void searchTree(String search){
-		if (search.equals("")){populateTree();return;}
-		Customer[] accts = main.getCont().getAllCustomers();
-		Vector<Customer> filtered = new Vector<>();
-		// Filter accts
-		for (Customer a : accts){
-			if (a.getUsername().startsWith(search)){
-				filtered.add(a);
-			}
-		}
-
-		customer.removeAllChildren();
-		for (Customer a : filtered) {
-			DefaultMutableTreeNode username = new DefaultMutableTreeNode(a.getUsername());
-			customer.add(username);
-			
-			username.add(new DefaultMutableTreeNode("Full Name: "+a.getName()));
-			username.add(new DefaultMutableTreeNode("Email: "+a.getEmail()));
-			username.add(new DefaultMutableTreeNode("Address: "+a.getAddress()));
-			
-			DefaultMutableTreeNode userR = new DefaultMutableTreeNode("View All Bills");
-			String[][][] userReadings = main.getCont().getUserReading(a.getUsername());//get all userReadings of user
-			double utotal = 0;
-			for (String[][] ur: userReadings){//go thru each bill
-				double total=0;
-				if(ur==null){continue;}
-				if (ur[0][0]==null){continue;}
-				DefaultMutableTreeNode bill= new DefaultMutableTreeNode("Bill "+ur[0][1]+":"+ur[0][2]);
-				for (int i =0; i<ur.length-1; i++){// go thru each reading
-					if (ur[i][0]==null){continue;}
-					bill.add(new DefaultMutableTreeNode(ur[i+1][0]+": "+ ur[i+1][1]));
-					total+=Double.valueOf(ur[i+1][2]);
-				}
-				String t = String.format("%.2f", total);
-				utotal+= total;
-				bill.add(new DefaultMutableTreeNode("Total: $"+t));//total of bill
-				userR.add(bill);
-			}
-			userR.add(new DefaultMutableTreeNode("User Total: $"+String.format("%.2f", utotal)));
-			username.add(userR);
-		}
-		model.reload();
+	
+		this.model.reload();
 		tree.setModel(model);
 	}
 }

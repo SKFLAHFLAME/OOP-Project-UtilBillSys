@@ -189,7 +189,7 @@ public class DataStorage {
     //! user draft Methods
     public boolean hasDraft(String userName){
         Customer c = this.getUser(userName);
-        return c.getDraft().size()==0;
+        return (c.getDraft().size()!=0);
     }
 
     public void addMeterReading(String userName, String readingName, Double meterReading){

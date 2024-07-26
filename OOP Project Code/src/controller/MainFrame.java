@@ -140,6 +140,16 @@ public class MainFrame extends JFrame implements WindowListener{
     	add(vhs, "vhs");
     	card.show(getContentPane(), "vhs");
     }
+	public void showAllBills() {
+    	ViewAllBills vs = new ViewAllBills(this);
+    	add(vs,"vs");
+    	card.show(getContentPane(), "vs");
+    }
+    public void showEditDate() {
+    	EditSysDate vs = new EditSysDate(this);
+    	add(vs,"vs");
+    	card.show(getContentPane(), "vs");
+    }
     public void showAddFrame(){
     	frame = new AddFrame(this);
     	frame.setVisible(true);
