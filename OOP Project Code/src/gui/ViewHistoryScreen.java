@@ -69,10 +69,7 @@ public class ViewHistoryScreen extends JPanel{
 		this.btnBack = new JButton("Back");
 		this.btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (main.getCurrentAcct()[0].equals("A")) {
-					main.showAdminMenu();
-				}
-				else {main.showStaffMenu();}
+				main.showCustMenu();
 			}
 		});
 		this.btnBack.setFont(new Font("Dialog", Font.BOLD, 14));
