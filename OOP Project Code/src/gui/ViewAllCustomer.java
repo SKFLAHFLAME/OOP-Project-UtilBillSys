@@ -28,6 +28,8 @@ import java.lang.reflect.Array;
 import java.awt.event.InputMethodListener;
 import java.awt.event.InputMethodEvent;
 import java.awt.Color;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
 
 public class ViewAllCustomer extends JPanel{
 	MainFrame main;
@@ -41,7 +43,7 @@ public class ViewAllCustomer extends JPanel{
 	private JTextField txtSearch;
 	private JLabel lblSearch;
 	private JLabel lblcaseSensetive;
-	private JButton btnSearchByDate;
+	private JButton btnEditUser;
 	
 	public ViewAllCustomer(MainFrame m) {
 		main=m;
@@ -53,6 +55,12 @@ public class ViewAllCustomer extends JPanel{
 		
 		model = new DefaultTreeModel(customer);
 		this.tree = new JTree(model);
+		this.tree.addTreeSelectionListener(new TreeSelectionListener() {
+			public void valueChanged(TreeSelectionEvent arg0) {
+				btnBack.setLocation(12, 410);
+				btnEditUser.show();
+			}
+		});
 		this.tree.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		this.scrollPane.setViewportView(this.tree);
 		populateTree();
@@ -73,7 +81,7 @@ public class ViewAllCustomer extends JPanel{
 			}
 		});
 		this.btnBack.setFont(new Font("Dialog", Font.BOLD, 14));
-		this.btnBack.setBounds(12, 411, 123, 40);
+		this.btnBack.setBounds(135, 410, 123, 40);
 		add(this.btnBack);
 		
 		this.txtSearch = new JTextField();
@@ -104,15 +112,16 @@ public class ViewAllCustomer extends JPanel{
 		this.lblcaseSensetive.setBounds(87, 388, 132, 25);
 		add(this.lblcaseSensetive);
 		
-		this.btnSearchByDate = new JButton("Search By Date");
-		this.btnSearchByDate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				main.showAllBills();
+		this.btnEditUser = new JButton("Edit User");
+		this.btnEditUser.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			
 			}
 		});
-		this.btnSearchByDate.setFont(new Font("Tahoma", Font.BOLD, 14));
-		this.btnSearchByDate.setBounds(239, 411, 139, 40);
-		add(this.btnSearchByDate);
+		btnEditUser.hide();
+		this.btnEditUser.setFont(new Font("Tahoma", Font.BOLD, 14));
+		this.btnEditUser.setBounds(256, 411, 124, 38);
+		add(this.btnEditUser);
 		main.setSize(400,500);
 		
 	}

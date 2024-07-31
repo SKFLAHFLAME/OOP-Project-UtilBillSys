@@ -17,13 +17,18 @@ import javax.swing.filechooser.FileSystemView;
 
 
 import controller.MainFrame;
+import data.Readings;
 
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.FileNotFoundException;
+import java.util.Vector;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 
 public class AddFrame extends JFrame{
 	MainFrame main;
@@ -56,26 +61,33 @@ public class AddFrame extends JFrame{
 	private String[] lines = new String[0];
 	private String fileSelected;
 	private boolean Header=false;
+	private boolean f;
 	private JLabel lbldoNotUse;
+	private JLabel lblFormat;
 	
 	public AddFrame(MainFrame m){
 		main=m;
+		this.f = main.flag;
+		main.flag = false;
 		getContentPane().setFont(new Font("Tahoma", Font.PLAIN, 17));
 		getContentPane().setLayout(null);
 		this.setSize(310,420);
-		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);;
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setLocationRelativeTo(main);
 		this.setResizable(false);
 		
 		this.InitPanel1();
 		this.initPanel2();
+		if (f==true){panel1.hide();panel2.show();}
 		
 		
 	}
 	
+	
+	
 	//!Panel 1
 	private void InitPanel1(){
-		this.panel1 = new JPanel();
+		this.panel1 =  new JPanel();
 		this.panel1.setLocation(0, 0);
 		panel1.setSize(294, 365);
 		panel1.setLayout(null);
@@ -189,7 +201,7 @@ public class AddFrame extends JFrame{
 	private void initPanel2(){
 		this.panel2 = new JPanel();
 		this.panel2.setLocation(0, 0);
-		panel2.setSize(294, 365);
+		panel2.setSize(304, 385);
 		panel2.setLayout(null);
 		getContentPane().add(panel2);
 		panel2.setVisible(false);
@@ -199,19 +211,24 @@ public class AddFrame extends JFrame{
 		this.btnAdd_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (fileSelected==null){lblError.setText("No File Uploaded");return;}
-				int c=0;
-				for(String[] s : fileContents){
-					if(c==0&&Header==true){c+=1;continue;}
-					addReading(s[0], s[1], s[2], s[3].split("%")[0]);
-					c+=1;
+				if (f == false){
+					int c=0;
+					for(String[] s : fileContents){
+						if(c==0&&Header==true){c+=1;continue;}
+						addReading(s[0], s[1], s[2], s[3].split("%")[0]);
+						c+=1;
+					}
+					c=0;}
+				else{
+					if(updateReading()==false){return;}
+					f = false;
 				}
-				c=0;
 				main.getEu().redraw();
 				dispose();
 			}
 		});
 		this.btnAdd_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		this.btnAdd_1.setBounds(179, 313, 103, 39);
+		this.btnAdd_1.setBounds(178, 333, 103, 39);
 		this.panel2.add(this.btnAdd_1);
 		
 
@@ -250,7 +267,7 @@ public class AddFrame extends JFrame{
 		
 
 		this.scrollPane = new JScrollPane();
-		this.scrollPane.setBounds(12, 51, 258, 193);
+		this.scrollPane.setBounds(12, 51, 269, 193);
 		this.panel2.add(this.scrollPane);
 		
 
@@ -259,6 +276,7 @@ public class AddFrame extends JFrame{
 
 
 		this.btnAddManually = new JButton("Add Manually");
+		if (f==true){btnAddManually.hide();}
 		this.btnAddManually.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				panel2.setVisible(false);
@@ -266,24 +284,29 @@ public class AddFrame extends JFrame{
 			}
 		});
 		this.btnAddManually.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		this.btnAddManually.setBounds(59, 270, 152, 29);
+		this.btnAddManually.setBounds(82, 298, 152, 29);
 		this.panel2.add(this.btnAddManually);
 
 
 		this.btnCancel_1 = new JButton("Cancel");
 		this.btnCancel_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				main.flag = false;
 				dispose();			
 			}
 		});
 		this.btnCancel_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		this.btnCancel_1.setBounds(12, 313, 103, 39);
+		this.btnCancel_1.setBounds(12, 333, 103, 39);
 		this.panel2.add(this.btnCancel_1);
 		
 		this.lbldoNotUse = new JLabel("*Do NOT put Units*");
 		this.lbldoNotUse.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		this.lbldoNotUse.setBounds(125, 13, 157, 25);
 		this.panel2.add(this.lbldoNotUse);
+		
+		this.lblFormat = new JLabel("Format: \r\nNo file uploaded");
+		this.lblFormat.setBounds(12, 271, 280, 25);
+		this.panel2.add(this.lblFormat);
 
 
 
@@ -301,12 +324,19 @@ public class AddFrame extends JFrame{
 		int c=0;
 		for (String[] line : fileContents){
 			System.out.println(line[0]);
+			
 			if (line[0].equals("Header")){Header = true;}
 			String l="";
 			for (String var: line){
 				l=l+var+"  |  ";
 			}
 			lines[c]=l;
+			
+			if (line.length==4){lblFormat.setText("Format: \r\nUtil Name, Price($), Unit, Service Charge(%)");}
+			else if (line.length==3&&f == true){lblFormat.setText("Format: \r\nUtil Name, Price($), Service Charge(%)");}
+			else if (line.length==2&&f == true){lblFormat.setText("Format: \r\nUtil Name, Price($)");}
+			else{lblFormat.setText("Format Read: \r\nUnReadable");}
+			
 			c+=1;
 		}
 		c=0;
@@ -355,4 +385,42 @@ public class AddFrame extends JFrame{
 		
 		main.getCont().addReading(name, price, unit, serCharge);
 	}
+	
+	public boolean updateReading(){
+		Vector<String[]> avaliable = new Vector<>();
+		Vector<String[]> unAvaliable = new Vector<>();
+		Vector<String> notAvaRead = new Vector<>();
+		int c=0;
+		for (String[] line : fileContents){
+			if (c==0&&Header == true){c+=1;continue;}
+			try {
+				main.getCont().getReading(line[0]).getUtilityName();
+				avaliable.add(line);
+			} catch (Exception e) {
+				unAvaliable.add(line);
+				notAvaRead.add(line[0]);
+			}
+			c+=1;
+		}
+		System.out.println(String.join(",", notAvaRead));
+		if (!unAvaliable.isEmpty()){
+			String[] options = {"Continue","Cancel"};
+			int selection = JOptionPane.showOptionDialog(null, String.join(", ", notAvaRead)+" is not avaliable in Readings. Continue? Will change those avaliable", "Unavaliable Edits", 0,3,null,options,options[0]);
+			if(selection != 0){return false;}
+		}
+		
+		for (String[] line :avaliable){
+			if (line.length ==4){main.getEu().editRow(line[0], line[1], line[2], line[3]);}// utilName, Price, Unit, serCharge
+			else if (line.length ==3){main.getEu().editRow(line[0], line[1], "", line[2]);}//utilName, Price, serCharge
+			else if (line.length ==2){main.getEu().editRow(line[0], line[1], "", "");}// utilName, Price
+			else {JOptionPane.showMessageDialog(null, "Unable to read", "ERROR", ERROR); return false;}
+		}
+		
+		
+		
+		return true;
+	}
+
+
+
 }

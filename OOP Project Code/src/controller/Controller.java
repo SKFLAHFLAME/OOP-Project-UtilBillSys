@@ -12,6 +12,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Scanner;
 import java.util.StringTokenizer;
@@ -22,6 +23,7 @@ import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
 public class Controller {
     private DataStorage ds = new DataStorage();
     private String[] systemDate = new String[2];//MM, YYYY
+    public String cdir;
     
     
     public void initialiseItems(){
@@ -316,20 +318,22 @@ public class Controller {
         c=0;
 
         //!Customer (UserName, Password, Full Name, Email, Address, Draft)
-        String[][] customerData = new String[customer.length][6];
+        String[][] customerData = new String[customer.length][7];
         for (int i = 0; i < customer.length; i++) {
             customerData[i][0] = customer[i].getUsername();
             customerData[i][1] = customer[i].getPassword();
             customerData[i][2] = customer[i].getName();
             customerData[i][3] = customer[i].getEmail();
             customerData[i][4] = customer[i].getAddress();
+            customerData[i][5] = customer[i].getLastSubmittedString();
+			
             String[][] draft = customer[i].getDraftArray();
             String d = new String();
             for (String [] string : draft) {
                 d= d+ string[0]+":"+string[1]+"-";
             }
             if (d.isEmpty()){d="null";}
-            customerData[i][5] = d;
+            customerData[i][6] = d;
         }
 
         //!Readings
@@ -361,7 +365,7 @@ public class Controller {
 
 
         //store into CSV files
-        String cdir = System.getProperty("java.class.path");
+        cdir = System.getProperty("java.class.path");
         if (!(System.getProperty("file.separator")=="/")){
             cdir = cdir.replace("\\", "/");}
         String[] cp = cdir.split("/");
@@ -370,10 +374,10 @@ public class Controller {
         System.out.println(cdir);
         
         try {
-            csvWriter(cdir+"/datafiles/Staff.csv", staffData);
-            csvWriter(cdir+"/datafiles/Customer.csv", customerData);
-            csvWriter(cdir+"/datafiles/Readings.csv", readingsData);
-            csvWriter(cdir+"/datafiles/UserReadings.csv", userR);
+            csvWriter(cdir+"/data/Staff.csv", staffData);
+            csvWriter(cdir+"/data/Customer.csv", customerData);
+            csvWriter(cdir+"/data/Readings.csv", readingsData);
+            csvWriter(cdir+"/data/UserReadings.csv", userR);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -382,74 +386,98 @@ public class Controller {
 
 
     public void syncData(){
-        try {
-            //Read files for data
-        	String cdir = System.getProperty("java.class.path");
-            if (!(System.getProperty("file.separator")=="/")){
-                cdir = cdir.replace("\\", "/");}
-            String[] cp = cdir.split("/");
-            cp[cp.length-1] = "src";
-            cdir = String.join("/", cp);
-            System.out.println(cdir);
-            
-            String[][] customers = csvReader(cdir+"/datafiles/Customer.csv");
-            String[][] staffAcct = csvReader(cdir+"/datafiles/Staff.csv");
-            String[][] readings = csvReader(cdir+"/datafiles/Readings.csv");
-            String[][] userReadings = csvReader(cdir+"/datafiles/UserReadings.csv");
-            
-            //Creating and adding csv contents into vectors
-            //!customer
-            for(String[]c:customers){
-                this.addUser(c[0], c[1], c[2],c[3],c[4]);
-                if (c[5].equals("null")){continue;}
-                StringTokenizer st = new StringTokenizer(c[5],"-");
-                while (st.hasMoreTokens()){
-                    String reading = st.nextToken();
-                    StringTokenizer st2 = new StringTokenizer(reading,":");
-                    String[] items = new String[2];
-                    int i =0;
-                    while (st2.hasMoreTokens()){
-                        items[i]=st2.nextToken();
-                        i+=1;
-                    }
-                    ds.addMeterReading(c[0], items[0], Integer.valueOf(items[1]));
-                }
-            }
-            
-            //!Staff
-            for(String[]s:staffAcct){
-                this.addStaff(s[0], s[1]);
-            }
-            
-            //!Readings
-            for(String[]r:readings){
-                this.addReading(r[0], Double.parseDouble(r[1]), r[2], Double.parseDouble(r[3]));
-            }
+    	//get current directory
+    	cdir = System.getProperty("java.class.path");
+        if (!(System.getProperty("file.separator")=="/")){
+            cdir = cdir.replace("\\", "/");}
+        String[] cp = cdir.split("/");
+        cp[cp.length-1] = "src";
+        cdir = String.join("/", cp);
+        System.out.println(cdir);
 
-            //!User Readings
-            int c=0;
-            for(String[] ur:userReadings){
-            	if(ur.length==0){
-            		setSystemDate("1", "2020");
-            		continue;
-            	}
-                Vector<String[]> bill = new Vector<>();
-                
-                if (c==0&&ur[0].length()==2){setSystemDate(ur);c+=1;continue;}
-                else if (c==0){c+=1;setSystemDate("1", "2020");}
-                for(String item : ur){
-                	String [] t = item.split(":");
-                	bill.add(t);
-                }
-                String[][] b = new String[bill.size()][];
-                bill.toArray(b);
-                ds.addUserReading(b);
-            }
+        //Read files for data
+        //Creating and adding csv contents into vectors
+            String[][] customers;
+			try {
+				customers = csvReader(cdir+"/data/Customer.csv");
+				//!customer
+	            for(String[]c:customers){
+	                this.addUser(c[0], c[1], c[2],c[3],c[4]);
+	                if (!c[5].equals("null")){ds.setLastSubmitted(c[0], c[5]);}
+	                if (c[6].equals("null")){continue;}
+	                StringTokenizer st = new StringTokenizer(c[6],"-");
+	                while (st.hasMoreTokens()){
+	                    String reading = st.nextToken();
+	                    StringTokenizer st2 = new StringTokenizer(reading,":");
+	                    String[] items = new String[2];
+	                    int i =0;
+	                    while (st2.hasMoreTokens()){
+	                        items[i]=st2.nextToken();
+	                        i+=1;
+	                    }
+                        int mr = 0;
+                        try {
+                            mr = Integer.valueOf(items[1]);
+                        } catch (Exception e) {
+                            mr = Double.valueOf(items[1]).intValue();
+                        }
+	                    ds.addMeterReading(c[0], items[0], mr);
+	                }
+	            }
+			} catch (FileNotFoundException e) {
+				System.out.println(cdir+"/data/Customer.csv NOT FOUND");
+			}
+			
+            String[][] staffAcct;
+			try {
+				staffAcct = csvReader(cdir+"/data/Staff.csv");
+				//!Staff
+	            for(String[]s:staffAcct){
+	                this.addStaff(s[0], s[1]);
+	            }
+	            
+	            
+			} catch (FileNotFoundException e) {
+				System.out.println(cdir+"/data/Staff.csv NOT FOUND");
+			}
+			
+            String[][] readings;
+			try {
+				readings = csvReader(cdir+"/data/Readings.csv");
+				//!Readings
+	            for(String[]r:readings){
+	                this.addReading(r[0], Double.parseDouble(r[1]), r[2], Double.parseDouble(r[3]));
+	            }
+			} catch (FileNotFoundException e) {
+				System.out.println(cdir+"/data/Readings.csv NOT FOUND");
+			}
+			
+            String[][] userReadings;
+			try {
+				userReadings = csvReader(cdir+"/data/UserReadings.csv");
+				//!User Readings
+	            int c=0;
+	            for(String[] ur:userReadings){
+	            	if(ur.length==0){
+	            		setSystemDate("1", "2020");
+	            		continue;
+	            	}
+	                Vector<String[]> bill = new Vector<>();
+	                
+	                if (c==0&&ur[0].length()==2){setSystemDate(ur);c+=1;continue;}
+	                else if (c==0){c+=1;setSystemDate("1", "2020");}
+	                for(String item : ur){
+	                	String [] t = item.split(":");
+	                	bill.add(t);
+	                }
+	                String[][] b = new String[bill.size()][];
+	                bill.toArray(b);
+	                ds.addUserReading(b);
+	            }
+			} catch (FileNotFoundException e) {
+				System.out.println(cdir+"/data/UserReadings.csv NOT FOUND");
+			}
             
-
-        } catch (FileNotFoundException ex) {
-
-        }
 
     }
 

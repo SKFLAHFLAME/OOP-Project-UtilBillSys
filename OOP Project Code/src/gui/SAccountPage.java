@@ -118,6 +118,9 @@ public class SAccountPage extends JPanel{
 		this.showAccount();
 		this.showNormalScreen();
 		
+		System.out.println((textField.getLocation().y+textField.getSize().width+10)+" : "+(btnEdit.getLocation().x+btnEdit.getSize().height+10));
+		main.setSize((textField.getLocation().x+textField.getSize().width+40),(btnEdit.getLocation().y+btnEdit.getSize().height+60));
+		
 
 	}
 	
@@ -145,7 +148,7 @@ public class SAccountPage extends JPanel{
 		passwordField.setEchoChar((char)0x2022);
 		if (this.id.equals("admin")){
 			btnEdit.hide();
-			btnBack.setLocation(207, 252);
+			btnBack.setLocation((main.getWidth()/2)-(btnBack.getSize().width/2), 252);
 		}
 		
 	}

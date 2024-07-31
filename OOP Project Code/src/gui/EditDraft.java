@@ -95,7 +95,7 @@ public class EditDraft extends JPanel {
 				if(sel != 0){return;}
                 
                 deleteRow(edtRow);
-                if (main.getCont().hasDraft(main.getCurrentAcct()[1])){
+                if (!main.getCont().hasDraft(main.getCurrentAcct()[1])){
                 	main.showAddMeterReading();
                 }
             }
