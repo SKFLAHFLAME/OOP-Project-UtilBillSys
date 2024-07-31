@@ -62,7 +62,7 @@ public class CreateStaff extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(main.getCurrentAcct()[0].equals("A")){
-					if (main.getCont().isStaff(textField.getText())){lblErrors.setText("ID Already Used");return;}
+					if (main.getCont().isStaff(textField.getText())||main.getCont().isUser(textField.getText())){lblErrors.setText("ID Already Used");return;}
 					System.out.println("Successful");
 					addStaff();
 					main.showAllStaff();

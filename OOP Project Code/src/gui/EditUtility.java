@@ -10,6 +10,8 @@ import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Vector;
+
+import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -26,11 +28,13 @@ public class EditUtility extends JPanel{
 	private Object[] coloumnames={"Utility Name","Price (S$)","Unit", "Service Charge (%)"};
 	private JScrollPane scrollPane;
 	private JTable table;
-	private Vector<Object[]> changes = new Vector<>();
+	private Vector<Object[]> changes = new Vector<>();//Row, Col, Val
 	private String[][]data;
 	private boolean unsaved = false;
 //	private Vector<Object[]> finaldata=new Vector<>();
 	private DefaultTableModel model;
+	private JButton btnEditWithFile;
+	private JButton btnClearRow;
 	public EditUtility(MainFrame m){
 		this.main = m;
 		this.setLayout(null);
@@ -61,7 +65,7 @@ public class EditUtility extends JPanel{
 			}
 		});
 		this.btnBack.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		this.btnBack.setBounds(187, 415, 97, 25);
+		this.btnBack.setBounds(127, 414, 97, 25);
 		add(this.btnBack);
 		
 		this.btnDelete = new JButton("Delete");
@@ -123,7 +127,15 @@ public class EditUtility extends JPanel{
 		this.scrollPane.setBounds(12, 13, 454, 292);
 		add(this.scrollPane);
 		
-		this.model = new DefaultTableModel(coloumnames, 0);
+		this.model = new DefaultTableModel(coloumnames, 0)
+		{
+		    @Override 
+		    public boolean isCellEditable(int row, int column)
+		    {
+		        if (main.getCurrentAcct()[0].equals("A")){return true;}
+		        return column==0 ? false:true;
+		    }
+		};
 		this.table = new JTable(model);
 		table. getTableHeader(). setReorderingAllowed(false);
 		table.getTableHeader().setResizingAllowed(false);
@@ -153,7 +165,38 @@ public class EditUtility extends JPanel{
 		table.getColumnModel().getColumn(1).setPreferredWidth(2);
 		table.getColumnModel().getColumn(2).setPreferredWidth(2);
 		this.scrollPane.setViewportView(this.table);
+		
+		this.btnEditWithFile = new JButton("Edit with File");
+		this.btnEditWithFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				main.flag = true;
+				main.showAddFrame();
+			}
+		});
+		this.btnEditWithFile.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		this.btnEditWithFile.setBounds(258, 414, 117, 25);
+		add(this.btnEditWithFile);
+		
+		this.btnClearRow = new JButton("Clear Row");
+		this.btnClearRow.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clearRow();
+			}
+		});
+		this.btnClearRow.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		this.btnClearRow.setBounds(12, 374, 117, 40);
+		add(this.btnClearRow);
 		main.setSize(500,500);
+		
+		init();
+	}
+	
+	public void init(){
+		if(main.getCurrentAcct()[0].equals("A")){btnUpdateUtility.setLocation(291,318);return;}
+		btnAddUtility.hide();
+		btnDelete.hide();
+		btnUpdateUtility.setLocation(291,318);
+		btnClearRow.setLocation(12,324);
 	}
 	
 
@@ -221,7 +264,7 @@ public class EditUtility extends JPanel{
 		}
 		c=0;
 		for(Object[] i:changes){
-			System.out.println(changes.size());
+//			System.out.println(changes.size());
 			System.out.println(String.join(","+i));
 			// try {
 				data[(int) i[0]][(int) i[1]]=String.valueOf(i[2]);
@@ -263,6 +306,51 @@ public class EditUtility extends JPanel{
 		}
 		c=0;
 		this.unsaved = false;
+		redraw();
+	}
+	
+	public void clearRow(){
+		if (!(main.getCurrentAcct()[0].equals("A") || main.getCurrentAcct()[0].equals("S"))){return;}
+		int selRow = table.getSelectedRow();
+		if (selRow == -1){return;}
+		Object[] r1 = {selRow, 1, 0.0};
+		Object[] r2 = {selRow, 3, 0.0};
+		changes.add(r1);
+		changes.add(r2);
+		unsaved = true;
+		redraw();
+	}
+	
+	public void editRow(String utilName, String price, String unit, String serCharge){
+		int row=0;
+		for (int i=0; i<data.length;i++){
+			if(data[i][0].equals(utilName)){row=i;break;}
+		}
+		if(!price.equals("")){
+			try {
+				Double.valueOf(price);
+			} catch (Exception e) {
+				price = String.valueOf(0.0);
+			}
+			Object[] temp = {row, 1, price};
+			changes.add(temp);
+		}
+		if(!unit.equals("")){
+			Object[] temp = {row, 2, unit};
+			changes.add(temp);
+		}
+		if(!serCharge.equals("")){
+			try {
+				Double.valueOf(serCharge);
+			} catch (Exception e) {
+				serCharge = String.valueOf(0.0);
+			}
+			Object[] temp = {row, 3, serCharge};
+			String[] t = {String.valueOf(row), String.valueOf(3), String.valueOf(serCharge)};
+			System.out.println(String.join(":", t));
+			changes.add(temp);
+		}
+		unsaved = true;
 		redraw();
 	}
 }

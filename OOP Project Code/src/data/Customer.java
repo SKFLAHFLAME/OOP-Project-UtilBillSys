@@ -11,6 +11,7 @@ public class Customer extends Account{
     private String name;
 	private String email;
     private String address;
+    private String lastSubmitted;
     
 
     //!Constructors
@@ -108,4 +109,16 @@ public class Customer extends Account{
     public void setDraft(HashMap<String, Double> draft) {
         this.draft = draft;
     }
+	public String[] getLastSubmitted() {
+		return lastSubmitted.split("/");
+	}
+	public void setLastSubmitted(String month, String year) {
+		lastSubmitted = String.join("/", month,year);
+	}
+	public String getLastSubmittedString() {
+		return lastSubmitted;
+	}
+	public void setLastSubmittedString(String lastSubmitted) {
+		this.lastSubmitted = lastSubmitted;
+	}
 }

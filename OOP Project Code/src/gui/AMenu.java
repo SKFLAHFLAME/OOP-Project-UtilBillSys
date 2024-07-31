@@ -18,6 +18,7 @@ public class AMenu extends JPanel{
     private JButton btnEditStaff;
     private JButton btnAccount;
     private JButton btnEditDate;
+    private JButton btnViewBills_1;
     
     public AMenu(MainFrame m){
         this.main = m;
@@ -40,7 +41,7 @@ public class AMenu extends JPanel{
         	@Override
 			public void actionPerformed(ActionEvent arg0) {
                 main.clearCurrentAcct();
-        		main.showStaffLogin();
+        		main.showAllLogin();
         	}
         });
         this.btnLogOut.setFont(new Font("Tahoma", Font.PLAIN, 15));
@@ -57,7 +58,7 @@ public class AMenu extends JPanel{
         	}
         });
         this.btnEditUtilities.setFont(new Font("Tahoma", Font.PLAIN, 17));
-        this.btnEditUtilities.setBounds(162, 105, 128, 59);
+        this.btnEditUtilities.setBounds(135, 105, 128, 59);
         add(this.btnEditUtilities);
         
         this.btnViewBills = new JButton("View Customers");
@@ -68,7 +69,7 @@ public class AMenu extends JPanel{
         	}
         });
         this.btnViewBills.setFont(new Font("Tahoma", Font.PLAIN, 17));
-        this.btnViewBills.setBounds(303, 106, 135, 57);
+        this.btnViewBills.setBounds(273, 106, 165, 29);
         add(this.btnViewBills);
         
         this.btnEditStaff = new JButton("Edit Staff");
@@ -78,7 +79,7 @@ public class AMenu extends JPanel{
         	}
         });
         this.btnEditStaff.setFont(new Font("Tahoma", Font.PLAIN, 17));
-        this.btnEditStaff.setBounds(12, 105, 140, 56);
+        this.btnEditStaff.setBounds(12, 105, 113, 56);
         add(this.btnEditStaff);
         
         this.btnAccount = new JButton("Account");
@@ -101,6 +102,16 @@ public class AMenu extends JPanel{
         this.btnEditDate.setFont(new Font("Tahoma", Font.PLAIN, 14));
         this.btnEditDate.setBounds(12, 57, 97, 25);
         add(this.btnEditDate);
+        
+        this.btnViewBills_1 = new JButton("View Bills");
+        this.btnViewBills_1.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		main.showAllBills();
+        	}
+        });
+        this.btnViewBills_1.setFont(new Font("Tahoma", Font.PLAIN, 17));
+        this.btnViewBills_1.setBounds(273, 141, 167, 23);
+        add(this.btnViewBills_1);
 
 
 

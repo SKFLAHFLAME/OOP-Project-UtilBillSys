@@ -4,6 +4,9 @@ import gui.*;
 import java.awt.CardLayout;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -21,14 +24,20 @@ public class MainFrame extends JFrame implements WindowListener{
 	private AddMeterReading amr;
 	private EditMeterReading emr;
 	private ViewHistoryScreen vhs;
+	private ImageIcon logo;
+	
 
-    public MainFrame(){
+    
+
+	public MainFrame(){
         
         this.setTitle("Utility Billing System");
-        this.setSize(400,300);
+//        this.setSize(400,300);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setSize(1050,720);
+        this.setResizable(false);
         this.setLocationRelativeTo(null);
-            
+        
         try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException e) {
@@ -53,7 +62,7 @@ public class MainFrame extends JFrame implements WindowListener{
         this.setLayout(card);
         this.addWindowListener(this);
             
-        this.showLogin();
+        this.showAllLogin();
         getCont().initialiseItems();
             
         this.setVisible(true);
@@ -88,6 +97,12 @@ public class MainFrame extends JFrame implements WindowListener{
         SLogin sl = new SLogin(this);
         add(sl, "Slogin");
         card.show(this.getContentPane(), "Slogin");
+    }
+    
+    public void showAllLogin(){
+        AllLogin l = new AllLogin(this);
+        add(l, "login");
+        card.show(this.getContentPane(), "login");
     }
     
     public void showSignUp(){
@@ -157,6 +172,7 @@ public class MainFrame extends JFrame implements WindowListener{
     public void closeAddFrame(){
     	try {
     		frame.dispose();
+    		flag = false;
 		} catch (Exception e) {
 			return;
 		}
@@ -195,11 +211,21 @@ public class MainFrame extends JFrame implements WindowListener{
 	public EditUtility getEu() {
 		return eu;
 	}
+
+	public ImageIcon getLogo() {
+		return logo;
+	}
+
+	public void setLogo(ImageIcon logo) {
+		this.logo = logo;
+	}
 	
 
 	@Override
 	public void windowOpened(WindowEvent e) {
 		getCont().syncData();
+		logo = new ImageIcon(cont.cdir+"/data/logo.png");
+		this.setIconImage(logo.getImage());
 		System.out.println("Added");
 	}
  

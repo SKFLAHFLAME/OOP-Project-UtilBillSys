@@ -121,9 +121,9 @@ public class SLogin extends JPanel{
         		String id = idField.getText();
         		String pass = new String(passwordField.getPassword());
                 if (main.getCont().verifyStaff(id, pass)){
-                    if (id.equals("admin")){
+                    if (id.equals(main.getCont().getAllStaff()[0].getUsername())){
                         lblErrors.setText("Admin Login");
-                        main.setCurrentAcct("A", "admin");
+                        main.setCurrentAcct("A", main.getCont().getAllStaff()[0].getUsername());
                         main.showAdminMenu();
                     }
                     else{lblErrors.setText("Success");main.setCurrentAcct("S", id);main.showStaffMenu();}

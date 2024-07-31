@@ -116,7 +116,7 @@ public class SignUp extends JPanel{
 			}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				main.showLogin();
+				main.showAllLogin();
 			}
 		});
 		this.lblGoLogin.setFont(new Font("Dialog", Font.BOLD, 11));

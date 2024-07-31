@@ -54,7 +54,7 @@ public class CMenu extends JPanel{
         btnViewCurrentDraft.addActionListener(new ActionListener() {
         	@Override
         	public void actionPerformed(ActionEvent arg0) {
-        		if (main.getCont().hasDraft(main.getCurrentAcct()[1])){
+        		if (!main.getCont().hasDraft(main.getCurrentAcct()[1])){
             		main.setPrepage(true);
             		main.showAddMeterReading();
             	}
@@ -73,7 +73,7 @@ public class CMenu extends JPanel{
         btnLogOut.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent arg0) {
         		main.clearCurrentAcct();
-        		main.showLogin();
+        		main.showAllLogin();
         	}
         });
         btnLogOut.setBounds(152, 271, 115, 29);
