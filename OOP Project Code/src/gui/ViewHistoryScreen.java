@@ -129,6 +129,12 @@ public class ViewHistoryScreen extends JPanel {
             int monthIndex = Integer.parseInt(dateParts[1]) - 1; // get month index (0-based)
             int billYear = Integer.parseInt(dateParts[2]);
             // stops loop if bill is in the "future"
+            if (monthIndex+1 > Integer.parseInt(date[0])&& billYear == Integer.parseInt(date[1])){
+            	continue;
+            }
+            if (billYear>Integer.parseInt(date[1])){
+            	continue;
+            }
             
             
             DefaultMutableTreeNode bill = new DefaultMutableTreeNode(ur[0][2]); // use the date as the node label
@@ -154,10 +160,16 @@ public class ViewHistoryScreen extends JPanel {
     private void filterTree() {
         userName.removeAllChildren(); // Clear the existing tree
         String[][][] userReadings = main.getCont().getUserReading(main.getCurrentAcct()[1]); // get all userReadings of user
-
+        
+        int monthI = comboMonth.getSelectedIndex();
         String selectedYear = comboYear.getSelectedItem().toString();
         String selectedMonth = comboMonth.getSelectedItem().toString();
-
+        // stops loop if bill is in the "future"
+        if(!selectedYear.equals("All")){
+	        if (monthI > Integer.parseInt(date[0])&& Integer.parseInt(selectedYear) == Integer.parseInt(date[1])){
+	        	selectedMonth = month[Integer.parseInt(date[0])];
+        }}
+        
         // Handle "All" cases, filtering section
         boolean filterByYear = !selectedYear.equals("All");
         boolean filterByMonth = !selectedMonth.equals("All");
@@ -171,6 +183,10 @@ public class ViewHistoryScreen extends JPanel {
                 }
                 String[] dateParts = ur[0][2].split("/");
                 String billMonth = dateParts[1];
+				String billYear = dateParts[2];
+                if (Integer.parseInt(billYear) > Integer.parseInt(date[1])){
+                	continue;
+                }
 
                 // Skip bills not in the selected month
                 if (!month[Integer.valueOf(billMonth)].equals(selectedMonth)) {
@@ -189,7 +205,11 @@ public class ViewHistoryScreen extends JPanel {
                     continue;
                 }
                 String[] dateParts = ur[0][2].split("/");
+                String billMonth = dateParts[1];
                 String billYear = dateParts[2];
+                if (Integer.valueOf(billMonth) > Integer.parseInt(date[0])&& Integer.parseInt(billYear) == Integer.parseInt(date[1])){
+                	continue;
+                }
 
                 // Skip bills not in the selected year
                 if (!billYear.equals(selectedYear)) {

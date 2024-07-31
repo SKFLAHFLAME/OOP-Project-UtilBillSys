@@ -197,7 +197,7 @@ public class Controller {
     }
 
     //!Meter Readings
-    public void addMeterReading(String uName, String readingName, Double meterReading) {
+    public void addMeterReading(String uName, String readingName, Integer meterReading) {
 		ds.addMeterReading(uName, readingName, meterReading);
 	}
     public boolean hasDraft(String UName){
