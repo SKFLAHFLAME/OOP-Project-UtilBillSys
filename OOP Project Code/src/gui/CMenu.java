@@ -35,7 +35,8 @@ public class CMenu extends JPanel{
         this.btnShowHistoryScreen = new JButton("Show History Screen");
         btnShowHistoryScreen.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		if (main.getCont().hasDraft(main.getCurrentAcct()[1])){
+        		String[][][] ur = main.getCont().getUserReading(main.getCurrentAcct()[1]);
+        		if (ur.length!=0){
         			main.showViewHistoryScreen();
         		}
         		else{
