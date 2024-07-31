@@ -40,7 +40,7 @@ public class ViewHistoryScreen extends JPanel {
 
     public ViewHistoryScreen(MainFrame m) {
         main = m;
-        main.setSize(400, 715);
+        main.setSize(400, 750);
         this.setLayout(null);
         userName = new DefaultMutableTreeNode(main.getCurrentAcct()[1]);
 
@@ -108,7 +108,6 @@ public class ViewHistoryScreen extends JPanel {
         this.btnBack.setFont(new Font("Dialog", Font.BOLD, 14));
         this.btnBack.setBounds(158, 474, 117, 25);
         add(this.btnBack);
-        main.setSize(400, 500);
     }
 
     public void populateTree() {
