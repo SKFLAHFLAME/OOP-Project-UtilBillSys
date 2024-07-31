@@ -192,7 +192,7 @@ public class DataStorage {
         return (c.getDraft().size()!=0);
     }
 
-    public void addMeterReading(String userName, String readingName, Double meterReading){
+    public void addMeterReading(String userName, String readingName, Integer meterReading){
         int i=0;
         for(Customer c : user){
             if(c.getUsername().equals(userName)){
@@ -203,7 +203,7 @@ public class DataStorage {
         }
     }
 
-    public void editMeterReading(String userName, String readingName, Double newMeterReading){
+    public void editMeterReading(String userName, String readingName, Integer newMeterReading){
         int i=0;
         for(Customer c : user){
             if(c.getUsername().equals(userName)){
@@ -250,7 +250,7 @@ public class DataStorage {
         String[][] draft;
         for(Customer c:user){
             if(c.getUsername().equals(userName)){
-                HashMap<String,Double> d = c.getDraft();
+                HashMap<String,Integer> d = c.getDraft();
                 draft = new String[d.size()][2];
 
                 int i=0;

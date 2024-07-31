@@ -64,18 +64,18 @@ public class MainFrame extends JFrame implements WindowListener{
 
     public void showCustMenu(){
         CMenu m = new CMenu(this);
-        add(m, "cmenu");
-        card.show(this.getContentPane(), "cmenu");
+        add(m, "menu");
+        card.show(this.getContentPane(), "menu");
     }
     public void showAdminMenu(){
         AMenu m = new AMenu(this);
-        add(m, "amenu");
-        card.show(this.getContentPane(), "amenu");
+        add(m, "menu");
+        card.show(this.getContentPane(), "menu");
     }
     public void showStaffMenu(){
         SMenu m = new SMenu(this);
-        add(m, "smenu");
-        card.show(this.getContentPane(), "smenu");
+        add(m, "menu");
+        card.show(this.getContentPane(), "menu");
     }
 
     public void showLogin(){
@@ -239,7 +239,6 @@ public class MainFrame extends JFrame implements WindowListener{
 
 		
 	}
-
 	public static void main(String[] args)
 	{
 		MainFrame ex = new MainFrame();

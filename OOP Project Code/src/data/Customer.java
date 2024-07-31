@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public class Customer extends Account{
     // private String address;
-	private HashMap<String, Double> draft = new HashMap<>();
+	private HashMap<String, Integer> draft = new HashMap<>();
     private String name;
 	private String email;
     private String address;
@@ -44,11 +44,11 @@ public class Customer extends Account{
 
 
     //!Meter Reading Methods
-    public void addMeterReading(String readingName, Double meterReading){
+    public void addMeterReading(String readingName, int meterReading){
         draft.put(readingName, meterReading);
     }
 
-    public void editMeterReading(String readingName, Double newMeterReading){
+    public void editMeterReading(String readingName, int newMeterReading){
         draft.replace(readingName, newMeterReading);
     }
 
@@ -60,7 +60,7 @@ public class Customer extends Account{
     public String[][] getDraftArray(){
         String[][] r = new String[draft.size()][2];
         int c=0;
-        for (Entry<String, Double> reading: draft.entrySet()){
+        for (Entry<String, Integer> reading: draft.entrySet()){
             r[c][0] = reading.getKey();
             r[c][1] = String.valueOf(reading.getValue());
             c+=1;
@@ -101,11 +101,11 @@ public class Customer extends Account{
         this.address = address;
     } 
 
-    public HashMap<String, Double> getDraft() {
+    public HashMap<String, Integer> getDraft() {
         return draft;
     }
 
-    public void setDraft(HashMap<String, Double> draft) {
+    public void setDraft(HashMap<String, Integer> draft) {
         this.draft = draft;
     }
 }

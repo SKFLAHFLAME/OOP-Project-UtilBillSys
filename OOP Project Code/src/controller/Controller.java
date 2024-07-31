@@ -412,7 +412,7 @@ public class Controller {
                         items[i]=st2.nextToken();
                         i+=1;
                     }
-                    ds.addMeterReading(c[0], items[0], Double.valueOf(items[1]));
+                    ds.addMeterReading(c[0], items[0], Integer.valueOf(items[1]));
                 }
             }
             

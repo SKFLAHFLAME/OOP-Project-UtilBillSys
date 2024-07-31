@@ -101,7 +101,7 @@ public class EditMeterReading extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
                 String readingName = (String) mrBox.getSelectedItem();
-                double meterReading = Double.parseDouble(textField.getText()); 
+                double meterReading = Integer.valueOf(textField.getText()); 
                 
                 main.getCont().removeMeterReading(main.getCurrentAcct()[1], CurrentName);
                 main.getCont().addMeterReading(main.getCurrentAcct()[1],readingName, meterReading);
