@@ -415,7 +415,13 @@ public class Controller {
 	                        items[i]=st2.nextToken();
 	                        i+=1;
 	                    }
-	                    ds.addMeterReading(c[0], items[0], Double.valueOf(items[1]));
+                        int mr = 0;
+                        try {
+                            mr = Integer.valueOf(items[1]);
+                        } catch (Exception e) {
+                            mr = Double.valueOf(items[1]).intValue();
+                        }
+	                    ds.addMeterReading(c[0], items[0], mr);
 	                }
 	            }
 			} catch (FileNotFoundException e) {
