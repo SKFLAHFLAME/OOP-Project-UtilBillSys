@@ -58,14 +58,14 @@ public class DataStorage {
         user.toArray(c);
         return c;
     }
-    
-  //! user draft Methods
+        
+    //! user draft Methods
     public boolean hasDraft(String userName){
         Customer c = this.getUser(userName);
-        return !(c.getDraft().size()==0);
+        return (c.getDraft().size()!=0);
     }
 
-    public void addMeterReading(String userName, String readingName, Double meterReading){
+    public void addMeterReading(String userName, String readingName, Integer meterReading){
         int i=0;
         for(Customer c : user){
             if(c.getUsername().equals(userName)){
@@ -76,7 +76,7 @@ public class DataStorage {
         }
     }
 
-    public void editMeterReading(String userName, String readingName, Double newMeterReading){
+    public void editMeterReading(String userName, String readingName, Integer newMeterReading){
         int i=0;
         for(Customer c : user){
             if(c.getUsername().equals(userName)){
@@ -123,7 +123,7 @@ public class DataStorage {
         String[][] draft;
         for(Customer c:user){
             if(c.getUsername().equals(userName)){
-                HashMap<String,Double> d = c.getDraft();
+                HashMap<String,Integer> d = c.getDraft();
                 draft = new String[d.size()][2];
 
                 int i=0;
@@ -289,86 +289,7 @@ public class DataStorage {
         return arr;
     }
 
-    //! user draft Methods
-    public boolean hasDraft(String userName){
-        Customer c = this.getUser(userName);
-        return (c.getDraft().size()!=0);
-    }
-
-    public void addMeterReading(String userName, String readingName, Integer meterReading){
-        int i=0;
-        for(Customer c : user){
-            if(c.getUsername().equals(userName)){
-                c.addMeterReading(readingName, meterReading);
-                user.setElementAt(c, i);
-            }
-            i+=1;
-        }
-    }
-
-    public void editMeterReading(String userName, String readingName, Integer newMeterReading){
-        int i=0;
-        for(Customer c : user){
-            if(c.getUsername().equals(userName)){
-                c.editMeterReading(readingName, newMeterReading);
-                user.setElementAt(c, i);
-            }
-            i+=1;
-        }
-    }
-    public void editMeterReadingName(String userName, String readingName, String newReadingName){
-        int i=0;
-        for(Customer c : user){
-            if(c.getUsername().equals(userName)){
-                c.editReadingName(readingName, newReadingName);
-                user.setElementAt(c, i);
-            }
-            i+=1;
-        }
-    }
-
-    public void removeMeterReading(String userName, String readingName){
-        int i=0;
-        for(Customer c : user){
-            if(c.getUsername().equals(userName)){
-                c.deleteMeterReading(readingName);
-                user.setElementAt(c, i);
-            }
-            i+=1;
-        }
-    }
-
-    public void removeDraft(String userName){
-        int i=0;
-        for(Customer c : user){
-            if(c.getUsername().equals(userName)){
-                c.clearDraft();
-                user.setElementAt(c, i);
-            }
-            i+=1;
-        }
-    }
-
-    public String[][] getDraft(String userName){
-        String[][] draft;
-        for(Customer c:user){
-            if(c.getUsername().equals(userName)){
-                HashMap<String,Integer> d = c.getDraft();
-                draft = new String[d.size()][2];
-
-                int i=0;
-                for(String k:d.keySet()){
-                    String[] t = {k,String.valueOf(d.get(k))};
-                    draft[i]=t;
-                    i+=1;
-                }
-
-                return draft;
-            }
-        }
-        return null;
-        
-    }
+    
 
 
     
