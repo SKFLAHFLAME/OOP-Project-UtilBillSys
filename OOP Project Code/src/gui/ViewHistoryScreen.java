@@ -7,8 +7,6 @@ import javax.swing.SwingConstants;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
-
 import javax.swing.JTree;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -40,7 +38,7 @@ public class ViewHistoryScreen extends JPanel {
 
     public ViewHistoryScreen(MainFrame m) {
         main = m;
-        main.setSize(400, 600);
+        main.setSize(400, 715);
         this.setLayout(null);
         userName = new DefaultMutableTreeNode(main.getCurrentAcct()[1]);
 
@@ -184,6 +182,9 @@ public class ViewHistoryScreen extends JPanel {
                 String billMonth = dateParts[1];
 				String billYear = dateParts[2];
                 if (Integer.parseInt(billYear) > Integer.parseInt(date[1])){
+                	continue;
+                }
+				if (Integer.valueOf(billMonth) > Integer.parseInt(date[0])&& Integer.parseInt(billYear) == Integer.parseInt(date[1])){
                 	continue;
                 }
 
