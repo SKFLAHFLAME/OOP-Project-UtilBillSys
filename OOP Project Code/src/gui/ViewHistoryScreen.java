@@ -184,6 +184,9 @@ public class ViewHistoryScreen extends JPanel {
                 if (Integer.parseInt(billYear) > Integer.parseInt(date[1])){
                 	continue;
                 }
+				if (Integer.valueOf(billMonth) > Integer.parseInt(date[0])&& Integer.parseInt(billYear) == Integer.parseInt(date[1])){
+                	continue;
+                }
 
                 // Skip bills not in the selected month
                 if (!month[Integer.valueOf(billMonth)].equals(selectedMonth)) {
