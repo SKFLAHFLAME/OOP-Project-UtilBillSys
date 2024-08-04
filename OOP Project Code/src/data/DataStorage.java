@@ -118,6 +118,51 @@ public class DataStorage {
             i+=1;
         }
     }
+    
+    public String[][][] getLatestSubmittedReadings(String userName) {
+        Customer user = getUser(userName);
+        if (user == null) {
+            return new String[0][][]; // No user found
+        }
+
+        String lastSubmittedDate = user.getLastSubmittedString();
+        if (lastSubmittedDate == null || lastSubmittedDate.isEmpty()) {
+            return new String[0][][]; // No last submitted date
+        }
+
+        String month = lastSubmittedDate.split("/")[0];
+        String year = lastSubmittedDate.split("/")[1];
+
+        // Filter readings based on the last submitted date
+        Vector<String[][]> latestReadings = new Vector<>();
+        for (String[][] reading : userReading) {
+            String[] dateParts = reading[0][2].split("/");
+            if (dateParts[0].equals(month) && dateParts[1].equals(year)) {
+                latestReadings.add(reading);
+            }
+        }
+
+        String[][][] arr = new String[latestReadings.size()][this.readings.size() + 2][3];
+        latestReadings.toArray(arr);
+
+        // Sort by Entry_Number
+        try {
+            Arrays.sort(arr, (a, b) -> Integer.compare(Integer.parseInt(a[0][1]), Integer.parseInt(b[0][1])));
+        } catch (Exception e) {
+            // Handle parsing exceptions if needed
+        }
+
+        return arr;
+    }
+
+    // Method to update the last submitted date
+    public void updateLastSubmittedDate(String userName, String month, String year) {
+        Customer user = getUser(userName);
+        if (user != null) {
+            user.setLastSubmitted(month, year); // Update the last submitted date
+        }
+    }
+
 
     public String[][] getDraft(String userName){
         String[][] draft;

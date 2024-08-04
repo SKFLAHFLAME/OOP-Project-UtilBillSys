@@ -12,7 +12,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Scanner;
 import java.util.StringTokenizer;
@@ -23,7 +22,7 @@ import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
 public class Controller {
     private DataStorage ds = new DataStorage();
     private String[] systemDate = new String[2];//MM, YYYY
-    public String cdir;
+	public String cdir;
     
     
     public void initialiseItems(){
@@ -133,8 +132,12 @@ public class Controller {
     public void removeStaff(String id){
     	ds.removeStaff(id);
     }
+ // Method to get the latest submitted readings
+    public String[][][] getPreviousSubmittedReadings(String userName) {
+        return ds.getLatestSubmittedReadings(userName);
+    }
     
-    public void addReading(String name, double price, String unit, double serviceCharge){
+    void addReading(String name, double price, String unit, double serviceCharge){
     	Readings readings = new Readings(name, price, unit, serviceCharge);
     	ds.addReading(readings);
     }
@@ -150,13 +153,46 @@ public class Controller {
     	ds.removeReading(index);
     }
     
-    public double calculateReading(String readingName, String meterReading){
-    	Readings reading = ds.getReadings(readingName);
-    	return Double.valueOf(meterReading)*reading.getPrice()+(Double.valueOf(meterReading)*reading.getPrice()*reading.getServiceCharge()/100);
+    public double calculateReading(String readingName, String meterReadingStr) {
+        // Convert meterReading from String to Integer
+        Integer meterReading = Integer.parseInt(meterReadingStr);
+        
+        // Get the latest submitted readings
+        String[][][] latestReadings = getPreviousSubmittedReadings(readingName);
+        Readings reading = ds.getReadings(readingName);
+        
+        // Initialize variables for comparison
+        Integer latestReading = null;
+        
+        // Find the latest reading value
+        for (String[][] readingArray : latestReadings) {
+            for (String[] entry : readingArray) {
+                if (entry[0].equals(readingName)) {
+                    latestReading = Integer.parseInt(entry[2]); // Convert from String to Integer
+                    break;
+                }
+            }
+        }
+        
+        // Ensure latestReading has been found
+        if (latestReading == null) {
+            // Handle case where no previous reading is found
+            return 0; // or throw an exception or return a default value
+        }
+        
+        // Calculate the difference
+        Integer difference = meterReading - latestReading;
+        
+        // Calculate price and service charge
+        double price = reading.getPrice();
+        double serviceCharge = reading.getServiceCharge();
+        
+        // Calculate total cost
+        double totalCost = (difference * price) + (difference * price * serviceCharge / 100);
+        
+        return totalCost;
     }
-    public double getStandardPrice() {
-        return 129.0; // Temporarily returning a fixed value for testing
-    }
+
 
     
     //! User Readings
@@ -183,9 +219,22 @@ public class Controller {
         }
         ds.addUserReading(bill);
         
-
+        
 
     }
+
+    public void displayLatestReadings(String userName) {
+        String[][][] latestReadings = getPreviousSubmittedReadings(userName);
+        
+        // Process and display the readings
+        for (String[][] reading : latestReadings) {
+            // Example: Print the readings
+            for (String[] entry : reading) {
+                System.out.println("Entry No: " + entry[1] + ", Reading: " + entry[2] + ", Total Price: " + entry[3]);
+            }
+        }
+    }
+
     public void addUserReading(String[][] userReading){
         ds.addUserReading(userReading);
     }
@@ -199,9 +248,11 @@ public class Controller {
     }
 
     //!Meter Readings
-    public void addMeterReading(String uName, String readingName, Integer meterReading) {
-		ds.addMeterReading(uName, readingName, meterReading);
-	}
+    public void addMeterReading(String userName, String readingName, int meterReading) {
+        // Add the meter reading
+        ds.addMeterReading(userName, readingName, meterReading);
+    }
+
     public boolean hasDraft(String UName){
         return ds.hasDraft(UName);
     }
@@ -318,22 +369,20 @@ public class Controller {
         c=0;
 
         //!Customer (UserName, Password, Full Name, Email, Address, Draft)
-        String[][] customerData = new String[customer.length][7];
+        String[][] customerData = new String[customer.length][6];
         for (int i = 0; i < customer.length; i++) {
             customerData[i][0] = customer[i].getUsername();
             customerData[i][1] = customer[i].getPassword();
             customerData[i][2] = customer[i].getName();
             customerData[i][3] = customer[i].getEmail();
             customerData[i][4] = customer[i].getAddress();
-            customerData[i][5] = customer[i].getLastSubmittedString();
-			
             String[][] draft = customer[i].getDraftArray();
             String d = new String();
             for (String [] string : draft) {
                 d= d+ string[0]+":"+string[1]+"-";
             }
             if (d.isEmpty()){d="null";}
-            customerData[i][6] = d;
+            customerData[i][5] = d;
         }
 
         //!Readings
@@ -386,98 +435,74 @@ public class Controller {
 
 
     public void syncData(){
-    	//get current directory
-    	cdir = System.getProperty("java.class.path");
-        if (!(System.getProperty("file.separator")=="/")){
-            cdir = cdir.replace("\\", "/");}
-        String[] cp = cdir.split("/");
-        cp[cp.length-1] = "src";
-        cdir = String.join("/", cp);
-        System.out.println(cdir);
-
-        //Read files for data
-        //Creating and adding csv contents into vectors
-            String[][] customers;
-			try {
-				customers = csvReader(cdir+"/data/Customer.csv");
-				//!customer
-	            for(String[]c:customers){
-	                this.addUser(c[0], c[1], c[2],c[3],c[4]);
-	                if (!c[5].equals("null")){ds.setLastSubmitted(c[0], c[5]);}
-	                if (c[6].equals("null")){continue;}
-	                StringTokenizer st = new StringTokenizer(c[6],"-");
-	                while (st.hasMoreTokens()){
-	                    String reading = st.nextToken();
-	                    StringTokenizer st2 = new StringTokenizer(reading,":");
-	                    String[] items = new String[2];
-	                    int i =0;
-	                    while (st2.hasMoreTokens()){
-	                        items[i]=st2.nextToken();
-	                        i+=1;
-	                    }
-                        int mr = 0;
-                        try {
-                            mr = Integer.valueOf(items[1]);
-                        } catch (Exception e) {
-                            mr = Double.valueOf(items[1]).intValue();
-                        }
-	                    ds.addMeterReading(c[0], items[0], mr);
-	                }
-	            }
-			} catch (FileNotFoundException e) {
-				System.out.println(cdir+"/data/Customer.csv NOT FOUND");
-			}
-			
-            String[][] staffAcct;
-			try {
-				staffAcct = csvReader(cdir+"/data/Staff.csv");
-				//!Staff
-	            for(String[]s:staffAcct){
-	                this.addStaff(s[0], s[1]);
-	            }
-	            
-	            
-			} catch (FileNotFoundException e) {
-				System.out.println(cdir+"/data/Staff.csv NOT FOUND");
-			}
-			
-            String[][] readings;
-			try {
-				readings = csvReader(cdir+"/data/Readings.csv");
-				//!Readings
-	            for(String[]r:readings){
-	                this.addReading(r[0], Double.parseDouble(r[1]), r[2], Double.parseDouble(r[3]));
-	            }
-			} catch (FileNotFoundException e) {
-				System.out.println(cdir+"/data/Readings.csv NOT FOUND");
-			}
-			
-            String[][] userReadings;
-			try {
-				userReadings = csvReader(cdir+"/data/UserReadings.csv");
-				//!User Readings
-	            int c=0;
-	            for(String[] ur:userReadings){
-	            	if(ur.length==0){
-	            		setSystemDate("1", "2020");
-	            		continue;
-	            	}
-	                Vector<String[]> bill = new Vector<>();
-	                
-	                if (c==0&&ur[0].length()==2){setSystemDate(ur);c+=1;continue;}
-	                else if (c==0){c+=1;setSystemDate("1", "2020");}
-	                for(String item : ur){
-	                	String [] t = item.split(":");
-	                	bill.add(t);
-	                }
-	                String[][] b = new String[bill.size()][];
-	                bill.toArray(b);
-	                ds.addUserReading(b);
-	            }
-			} catch (FileNotFoundException e) {
-				System.out.println(cdir+"/data/UserReadings.csv NOT FOUND");
-			}
+        try {
+            //Read files for data
+        	String cdir = System.getProperty("java.class.path");
+            if (!(System.getProperty("file.separator")=="/")){
+                cdir = cdir.replace("\\", "/");}
+            String[] cp = cdir.split("/");
+            cp[cp.length-1] = "src";
+            cdir = String.join("/", cp);
+            System.out.println(cdir);
             
+            String[][] customers = csvReader(cdir+"/data/Customer.csv");
+            String[][] staffAcct = csvReader(cdir+"/data/Staff.csv");
+            String[][] readings = csvReader(cdir+"/data/Readings.csv");
+            String[][] userReadings = csvReader(cdir+"/data/UserReadings.csv");
+            
+            //Creating and adding csv contents into vectors
+            //!customer
+            for(String[]c:customers){
+                this.addUser(c[0], c[1], c[2],c[3],c[4]);
+                if (c[5].equals("null")){continue;}
+                StringTokenizer st = new StringTokenizer(c[5],"-");
+                while (st.hasMoreTokens()){
+                    String reading = st.nextToken();
+                    StringTokenizer st2 = new StringTokenizer(reading,":");
+                    String[] items = new String[2];
+                    int i =0;
+                    while (st2.hasMoreTokens()){
+                        items[i]=st2.nextToken();
+                        i+=1;
+                    }
+                    ds.addMeterReading(c[0], items[0], Integer.valueOf(items[1]));
+                }
+            }
+            
+            //!Staff
+            for(String[]s:staffAcct){
+                this.addStaff(s[0], s[1]);
+            }
+            
+            //!Readings
+            for(String[]r:readings){
+                this.addReading(r[0], Double.parseDouble(r[1]), r[2], Double.parseDouble(r[3]));
+            }
+
+            //!User Readings
+            int c=0;
+            for(String[] ur:userReadings){
+            	if(ur.length==0){
+            		setSystemDate("1", "2020");
+            		continue;
+            	}
+                Vector<String[]> bill = new Vector<>();
+                
+                if (c==0&&ur[0].length()==2){setSystemDate(ur);c+=1;continue;}
+                else if (c==0){c+=1;setSystemDate("1", "2020");}
+                for(String item : ur){
+                	String [] t = item.split(":");
+                	bill.add(t);
+                }
+                String[][] b = new String[bill.size()][];
+                bill.toArray(b);
+                ds.addUserReading(b);
+            }
+            
+
+        } catch (FileNotFoundException ex) {
+
+        }
 
     }
 

@@ -184,34 +184,39 @@ public class EditDraft extends JPanel {
 
 	}
 
-    public void redraw() {
-    	draft = main.getCont().getDraft(main.getCurrentAcct()[1]);
-        this.model.setRowCount(0);
-        double total=0;
-        for (String[] d :draft) {
-        	System.out.println(String.join(", ", d));
-        	try {
-        		Readings r = main.getCont().getReading(d[0]);
-                Object[] x = {d[0], d[1], r.getUnit(), String.format("%.2f", r.getPrice()), String.format("%.2f",r.getServiceCharge()), String.format("%.2f", main.getCont().calculateReading(r.getUtilityName(),String.valueOf(d[1])))};
-                model.addRow(x);
-                total+=main.getCont().calculateReading(r.getUtilityName(),String.valueOf(d[1]));
-			} catch (Exception e) {
-				lblError.setText(d[0]+" Not Avaliable, Deleted");
-				main.getCont().removeMeterReading(main.getCurrentAcct()[1], d[0]);
-				continue;
-				
-				
-			}
-        	
-        }
-        Object[] tot= {"Total","","","","",String.format("%.2f", total)};
-        model.addRow(tot);
-//        for (Object[] i : changes) {
-//            data[(int) i[0]][(int) i[1]] = String.valueOf(i[2]);
-//            model.removeRow((int) i[0]);
-//            model.insertRow((int) i[0], data[(int) i[0]]);
-//        }
-        table.setModel(model);
-        table.repaint();
-    }
+	public void redraw() {
+	    draft = main.getCont().getDraft(main.getCurrentAcct()[1]);
+	    this.model.setRowCount(0);
+	    double total = 0;
+
+	    // Get current month and year
+	    LocalDateTime now = LocalDateTime.now();
+	    DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MM");
+	    DateTimeFormatter yearFormatter = DateTimeFormatter.ofPattern("yyyy");
+	    String currentMonth = now.format(monthFormatter);
+	    String currentYear = now.format(yearFormatter);
+
+	    for (String[] d : draft) {
+	        System.out.println(String.join(", ", d));
+	        try {
+	            Readings r = main.getCont().getReading(d[0]);
+	            Object[] x = {d[0], d[1], r.getUnit(), String.format("%.2f", r.getPrice()), String.format("%.2f", r.getServiceCharge()), String.format("%.2f", main.getCont().calculateReading(r.getUtilityName(), String.valueOf(d[1])))};
+	            model.addRow(x);
+	            total += main.getCont().calculateReading(r.getUtilityName(), String.valueOf(d[1]));
+
+	            // Update last submitted date for each reading
+	            main.getCont().updateLastSubmittedDate(d[0], currentMonth, currentYear);
+
+	        } catch (Exception e) {
+	            lblError.setText(d[0] + " Not Available, Deleted");
+	            main.getCont().removeMeterReading(main.getCurrentAcct()[1], d[0]);
+	            continue;
+	        }
+	    }
+
+	    Object[] tot = {"Total", "", "", "", "", String.format("%.2f", total)};
+	    model.addRow(tot);
+	    table.setModel(model);
+	    table.repaint();
+	}
 }
