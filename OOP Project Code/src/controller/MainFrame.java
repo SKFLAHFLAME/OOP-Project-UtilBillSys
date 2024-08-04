@@ -11,6 +11,10 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.formdev.flatlaf.FlatIntelliJLaf;
+
+
+
 
 public class MainFrame extends JFrame implements WindowListener{
     private CardLayout card;
@@ -39,16 +43,7 @@ public class MainFrame extends JFrame implements WindowListener{
         this.setLocationRelativeTo(null);
         
         try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			UIManager.setLookAndFeel(new FlatIntelliJLaf());
 		} catch (UnsupportedLookAndFeelException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -224,6 +219,7 @@ public class MainFrame extends JFrame implements WindowListener{
 	@Override
 	public void windowOpened(WindowEvent e) {
 		getCont().syncData();
+		
 		logo = new ImageIcon(cont.cdir+"/data/logo.png");
 		this.setIconImage(logo.getImage());
 		System.out.println("Added");

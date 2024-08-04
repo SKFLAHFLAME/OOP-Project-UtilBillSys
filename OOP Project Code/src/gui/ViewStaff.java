@@ -19,7 +19,6 @@ public class ViewStaff extends JPanel{
 	MainFrame main;
 	private JScrollPane scrollPane;
 	private JList list;
-	private JButton btnBack;
 	private JButton btnEdit;
 	private JButton btnRemove;
 	private JButton btnAdd;
@@ -29,22 +28,12 @@ public class ViewStaff extends JPanel{
 		this.setLayout(null);
 		
 		this.scrollPane = new JScrollPane();
-		this.scrollPane.setBounds(12, 68, 366, 256);
+		this.scrollPane.setBounds(12, 97, 468, 538);
 		add(this.scrollPane);
 		
 		this.list = new JList();
-		this.list.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		this.list.setFont(new Font("Tw Cen MT", Font.PLAIN, 30));
 		this.scrollPane.setViewportView(this.list);
-		
-		this.btnBack = new JButton("Back");
-		this.btnBack.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				main.showAdminMenu();
-			}
-		});
-		this.btnBack.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		this.btnBack.setBounds(149, 380, 104, 34);
-		add(this.btnBack);
 		
 		this.btnEdit = new JButton("Edit");
 		this.btnEdit.addActionListener(new ActionListener() {
@@ -55,7 +44,7 @@ public class ViewStaff extends JPanel{
 			}
 		});
 		this.btnEdit.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		this.btnEdit.setBounds(274, 335, 104, 34);
+		this.btnEdit.setBounds(492, 158, 104, 34);
 		add(this.btnEdit);
 		
 		this.btnRemove = new JButton("Remove");
@@ -71,7 +60,7 @@ public class ViewStaff extends JPanel{
 			}
 		});
 		this.btnRemove.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		this.btnRemove.setBounds(12, 335, 104, 34);
+		this.btnRemove.setBounds(492, 216, 104, 34);
 		add(this.btnRemove);
 		
 		this.btnAdd = new JButton("Add");
@@ -81,10 +70,12 @@ public class ViewStaff extends JPanel{
 			}
 		});
 		this.btnAdd.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		this.btnAdd.setBounds(149, 335, 104, 34);
+		this.btnAdd.setBounds(492, 96, 104, 34);
 		add(this.btnAdd);
-		main.setSize(400, 500);
+		main.setSize(1020,720);
 		populateList();
+		
+		TaskBar bar = new TaskBar(this, main);
 	}
 	
 	public void populateList(){

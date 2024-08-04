@@ -73,7 +73,7 @@ public class EditMeterReading extends JPanel {
 			@Override
 			public void keyTyped(KeyEvent arg0) {
 				char key = arg0.getKeyChar();
-				if(Character.isDigit(key)||(key==KeyEvent.VK_PERIOD&&!textField.getText().contains("."))){
+				if(Character.isDigit(key)){
 		            return;}
 				arg0.consume();
 			}

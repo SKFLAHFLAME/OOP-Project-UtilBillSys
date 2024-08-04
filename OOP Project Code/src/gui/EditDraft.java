@@ -19,10 +19,11 @@ import java.beans.PropertyChangeListener;
 import java.util.Vector;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
+import javax.swing.JComboBox;
+import javax.swing.JTextField;
 
 public class EditDraft extends JPanel {
     MainFrame main;
-    private JButton btnBack;
     private JButton btnDelete;
     private JButton btnAddUtility;
     private JButton btnUpdateUtility;
@@ -33,34 +34,42 @@ public class EditDraft extends JPanel {
     private String[][] data;
     private boolean unsaved = false;
     private DefaultTableModel model;
-    private Object[] columnNames = {"Utility Name", "Meter Reading", "Unit", "Price (S$)", "Service Charge(%)", "Total Price(S$)"};
+    private Object[] columnNames = {"Utility Name", "Meter Reading", "Previous Reading", "Price", "Tax", "Amount Used"};
     private JLabel lblError;
     private JButton btnEdit;
+    private JComboBox comboBox;
+    private JTextField txtReading;
 
     public EditDraft(MainFrame main) {
         this.main = main;
-        main.setSize(780,570);
+        main.setSize(1020,720);
         setLayout(null);
 
         this.scrollPane = new JScrollPane();
-        this.scrollPane.setBounds(15, 45, 720, 325);
+        this.scrollPane.setBounds(22, 81, 954, 292);
         add(this.scrollPane);
 
+        
+        
         this.model = new DefaultTableModel(columnNames, 0){
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
         this.table = new JTable(model);
+        table.setRowHeight(25);
+        this.table. getTableHeader(). setReorderingAllowed(false);
+		this.table.getTableHeader().setResizingAllowed(false);
         this.table.setRowHeight(table.getRowHeight() + 10);
-        table.getColumnModel().getColumn(0).setPreferredWidth(60);
-        table.getColumnModel().getColumn(1).setPreferredWidth(50);
+        table.getColumnModel().getColumn(0).setPreferredWidth(120);
+        table.getColumnModel().getColumn(1).setPreferredWidth(80);
         table.getColumnModel().getColumn(2).setPreferredWidth(10);
-        table.getColumnModel().getColumn(3).setPreferredWidth(20);
-        table.getColumnModel().getColumn(4).setPreferredWidth(80);
-        table.getColumnModel().getColumn(5).setPreferredWidth(80);
+        table.getColumnModel().getColumn(3).setPreferredWidth(40);
+        table.getColumnModel().getColumn(4).setPreferredWidth(30);
+        table.getColumnModel().getColumn(5).setPreferredWidth(90);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-        this.table.setFont(new Font("Tahoma", Font.PLAIN, 18));
+        this.table.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+        this.table.getTableHeader().setFont(new Font("Trebuchet MS", Font.PLAIN, 25));
         this.table.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent arg0) {
@@ -82,39 +91,43 @@ public class EditDraft extends JPanel {
             }
         });
         this.scrollPane.setViewportView(this.table);
+        
+        
+        JLabel lblEditDraft = new JLabel("Edit Draft");
+        this.scrollPane.setColumnHeaderView(lblEditDraft);
+        lblEditDraft.setFont(new Font("Tahoma", Font.PLAIN, 20));
 
         btnDelete = new JButton("Delete");
-        btnDelete.setFont(new Font("Tahoma", Font.PLAIN, 20));
+        btnDelete.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
         btnDelete.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 int edtRow = table.getSelectedRow();
-                
+                if (edtRow == -1){return;}
                 String[] options = {"Yes", "No"};
 				int sel = JOptionPane.showOptionDialog(null, "Confirm Deletion?", "Delete", 0, 3, null, options, options[1]);
 				if(sel != 0){return;}
-                
                 deleteRow(edtRow);
                 if (!main.getCont().hasDraft(main.getCurrentAcct()[1])){
                 	main.showAddMeterReading();
                 }
             }
         });
-        btnDelete.setBounds(40, 400, 115, 50);
+        btnDelete.setBounds(405, 575, 129, 50);
         add(btnDelete);
 
         JButton btnAdd = new JButton("Add");
-        btnAdd.setFont(new Font("Tahoma", Font.PLAIN, 20));
+        btnAdd.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
         btnAdd.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 main.showAddMeterReading();
             }
         });
-        btnAdd.setBounds(200, 400, 115, 50);
+        btnAdd.setBounds(546, 576, 129, 50);
         add(btnAdd);
 
         JButton btnSubmit = new JButton("Submit");
-        btnSubmit.setFont(new Font("Tahoma", Font.PLAIN, 20));
+        btnSubmit.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
         btnSubmit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	String[] options = {"Yes", "No"};
@@ -125,23 +138,8 @@ public class EditDraft extends JPanel {
                 main.showCustMenu();
             }
         });
-        btnSubmit.setBounds(600, 400, 115, 44);
+        btnSubmit.setBounds(835, 576, 129, 47);
         add(btnSubmit);
-        
-        
-        JLabel lblEditDraft = new JLabel("Edit Draft");
-        lblEditDraft.setFont(new Font("Tahoma", Font.PLAIN, 20));
-        lblEditDraft.setBounds(15, 16, 110, 20);
-        add(lblEditDraft);
-
-        btnBack = new JButton("Back");
-        btnBack.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                main.showCustMenu();
-            }
-        });
-        btnBack.setBounds(298, 455, 115, 29);
-        add(btnBack);
         
         this.lblError = new JLabel("");
         this.lblError.setFont(new Font("Tahoma", Font.ITALIC, 15));
@@ -150,7 +148,7 @@ public class EditDraft extends JPanel {
         add(this.lblError);
         
         this.btnEdit = new JButton("Edit");
-        btnEdit.setFont(new Font("Tahoma", Font.PLAIN, 20));
+        btnEdit.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
         this.btnEdit.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		int sel = table.getSelectedRow();
@@ -160,10 +158,21 @@ public class EditDraft extends JPanel {
         		main.showEditMeterReading(name, mr);
         	}
         });
-        this.btnEdit.setBounds(400, 400, 115, 50);
+        this.btnEdit.setBounds(687, 574, 129, 50);
         add(this.btnEdit);
         
-
+        TaskBar bar = new TaskBar(this, main);
+        
+        this.comboBox = new JComboBox();
+        this.comboBox.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+        this.comboBox.setBounds(130, 406, 213, 50);
+        add(this.comboBox);
+        
+        this.txtReading = new JTextField();
+        this.txtReading.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+        this.txtReading.setBounds(130, 499, 213, 50);
+        add(this.txtReading);
+        this.txtReading.setColumns(10);
         redraw();
     }
 
@@ -192,7 +201,7 @@ public class EditDraft extends JPanel {
         	System.out.println(String.join(", ", d));
         	try {
         		Readings r = main.getCont().getReading(d[0]);
-                Object[] x = {d[0], d[1], r.getUnit(), String.format("%.2f", r.getPrice()), String.format("%.2f",r.getServiceCharge()), String.format("%.2f", main.getCont().calculateReading(r.getUtilityName(),String.valueOf(d[1])))};
+                Object[] x = {d[0], d[1], "", "$"+String.format("%.2f", r.getPrice())+"/"+r.getUnit(), String.format("%.2f",r.getServiceCharge())+"%", Integer.valueOf(d[1])-Integer.valueOf("0")};
                 model.addRow(x);
                 total+=main.getCont().calculateReading(r.getUtilityName(),String.valueOf(d[1]));
 			} catch (Exception e) {
@@ -204,8 +213,9 @@ public class EditDraft extends JPanel {
 			}
         	
         }
-        Object[] tot= {"Total","","","","",String.format("%.2f", total)};
-        model.addRow(tot);
+//        String.format("%.2f", main.getCont().calculateReading(r.getUtilityName(),String.valueOf(d[1])))
+//        Object[] tot= {"Total","","","","",String.format("%.2f", total)};
+//        model.addRow(tot);
 //        for (Object[] i : changes) {
 //            data[(int) i[0]][(int) i[1]] = String.valueOf(i[2]);
 //            model.removeRow((int) i[0]);

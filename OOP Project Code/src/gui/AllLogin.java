@@ -4,17 +4,21 @@ import javax.swing.JPanel;
 
 import controller.MainFrame;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.Insets;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JCheckBox;
@@ -27,10 +31,12 @@ import java.awt.event.KeyEvent;
 import java.awt.SystemColor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.UIManager;
 
 public class AllLogin extends JPanel{
 	MainFrame main;
 	private ImageIcon logo = new ImageIcon(AllLogin.class.getResource("/data/logo.png"));
+	private ImageIcon background = new ImageIcon(AllLogin.class.getResource("/data/background.jpg"));
 	private JPanel panel;
 	private JLabel lblIcon;
 	private JLabel lblLogin;
@@ -44,21 +50,25 @@ public class AllLogin extends JPanel{
 	private JLabel lblPsGroup;
 	private JLabel lblForgotPassword;
 	private JLabel lblNoAccountSign;
+	private JLabel lblBackGround;
+	private JLabel label;
+	
 	public AllLogin(MainFrame m){
 		main = m;
 		setBackground(new Color(135, 206, 250));
 		setLayout(null);
-		main.setSize(1050,720);
+		main.setSize(1020,720);
 		
 		this.panel = new JPanel();
-		this.panel.setBackground(SystemColor.menu);
-		this.panel.setBounds(299, 82, 450, 548);
+//		this.panel.setBackground(SystemColor.menu);
+		panel.setBackground(new Color((224.0f/255.0f),(224.0f/255.0f),(224.0f/255.0f), 0.95f));
+		this.panel.setBounds(299, 82, 450, 550);
 //		panel.setLocation(main.getWidth()/2-panel.getWidth()/2, main.getHeight()/2 - panel.getHeight()/2);
 		add(this.panel);
 		this.panel.setLayout(null);
 		
 		this.lblIcon = new JLabel();
-		this.lblIcon.setBounds(110, 29, 87, 89);
+		this.lblIcon.setBounds(110, 29, 90, 90);
 		logo.setImage(logo.getImage().getScaledInstance(lblIcon.getHeight(), lblIcon.getHeight(), Image.SCALE_DEFAULT));
 		lblIcon.setIcon(logo);
 		this.panel.add(this.lblIcon);
@@ -75,18 +85,18 @@ public class AllLogin extends JPanel{
 				nextPage();
 			}
 		});
-		this.btnLogin.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
+		this.btnLogin.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
 		this.btnLogin.setBounds(154, 488, 150, 49);
 		btnLogin.setLocation(panel.getWidth()/2-btnLogin.getWidth()/2, panel.getHeight()-btnLogin.getHeight()-20);
 		this.panel.add(this.btnLogin);
 		
 		this.lblUsername = new JLabel("Username: ");
-		this.lblUsername.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
-		this.lblUsername.setBounds(10, 169, 105, 49);
+		this.lblUsername.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+		this.lblUsername.setBounds(10, 169, 111, 49);
 		this.panel.add(this.lblUsername);
 		
 		this.lblPassword = new JLabel("Password:");
-		this.lblPassword.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
+		this.lblPassword.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
 		this.lblPassword.setBounds(10, 239, 105, 43);
 		this.panel.add(this.lblPassword);
 		
@@ -121,7 +131,7 @@ public class AllLogin extends JPanel{
 		this.panel.add(this.passwordField);
 		
 		this.chckbxShowPassword = new JCheckBox("Show Password");
-		this.chckbxShowPassword.setBackground(SystemColor.menu);
+		chckbxShowPassword.setOpaque(false);
 		this.chckbxShowPassword.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if(chckbxShowPassword.isSelected()){
@@ -130,7 +140,7 @@ public class AllLogin extends JPanel{
 				else {passwordField.setEchoChar((char)0x2022);}
 			}
 		});
-		this.chckbxShowPassword.setFont(new Font("Tw Cen MT", Font.PLAIN, 17));
+		this.chckbxShowPassword.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
 		this.chckbxShowPassword.setBounds(125, 299, 156, 23);
 		this.panel.add(this.chckbxShowPassword);
 		
@@ -154,6 +164,7 @@ public class AllLogin extends JPanel{
 		this.panel.add(this.lblPsGroup);
 		
 		this.lblForgotPassword = new JLabel("Forgot Password");
+		lblForgotPassword.setOpaque(false);
 		this.lblForgotPassword.setForeground(SystemColor.textInactiveText);
 		this.lblForgotPassword.addMouseListener(new MouseAdapter() {
 			@Override
@@ -169,8 +180,8 @@ public class AllLogin extends JPanel{
 			}
 		});
 		this.lblForgotPassword.setHorizontalAlignment(SwingConstants.TRAILING);
-		this.lblForgotPassword.setFont(new Font("Yet R", Font.PLAIN, 15));
-		this.lblForgotPassword.setBounds(308, 299, 121, 23);
+		this.lblForgotPassword.setFont(new Font("Yet R", Font.PLAIN, 17));
+		this.lblForgotPassword.setBounds(297, 299, 132, 23);
 		this.panel.add(this.lblForgotPassword);
 		
 		this.lblNoAccountSign = new JLabel("No Account? Sign Up!");
@@ -189,9 +200,20 @@ public class AllLogin extends JPanel{
 			}
 		});
 		this.lblNoAccountSign.setForeground(SystemColor.textInactiveText);
-		this.lblNoAccountSign.setFont(new Font("Yet R", Font.PLAIN, 15));
-		this.lblNoAccountSign.setBounds(125, 359, 231, 23);
+		this.lblNoAccountSign.setFont(new Font("Yet R", Font.PLAIN, 17));
+		this.lblNoAccountSign.setBounds(125, 359, 176, 23);
 		this.panel.add(this.lblNoAccountSign);
+		
+		this.label = new JLabel("-----------------");
+		this.label.setFont(new Font("Trebuchet MS", Font.BOLD, 20));
+		this.label.setBounds(207, 71, 141, 16);
+		this.panel.add(this.label);
+		
+		this.lblBackGround = new JLabel("");
+		this.lblBackGround.setBounds(0,0, main.getWidth(), main.getHeight());
+		background.setImage(background.getImage().getScaledInstance(lblBackGround.getWidth(), lblBackGround.getHeight(), Image.SCALE_DEFAULT));
+		lblBackGround.setIcon(background);
+		add(this.lblBackGround);
 		
 		
 	}

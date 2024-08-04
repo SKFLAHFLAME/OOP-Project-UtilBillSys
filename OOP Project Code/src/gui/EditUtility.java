@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import java.awt.Color;
 
 public class EditUtility extends JPanel{
 	MainFrame main;
@@ -45,30 +46,19 @@ public class EditUtility extends JPanel{
 		this.btnBack.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				try {
-					table.getCellEditor().stopCellEditing();
-				} catch (Exception e) {
-				}
-				main.closeAddFrame();
-				if (unsaved == true){
-					String[] options = {"Save", "No","Cancel"};
-					int selection = JOptionPane.showOptionDialog(null, "You have unsaved changes Save?", "Unsaved changes", 0,3,null,options,options[0]);
-					if(selection == 2){return;}
-					else if (selection ==0){updateItems();}
-				}
-				
-
-				if (main.getPrepage()==true){
+				if (!back()){return;}
+				if (main.getCurrentAcct()[0].equals("A")){
 					main.showAdminMenu();
 				}
 				else{main.showStaffMenu();}
 			}
 		});
 		this.btnBack.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		this.btnBack.setBounds(127, 414, 97, 25);
+		this.btnBack.setBounds(855, 558, 97, 25);
 		add(this.btnBack);
 		
 		this.btnDelete = new JButton("Delete");
+		this.btnDelete.setBackground(Color.RED);
 		this.btnDelete.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -87,11 +77,13 @@ public class EditUtility extends JPanel{
 				redraw();
 			}
 		});
-		this.btnDelete.setFont(new Font("Tahoma", Font.PLAIN, 17));
-		this.btnDelete.setBounds(12, 318, 117, 52);
+		this.btnDelete.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+		this.btnDelete.setBounds(810, 274, 187, 51);
 		add(this.btnDelete);
 		
 		this.btnAddUtility = new JButton("Add Utility");
+		this.btnAddUtility.setForeground(Color.BLACK);
+		this.btnAddUtility.setBackground(Color.RED);
 		this.btnAddUtility.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -99,8 +91,8 @@ public class EditUtility extends JPanel{
 				
 			}
 		});
-		this.btnAddUtility.setFont(new Font("Tahoma", Font.PLAIN, 17));
-		this.btnAddUtility.setBounds(162, 319, 117, 50);
+		this.btnAddUtility.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+		this.btnAddUtility.setBounds(810, 401, 187, 50);
 		add(this.btnAddUtility);
 		
 		this.btnUpdateUtility = new JButton("Update Utilities");
@@ -119,12 +111,12 @@ public class EditUtility extends JPanel{
 				updateItems();
 			}
 		});
-		this.btnUpdateUtility.setFont(new Font("Tahoma", Font.PLAIN, 17));
-		this.btnUpdateUtility.setBounds(291, 318, 175, 52);
+		this.btnUpdateUtility.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+		this.btnUpdateUtility.setBounds(810, 464, 187, 52);
 		add(this.btnUpdateUtility);
 		
 		this.scrollPane = new JScrollPane();
-		this.scrollPane.setBounds(12, 13, 454, 292);
+		this.scrollPane.setBounds(12, 83, 786, 560);
 		add(this.scrollPane);
 		
 		this.model = new DefaultTableModel(coloumnames, 0)
@@ -137,10 +129,12 @@ public class EditUtility extends JPanel{
 		    }
 		};
 		this.table = new JTable(model);
+		Font tableFont = new Font("Tahoma", Font.PLAIN, 20);
+		table.getTableHeader().setFont(tableFont);
 		table. getTableHeader(). setReorderingAllowed(false);
 		table.getTableHeader().setResizingAllowed(false);
 		this.table.setRowHeight(table.getRowHeight()+10);
-		this.table.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		this.table.setFont(tableFont);
 		this.table.addPropertyChangeListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent arg0) {
@@ -173,8 +167,8 @@ public class EditUtility extends JPanel{
 				main.showAddFrame();
 			}
 		});
-		this.btnEditWithFile.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		this.btnEditWithFile.setBounds(258, 414, 117, 25);
+		this.btnEditWithFile.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+		this.btnEditWithFile.setBounds(810, 338, 187, 50);
 		add(this.btnEditWithFile);
 		
 		this.btnClearRow = new JButton("Clear Row");
@@ -183,20 +177,23 @@ public class EditUtility extends JPanel{
 				clearRow();
 			}
 		});
-		this.btnClearRow.setFont(new Font("Tahoma", Font.PLAIN, 17));
-		this.btnClearRow.setBounds(12, 374, 117, 40);
+		this.btnClearRow.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+		this.btnClearRow.setBounds(810, 211, 187, 50);
 		add(this.btnClearRow);
-		main.setSize(500,500);
+		main.setSize(1020,720);
 		
+		TaskBar bar = new TaskBar(this, main);
 		init();
 	}
 	
 	public void init(){
-		if(main.getCurrentAcct()[0].equals("A")){btnUpdateUtility.setLocation(291,318);return;}
+		if(main.getCurrentAcct()[0].equals("A")){
+//			btnUpdateUtility.setLocation(291,318);
+			return;}
 		btnAddUtility.hide();
 		btnDelete.hide();
-		btnUpdateUtility.setLocation(291,318);
-		btnClearRow.setLocation(12,324);
+//		btnUpdateUtility.setLocation(291,318);
+//		btnClearRow.setLocation(12,324);
 	}
 	
 
@@ -352,5 +349,21 @@ public class EditUtility extends JPanel{
 		}
 		unsaved = true;
 		redraw();
+	}
+	
+	public boolean back(){
+		try {
+			table.getCellEditor().stopCellEditing();
+		} catch (Exception e) {
+		}
+		main.closeAddFrame();
+		if (unsaved == true){
+			String[] options = {"Save", "No","Cancel"};
+			int selection = JOptionPane.showOptionDialog(null, "You have unsaved changes Save?", "Unsaved changes", 0,3,null,options,options[0]);
+			if(!(selection == 1|| selection== 0)){return false;}
+			else if (selection ==0){updateItems();}
+		}
+		
+		return true;
 	}
 }

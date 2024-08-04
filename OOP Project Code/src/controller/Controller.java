@@ -387,7 +387,7 @@ public class Controller {
 
     public void syncData(){
     	//get current directory
-    	cdir = System.getProperty("java.class.path");
+    	cdir = System.getProperty("java.class.path").split(";")[0];
         if (!(System.getProperty("file.separator")=="/")){
             cdir = cdir.replace("\\", "/");}
         String[] cp = cdir.split("/");
