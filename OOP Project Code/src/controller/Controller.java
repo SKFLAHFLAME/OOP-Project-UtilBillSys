@@ -154,9 +154,7 @@ public class Controller {
     	Readings reading = ds.getReadings(readingName);
     	return Double.valueOf(meterReading)*reading.getPrice()+(Double.valueOf(meterReading)*reading.getPrice()*reading.getServiceCharge()/100);
     }
-    public double getStandardPrice() {
-        return 129.0; // Temporarily returning a fixed value for testing
-    }
+    
 
     
     //! User Readings
@@ -188,6 +186,10 @@ public class Controller {
     }
     public void addUserReading(String[][] userReading){
         ds.addUserReading(userReading);
+    }
+    
+    public String[][] getLastUserReading(String userName){
+    	return ds.getLastUserReading(userName);
     }
 
     public String[][][] getUserReading(String userName) {
@@ -365,7 +367,7 @@ public class Controller {
 
 
         //store into CSV files
-        cdir = System.getProperty("java.class.path");
+        cdir = System.getProperty("java.class.path").split(";")[0];
         if (!(System.getProperty("file.separator")=="/")){
             cdir = cdir.replace("\\", "/");}
         String[] cp = cdir.split("/");
@@ -388,6 +390,7 @@ public class Controller {
     public void syncData(){
     	//get current directory
     	cdir = System.getProperty("java.class.path").split(";")[0];
+        System.out.println(cdir);
         if (!(System.getProperty("file.separator")=="/")){
             cdir = cdir.replace("\\", "/");}
         String[] cp = cdir.split("/");

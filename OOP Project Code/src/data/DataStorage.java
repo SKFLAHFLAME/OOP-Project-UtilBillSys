@@ -243,8 +243,12 @@ public class DataStorage {
     }
 
     //add more here
-
-
+    
+    public String[][] getLastUserReading(String userName){
+    	String[][][] acctUR = this.getUserReadings(userName);
+    	String [][] last = acctUR[acctUR.length-1];
+    	return last;
+    }
 
     public String[][][] getUserReadings(String userName){
         Vector<String[][]> ureading = new Vector<>();

@@ -58,7 +58,8 @@ public class EditUtility extends JPanel{
 		add(this.btnBack);
 		
 		this.btnDelete = new JButton("Delete");
-		this.btnDelete.setBackground(Color.RED);
+		btnDelete.setForeground(Color.WHITE);
+		this.btnDelete.setBackground(new Color(255,50,50, 200));
 		this.btnDelete.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -82,8 +83,8 @@ public class EditUtility extends JPanel{
 		add(this.btnDelete);
 		
 		this.btnAddUtility = new JButton("Add Utility");
-		this.btnAddUtility.setForeground(Color.BLACK);
-		this.btnAddUtility.setBackground(Color.RED);
+		this.btnAddUtility.setForeground(Color.WHITE);
+		this.btnAddUtility.setBackground(new Color(255,50,50, 200));
 		this.btnAddUtility.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -129,6 +130,7 @@ public class EditUtility extends JPanel{
 		    }
 		};
 		this.table = new JTable(model);
+		table.setShowGrid(true);
 		Font tableFont = new Font("Tahoma", Font.PLAIN, 20);
 		table.getTableHeader().setFont(tableFont);
 		table. getTableHeader(). setReorderingAllowed(false);

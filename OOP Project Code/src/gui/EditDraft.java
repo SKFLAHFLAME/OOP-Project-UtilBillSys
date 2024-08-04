@@ -4,6 +4,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.sound.midi.VoiceStatus;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -21,10 +22,11 @@ import java.awt.event.ActionEvent;
 import java.awt.Color;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
+import javax.swing.JTextArea;
 
 public class EditDraft extends JPanel {
     MainFrame main;
-    private JButton btnDelete;
+    private JButton btnReset;
     private JButton btnAddUtility;
     private JButton btnUpdateUtility;
     private JScrollPane scrollPane;
@@ -37,8 +39,12 @@ public class EditDraft extends JPanel {
     private Object[] columnNames = {"Utility Name", "Meter Reading", "Previous Reading", "Price", "Tax", "Amount Used"};
     private JLabel lblError;
     private JButton btnEdit;
-    private JComboBox comboBox;
-    private JTextField txtReading;
+    private JScrollPane scrollPane_1;
+    private JTable tablePrice;
+    private JLabel lblDate;
+    private JTextArea txtrCurrentBill;
+    private JLabel lblBillPrice;
+    private JTextField txtTotal;
 
     public EditDraft(MainFrame main) {
         this.main = main;
@@ -46,7 +52,7 @@ public class EditDraft extends JPanel {
         setLayout(null);
 
         this.scrollPane = new JScrollPane();
-        this.scrollPane.setBounds(22, 81, 954, 292);
+        this.scrollPane.setBounds(22, 104, 954, 292);
         add(this.scrollPane);
 
         
@@ -58,6 +64,7 @@ public class EditDraft extends JPanel {
         };
         this.table = new JTable(model);
         table.setRowHeight(25);
+        table.setShowGrid(true);
         this.table. getTableHeader(). setReorderingAllowed(false);
 		this.table.getTableHeader().setResizingAllowed(false);
         this.table.setRowHeight(table.getRowHeight() + 10);
@@ -97,9 +104,9 @@ public class EditDraft extends JPanel {
         this.scrollPane.setColumnHeaderView(lblEditDraft);
         lblEditDraft.setFont(new Font("Tahoma", Font.PLAIN, 20));
 
-        btnDelete = new JButton("Delete");
-        btnDelete.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
-        btnDelete.addActionListener(new ActionListener() {
+        btnReset = new JButton("Reset");
+        btnReset.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+        btnReset.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 int edtRow = table.getSelectedRow();
@@ -113,8 +120,8 @@ public class EditDraft extends JPanel {
                 }
             }
         });
-        btnDelete.setBounds(405, 575, 129, 50);
-        add(btnDelete);
+        btnReset.setBounds(672, 491, 140, 50);
+        add(btnReset);
 
         JButton btnAdd = new JButton("Add");
         btnAdd.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
@@ -123,10 +130,10 @@ public class EditDraft extends JPanel {
                 main.showAddMeterReading();
             }
         });
-        btnAdd.setBounds(546, 576, 129, 50);
+        btnAdd.setBounds(790, 18, 129, 50);
         add(btnAdd);
 
-        JButton btnSubmit = new JButton("Submit");
+        JButton btnSubmit = new JButton("Confirm");
         btnSubmit.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
         btnSubmit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -138,7 +145,7 @@ public class EditDraft extends JPanel {
                 main.showCustMenu();
             }
         });
-        btnSubmit.setBounds(835, 576, 129, 47);
+        btnSubmit.setBounds(672, 569, 315, 47);
         add(btnSubmit);
         
         this.lblError = new JLabel("");
@@ -152,28 +159,64 @@ public class EditDraft extends JPanel {
         this.btnEdit.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		int sel = table.getSelectedRow();
-        		if (sel ==-1||sel==model.getRowCount()-1){return;}
+        		if (sel ==-1){return;}
         		String name = (String) table.getValueAt(sel, 0);
         		String mr= (String) table.getValueAt(sel, 1);
         		main.showEditMeterReading(name, mr);
         	}
         });
-        this.btnEdit.setBounds(687, 574, 129, 50);
+        this.btnEdit.setBounds(847, 491, 140, 50);
         add(this.btnEdit);
         
         TaskBar bar = new TaskBar(this, main);
         
-        this.comboBox = new JComboBox();
-        this.comboBox.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
-        this.comboBox.setBounds(130, 406, 213, 50);
-        add(this.comboBox);
+        this.scrollPane_1 = new JScrollPane();
+        this.scrollPane_1.setBounds(22, 414, 333, 241);
+        add(this.scrollPane_1);
         
-        this.txtReading = new JTextField();
-        this.txtReading.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
-        this.txtReading.setBounds(130, 499, 213, 50);
-        add(this.txtReading);
-        this.txtReading.setColumns(10);
+        this.tablePrice = new JTable();
+        this.tablePrice.setFont(new Font("Tahoma", Font.PLAIN, 13));
+        this.scrollPane_1.setViewportView(this.tablePrice);
+        
+        this.lblDate = new JLabel("Bill Date: ");
+        this.lblDate.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+        this.lblDate.setBounds(22, 65, 254, 26);
+        add(this.lblDate);
+        
+        this.txtrCurrentBill = new JTextArea();
+        this.txtrCurrentBill.setEditable(false);
+        this.txtrCurrentBill.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+        this.txtrCurrentBill.setText("Current Bill");
+        this.txtrCurrentBill.setBounds(367, 414, 276, 241);
+        add(this.txtrCurrentBill);
+        
+        this.lblBillPrice = new JLabel("Bill Price: ");
+        this.lblBillPrice.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+        this.lblBillPrice.setBounds(760, 414, 83, 35);
+        add(this.lblBillPrice);
+        
+        this.txtTotal = new JTextField();
+        this.txtTotal.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+        this.txtTotal.setEditable(false);
+        this.txtTotal.setText("$");
+        this.txtTotal.setBounds(847, 414, 129, 35);
+        add(this.txtTotal);
+        this.txtTotal.setColumns(10);
         redraw();
+        init();
+        
+    }
+    
+    public void init(){
+    	String [][] lastBill = main.getCont().getLastUserReading(main.getCurrentAcct()[1]);
+    	String text = "Current Bill: "+lastBill[0][2]+ '\n';
+    	int total =0;
+    	for (int i =0; i<lastBill.length-1; i++){
+    		text+= lastBill[i+1][0] +" : "+lastBill[i+1][1]+"\n";
+    		total+=Double.valueOf(lastBill[i+1][2]);
+    	}
+    	text+="Total : $"+total;
+    	txtrCurrentBill.setText(text);
     }
 
 	public void addRow(){

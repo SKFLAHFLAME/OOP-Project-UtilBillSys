@@ -58,7 +58,7 @@ public class TaskBar {
     	JPanel bar = new JPanel();
     	bar.setLayout(new FlowLayout(FlowLayout.LEADING));
     	bar.setBounds(0, 0, main.getWidth(), 40);
-    	bar.setBackground(new Color(255,50,50));
+    	bar.setBackground(new Color(255,50,50, 200));
     	panel.add(bar);
     	
     	JLabel editUtil = new JLabel("Edit Utility");
@@ -187,7 +187,7 @@ public class TaskBar {
     	JPanel bar = new JPanel();
     	bar.setLayout(new FlowLayout(FlowLayout.LEADING));
     	bar.setBounds(0, 0, main.getWidth(), 40);
-    	bar.setBackground(new Color(100,60,200));
+    	bar.setBackground(new Color(100,60,200, 200));
     	panel.add(bar);
     	
     	JLabel editUtil = new JLabel("Edit Utility");
@@ -282,7 +282,7 @@ public class TaskBar {
     	JPanel bar = new JPanel();
     	bar.setLayout(new FlowLayout(FlowLayout.LEADING));
     	bar.setBounds(0, 0, main.getWidth(), 40);
-    	bar.setBackground(new Color(0,75,200));
+    	bar.setBackground(new Color(0,75,200, 200));
     	panel.add(bar);
     	
     	bar.add(new JLabel(spacer));
