@@ -171,7 +171,7 @@ public class ViewAllBills extends JPanel{
 		
 		searchTree(comboMonth.getSelectedIndex(), comboYear.getSelectedItem(), textField.getText());
 		
-		TaskBar bar = new TaskBar(this, main);
+		main.addTaskBar(this);
 		
 		this.lblcaseSensetive = new JLabel("*Case Sensetive");
 		this.lblcaseSensetive.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
@@ -181,7 +181,7 @@ public class ViewAllBills extends JPanel{
 	}
 
 	
-	public void searchTree(Object M, Object Y, String user){
+	public void searchTree(Object M, Object Y, String user){//month in number, Year, userName
 		String month = String.format("%02d",M);
 		String year = (String) Y;
 		String[] monthList = {month};

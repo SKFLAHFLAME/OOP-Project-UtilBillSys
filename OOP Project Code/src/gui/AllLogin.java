@@ -35,8 +35,8 @@ import javax.swing.UIManager;
 
 public class AllLogin extends JPanel{
 	MainFrame main;
-	private ImageIcon logo = new ImageIcon(AllLogin.class.getResource("/data/logo.png"));
-	private ImageIcon background = new ImageIcon(AllLogin.class.getResource("/data/background.jpg"));
+	private ImageIcon logo ;
+	private ImageIcon background;
 	private JPanel panel;
 	private JLabel lblIcon;
 	private JLabel lblLogin;
@@ -58,6 +58,9 @@ public class AllLogin extends JPanel{
 		setBackground(new Color(135, 206, 250));
 		setLayout(null);
 		main.setSize(1020,720);
+		
+		logo = new ImageIcon(AllLogin.class.getResource(main.getLogoFP()));
+		background = new ImageIcon(AllLogin.class.getResource(main.getBackgroundFP()));
 		
 		this.panel = new JPanel();
 //		this.panel.setBackground(SystemColor.menu);

@@ -1,6 +1,5 @@
 package gui;
 
-import controller.MainFrame;
 import data.Staff;
 
 import java.awt.Font;
@@ -15,7 +14,7 @@ import javax.swing.JTextField;
 import javax.swing.JCheckBox;
 
 public class SAccountPage extends JPanel{
-	MainFrame main;
+	PopupDialog window;
 	String id;
 	String[] acct;
 	
@@ -29,11 +28,11 @@ public class SAccountPage extends JPanel{
 	private boolean editing=false;
 	private JCheckBox chckbxShowPassword;
 	
-	public SAccountPage(MainFrame m, String id){
-		this.main=m;
+	public SAccountPage(PopupDialog popupDialog, String id){
+		this.window=popupDialog;
 		this.id = id;
 		this.setLayout(null);
-		main.setSize(500,400);
+		window.setSize(500,400);
 
 
 		
@@ -47,20 +46,14 @@ public class SAccountPage extends JPanel{
 		this.lblPassword.setBounds(29, 139, 97, 40);
 		add(this.lblPassword);
 		
-		this.btnBack = new JButton("Back");
+		this.btnBack = new JButton("Close");
 		this.btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (editing == true){showNormalScreen();showAccount();return;}
-				if (main.getCurrentAcct()[0].equals("S")) {
-					main.showStaffMenu();
-				}else if (main.getCurrentAcct()[0].equals("A")) {
-					if (main.getCurrentAcct()[1].equals(id)){
-						main.showAdminMenu();}
-					else {main.showAllStaff();}
-				}
+				window.dispose();
 			}
 		});
-		this.btnBack.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		this.btnBack.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
 		this.btnBack.setBounds(12, 252, 131, 40);
 		add(this.btnBack);
 		
@@ -81,7 +74,7 @@ public class SAccountPage extends JPanel{
                 }
             }
 		});
-		this.btnEdit.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		this.btnEdit.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
 		this.btnEdit.setBounds(348, 252, 131, 40);
 		add(this.btnEdit);
 		
@@ -112,13 +105,13 @@ public class SAccountPage extends JPanel{
 				else{passwordField.setEchoChar((char)0x2022);}
 			}
 		});
-		this.chckbxShowPassword.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		this.chckbxShowPassword.setBounds(131, 186, 124, 28);
+		this.chckbxShowPassword.setFont(new Font("Tw Cen MT", Font.PLAIN, 17));
+		this.chckbxShowPassword.setBounds(131, 186, 173, 28);
 		add(this.chckbxShowPassword);
 		this.showAccount();
 		this.showNormalScreen();
 		
-		main.setSize((textField.getLocation().x+textField.getSize().width+40),(btnEdit.getLocation().y+btnEdit.getSize().height+60));
+		window.setSize((textField.getLocation().x+textField.getSize().width+40),(btnEdit.getLocation().y+btnEdit.getSize().height+60));
 		
 
 	}
@@ -128,7 +121,7 @@ public class SAccountPage extends JPanel{
 		editing=true;
 		btnEdit.setText("Finish");
 		btnBack.setText("Cancel");
-		if (main.getCurrentAcct()[0].equals("A")){
+		if (window.main.getCurrentAcct()[0].equals("A")){
 			textField.setEditable(true);}
 		passwordField.setEditable(true);
 		passwordField.setEchoChar((char)0);
@@ -139,7 +132,7 @@ public class SAccountPage extends JPanel{
 	public void showNormalScreen(){
 		editing = false;
 		btnEdit.setText("Edit");
-		btnBack.setText("Back");
+		btnBack.setText("Close");
 		textField.setEditable(false);
 		passwordField.setEditable(false);
 		chckbxShowPassword.show();
@@ -147,18 +140,18 @@ public class SAccountPage extends JPanel{
 		passwordField.setEchoChar((char)0x2022);
 		if (this.id.equals("admin")){
 			btnEdit.hide();
-			btnBack.setLocation((main.getWidth()/2)-(btnBack.getSize().width/2), 252);
+			btnBack.setLocation((window.getWidth()/2)-(btnBack.getSize().width/2), 252);
 		}
 		
 	}
 	
 	public void showAccount(){
-		acct = main.getCont().getStaff(id);
+		acct = window.main.getCont().getStaff(id);
 		textField.setText(acct[0]);
 		passwordField.setText(acct[1]);
 	}
 	public void saveChanges(String id, String password){
-		main.getCont().editStaff(acct[0], id, password);
+		window.main.getCont().editStaff(acct[0], id, password);
 		this.id = id;
 		showAccount();
 	}

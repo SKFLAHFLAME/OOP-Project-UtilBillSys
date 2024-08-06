@@ -1,26 +1,31 @@
 package gui;
 
+import javax.sound.midi.VoiceStatus;
 import javax.swing.*;
 
 import controller.MainFrame;
 import data.Readings;
 
 import java.awt.Color;
+import java.awt.ComponentOrientation;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.SystemColor;
+import java.awt.FlowLayout;
 
 public class CMenu extends JPanel{
     MainFrame main;
+    private String[] date;
 	private JButton btnShowHistoryScreen;
 	private JButton btnViewCurrentDraft;
 	private JPanel panel;
 	private JLabel lblBackground;
-	private ImageIcon logo = new ImageIcon(this.getClass().getResource("/data/logo.png"));
-	private ImageIcon background = new ImageIcon(this.getClass().getResource("/data/background.jpg"));
+	private ImageIcon logo = new ImageIcon(this.getClass().getResource("/images/logo.png"));
+	private ImageIcon background = new ImageIcon(this.getClass().getResource("/images/background.jpg"));
 	private JLabel lblLogo;
 	private JTextArea txtrCurrentPrices;
 	private JLabel lblPsGroup;
@@ -30,18 +35,20 @@ public class CMenu extends JPanel{
 	private JTextArea txtrDate;
 	private JScrollPane scrollPane;
 	private JScrollPane scrollPane_1;
+	private JLabel lblAccessCustomer;
+	private JLabel lblAcct;
+	private JPanel panel_1;
 
     public CMenu(MainFrame main){
     	setBackground(new Color(135, 206, 250));
         this.main = main;
         this.setLayout(null);
         main.setSize(1020,720);
-        
-        TaskBar bar = new TaskBar(this, main);
+        main.addTaskBar(this);
         
         this.panel = new JPanel();
         panel.setBackground(new Color((224.0f/255.0f),(224.0f/255.0f),(224.0f/255.0f), 0.95f));
-        this.panel.setBounds(204, 57, 606, 599);
+        this.panel.setBounds(204, 57, 606, 600);
         add(this.panel);
         this.panel.setLayout(null);
         
@@ -70,11 +77,18 @@ public class CMenu extends JPanel{
         txtrDate.setEditable(false);
         this.txtrDate.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
         this.txtrDate.setText("Date:");
-        this.txtrDate.setBounds(481, 39, 113, 63);
+        this.txtrDate.setBounds(12, 39, 113, 63);
         this.panel.add(this.txtrDate);
         
         JButton btnLogOut = new JButton("Log out");
-        btnLogOut.setBounds(211, 546, 115, 29);
+        btnLogOut.setFont(new Font("Tahoma", Font.PLAIN, 20));
+        btnLogOut.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent arg0) {
+        		main.clearCurrentAcct();
+        		main.showAllLogin();
+        	} 
+        });
+        btnLogOut.setBounds(248, 536, 113, 39);
         this.panel.add(btnLogOut);
         
         this.btnViewCurrentDraft = new JButton("Edit");
@@ -84,14 +98,14 @@ public class CMenu extends JPanel{
         btnViewCurrentDraft.addActionListener(new ActionListener() {
         	@Override
         	public void actionPerformed(ActionEvent arg0) {
-        		if (!main.getCont().hasDraft(main.getCurrentAcct()[1])){
-            		main.setPrepage(true);
-            		main.showAddMeterReading();
-            	}
-        		else {
+//        		if (!main.getCont().hasDraft(main.getCurrentAcct()[1])){
+//            		main.setPrepage(true);
+//            		main.showAddMeterReading();
+//            	}
+//        		else {
         			main.setPrepage(false);
-        			main.showEditDraft();
-        		}
+        			main.showEditDraft(main.getCurrentAcct()[1]);
+//        		}
         		
         	}
         });
@@ -135,14 +149,42 @@ public class CMenu extends JPanel{
         this.scrollPane_1.setViewportView(this.txtrCurrentPrices);
         txtrCurrentPrices.setEditable(false);
         //        txtrCurrentPrices.setOpaque(false);
-                this.txtrCurrentPrices.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
-                this.txtrCurrentPrices.setText("Current Prices");
-        btnLogOut.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent arg0) {
-        		main.clearCurrentAcct();
-        		main.showAllLogin();
+        this.txtrCurrentPrices.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+        this.txtrCurrentPrices.setText("Current Prices");
+        
+        this.panel_1 = new JPanel();
+        this.panel_1.setBackground(Color.WHITE);
+        this.panel_1.addMouseListener(new MouseAdapter() {
+        	@Override
+        	public void mouseEntered(MouseEvent e) {
+        		panel_1.setBackground(SystemColor.control);
+        	}
+        	@Override
+        	public void mouseExited(MouseEvent e) {
+        		panel_1.setBackground(Color.WHITE);
+        	}
+        	@Override
+        	public void mouseClicked(MouseEvent e) {
+        		main.showPopup("CAccount", main.getCurrentAcct()[1]);
         	}
         });
+        this.panel_1.setBounds(443, 39, 151, 55);
+        panel_1.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        this.panel.add(this.panel_1);
+        this.panel_1.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        
+        this.lblAcct = new JLabel("Acct");
+        this.panel_1.add(this.lblAcct);
+        this.lblAcct.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
+        this.lblAcct.setHorizontalAlignment(SwingConstants.TRAILING);
+        
+        this.lblAccessCustomer = new JLabel("Access: Customer");
+        this.panel_1.add(this.lblAccessCustomer);
+        this.lblAccessCustomer.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
+        this.lblAccessCustomer.setHorizontalAlignment(SwingConstants.TRAILING);
+                
+                
+        
         
         this.lblBackground = new JLabel("");
         this.lblBackground.setBounds(0, 0, 1000, 700);
@@ -153,9 +195,22 @@ public class CMenu extends JPanel{
         
         
         
-        showDate();
+        init();
+    }
+    
+    public void init(){
+    	showDate();
         showPrices();
         showCurrentBill();
+        showAcctDetails();
+        checkEditStatus();
+        
+    }
+    
+    public void checkEditStatus(){
+    	if (!main.getCont().checkEditStatus(main.getCurrentAcct()[1])){
+    		btnViewCurrentDraft.setEnabled(false);
+    	}
     }
     
     public void showPrices(){
@@ -169,23 +224,31 @@ public class CMenu extends JPanel{
     }
     
     public void showCurrentBill(){
-    	String [][] lastBill = main.getCont().getLastUserReading(main.getCurrentAcct()[1]);
+    	String [][] lastBill;
+        lastBill = main.getCont().getLastUserReading(main.getCurrentAcct()[1]);
+        if (lastBill != null){
+        	String text = "Latest Bill: "+lastBill[0][2]+ '\n';
+        	double total =0;
+        	for (int i =0; i<lastBill.length-1; i++){
+        		text+= lastBill[i+1][0] +" : "+lastBill[i+1][1]+"\n";
+        		total+=Double.valueOf(lastBill[i+1][2]);
+        	}
+        	text+="Total : $"+String.format("%.2f", total);
+        	txtrCurrentBill.setText(text);
+        }
+        else {txtrCurrentBill.setText("No History");}
     	
-    	if (lastBill.length ==0){txtrCurrentBill.setText("No History");;return;}
-    	String text = "Latest Bill: "+lastBill[0][2]+ '\n';
-    	int total =0;
-    	for (int i =0; i<lastBill.length-1; i++){
-    		text+= lastBill[i+1][0] +" : "+lastBill[i+1][1]+"\n";
-    		total+=Double.valueOf(lastBill[i+1][2]);
-    	}
-    	text+="Total : $"+total;
-    	txtrCurrentBill.setText(text);
     	
     	
     }
     public void showDate(){
-    	String[] date = main.getCont().getSystemDate();
+    	date = main.getCont().getSystemDate();
     	String d = "Date: \n"+String.join(" / ", date);
     	txtrDate.setText(d);
+    }
+    public void showAcctDetails(){
+    	String text = "Welcome "+main.getCurrentAcct()[1];
+    	
+    	lblAcct.setText(text);
     }
 }

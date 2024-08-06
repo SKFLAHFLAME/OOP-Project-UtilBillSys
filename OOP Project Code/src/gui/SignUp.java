@@ -46,17 +46,21 @@ public class SignUp extends JPanel{
 	private JCheckBox chckbxShowPassword;
 	private JButton btnSignUp;
 	private JPanel panel;
-	private JLabel lblAddress;
-	private JTextField txtAddress;
+	private JLabel lblPostal;
 	private JLabel lblUsernameCannotBe;
 	private JLabel lblLogo;
 	private JLabel lblPsGroup;
 	private JLabel lblRegistration;
 	private JLabel lblBackground;
 	
-	private ImageIcon logo = new ImageIcon(this.getClass().getResource("/data/logo.png"));
-	private ImageIcon background = new ImageIcon(this.getClass().getResource("/data/background.jpg"));
+	private ImageIcon logo = new ImageIcon(this.getClass().getResource("/images/logo.png"));
+	private ImageIcon background = new ImageIcon(this.getClass().getResource("/images/background.jpg"));
 	private JLabel label;
+	private JTextField txtPostal;
+	private JLabel lblUnitNo;
+	private JTextField txtUnitNo;
+	private JLabel lblAddress_1;
+	private JLabel label_1;
 	
 	public SignUp(MainFrame m) {
 		setBackground(new Color(135, 206, 250));
@@ -104,32 +108,6 @@ public class SignUp extends JPanel{
 		this.panel.add(this.txtEmail);
 		this.txtEmail.setFont(new Font("Trebuchet MS", Font.PLAIN, 23));
 		this.txtEmail.setColumns(10);
-		
-		this.txtAddress = new JTextField();
-		this.txtAddress.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent arg0) {
-				char key = arg0.getKeyChar();
-				if (Character.isDigit(key)||
-						(key==KeyEvent.VK_COMMA&&!txtAddress.getText().contains(","))||
-						(key==KeyEvent.VK_MINUS&&!txtAddress.getText().contains("-"))||
-						(key==KeyEvent.VK_SPACE&&!txtAddress.getText().contains(" "))){
-					return;
-				}
-				arg0.consume();
-			}
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.getKeyChar() == KeyEvent.VK_ENTER){
-					registration();
-				}
-			}
-		});
-		this.txtAddress.setToolTipText("Postal Code, Unit No.\r\n");
-		this.txtAddress.setBounds(141, 301, 278, 45);
-		this.txtAddress.setFont(new Font("Trebuchet MS", Font.PLAIN, 23));
-		this.panel.add(this.txtAddress);
-		this.txtAddress.setColumns(10);
 		
 		this.txtUName = new JTextField();
 		this.txtUName.setBounds(572, 194, 278, 45);
@@ -238,10 +216,10 @@ public class SignUp extends JPanel{
 		this.panel.add(this.btnSignUp);
 		this.btnSignUp.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
 		
-		this.lblAddress = new JLabel("Address: ");
-		this.lblAddress.setFont(new Font("Tw Cen MT", Font.BOLD, 25));
-		this.lblAddress.setBounds(12, 301, 117, 45);
-		this.panel.add(this.lblAddress);
+		this.lblPostal = new JLabel("Postal Code");
+		this.lblPostal.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+		this.lblPostal.setBounds(141, 337, 111, 25);
+		this.panel.add(this.lblPostal);
 		
 		this.lblUsernameCannotBe = new JLabel("*Username cannot be changed");
 		this.lblUsernameCannotBe.setFont(new Font("Tw Cen MT", Font.ITALIC, 20));
@@ -270,6 +248,50 @@ public class SignUp extends JPanel{
 		this.label.setBounds(449, 72, 124, 16);
 		this.panel.add(this.label);
 		
+		this.txtPostal = new JTextField();
+		this.txtPostal.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+		this.txtPostal.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent arg0) {
+				if ((Character.isDigit(arg0.getKeyChar()))){return;}
+				arg0.consume();
+			}
+		});
+		this.txtPostal.setToolTipText("Postal Code");
+		this.txtPostal.setBounds(141, 303, 128, 35);
+		this.panel.add(this.txtPostal);
+		this.txtPostal.setColumns(10);
+		
+		this.lblUnitNo = new JLabel("Unit No");
+		this.lblUnitNo.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+		this.lblUnitNo.setBounds(314, 337, 90, 25);
+		this.panel.add(this.lblUnitNo);
+		
+		this.txtUnitNo = new JTextField();
+		this.txtUnitNo.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+		this.txtUnitNo.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				char key = e.getKeyChar();
+				if (Character.isDigit(key) || (key=='-'&&!(txtUnitNo.getText().contains("-")))){return;}
+				e.consume();
+			}
+		});
+		this.txtUnitNo.setBounds(308, 303, 111, 35);
+		this.panel.add(this.txtUnitNo);
+		this.txtUnitNo.setColumns(10);
+		
+		this.lblAddress_1 = new JLabel("Address:");
+		this.lblAddress_1.setFont(new Font("Tw Cen MT", Font.BOLD, 25));
+		this.lblAddress_1.setBounds(12, 300, 117, 35);
+		this.panel.add(this.lblAddress_1);
+		
+		this.label_1 = new JLabel("#");
+		this.label_1.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+		this.label_1.setHorizontalAlignment(SwingConstants.RIGHT);
+		this.label_1.setBounds(281, 308, 23, 25);
+		this.panel.add(this.label_1);
+		
 		this.lblBackground = new JLabel();
 		this.lblBackground.setBounds(0, 0, main.getWidth(), main.getHeight());
 		background.setImage(background.getImage().getScaledInstance(main.getWidth(), main.getHeight(), Image.SCALE_DEFAULT));
@@ -284,13 +306,14 @@ public class SignUp extends JPanel{
 	public void registration(){
 		String name = txtName.getText();
 		String email = txtEmail.getText();
-		String addr = txtAddress.getText();
+		String postal = txtPostal.getText();
+		String unitNo = txtUnitNo.getText();
 		String uName = txtUName.getText();
 		String pass = new String(passwordField.getPassword());
-		if (name.isEmpty() ||email.isEmpty() ||addr.isEmpty() ||uName.isEmpty() ||pass.isEmpty()) {
+		if (name.isEmpty() ||email.isEmpty() ||postal.isEmpty()||unitNo.isEmpty() ||uName.isEmpty() ||pass.isEmpty()) {
 			lblErrors.setText("Fields are Blank"); return;
 		}
-		if(uName.contains(" ")||pass.contains(" ")){
+		if(uName.contains(" ")||pass.contains(" ")||email.contains(" ")){
 			lblErrors.setText("Fields contains Spaces");
 			return;
 		}
@@ -298,17 +321,17 @@ public class SignUp extends JPanel{
 			lblErrors.setText("Please Enter Proper Email");
 			return;
 		}
-		if (!addr.contains(",")){
-			lblErrors.setText("Address format in \"Postal Code, Unit No. \" e.g.(512345, 0x-xxx) ");
-			return;
-		}
+//		if (!unitNo.contains("-")){
+//			lblErrors.setText("Unit Number format in 01-123A");
+//			return;
+//		}
 		
 		if(main.getCont().isUser(uName)||main.getCont().isStaff(uName)){
 			lblErrors.setText("Username Already in Use");
 			return;
 		}
 		
-		main.getCont().addUser(uName, pass, name, email, addr);
+		main.getCont().addUser(uName, pass, name, email, String.join(":", postal, unitNo));
 		main.showAllLogin();
 			
 	}

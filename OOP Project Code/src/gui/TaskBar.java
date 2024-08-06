@@ -14,6 +14,8 @@ import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import controller.MainFrame;
 
@@ -21,8 +23,13 @@ public class TaskBar {
 	MainFrame main;
 	private JPanel panel;
 	private Font font = new Font("Trebuchet MS", Font.PLAIN, 24);
-	private Font selected = new Font("Trebuchet MS", Font.BOLD, 25);
+	private Font selected = new Font("Trebuchet MS", Font.BOLD, 24);
 	private String currentPanel;
+	
+	
+	ImageIcon calicon = new ImageIcon(this.getClass().getResource("/images/calendar.png"));
+	ImageIcon proicon = new ImageIcon(this.getClass().getResource("/images/profile.png"));
+	ImageIcon exitIcon = new ImageIcon(this.getClass().getResource("/images/logout.png"));
 	
 	public TaskBar(JPanel panel, MainFrame m){
 		main=m;
@@ -53,13 +60,26 @@ public class TaskBar {
 	
 	public void adminBar(){
     	String spacer = "  ";
-    	int gap = 24;
+    	int gap = 27;
  
     	JPanel bar = new JPanel();
     	bar.setLayout(new FlowLayout(FlowLayout.LEADING));
     	bar.setBounds(0, 0, main.getWidth(), 40);
-    	bar.setBackground(new Color(255,50,50, 200));
+    	bar.setBackground(new Color(255,90,90));
     	panel.add(bar);
+    	
+    	JLabel adminpg = new JLabel("Home");
+    	adminpg.setToolTipText("Admin Page");
+    	adminpg.setForeground(Color.WHITE);
+    	adminpg.setFont(font);
+    	adminpg.addMouseListener(new MouseAdapter() {
+    		public void mouseClicked(MouseEvent e){
+    			main.showAdminMenu();;
+    		}
+    	});
+    	bar.add(adminpg);
+    	
+    	bar.add(new JLabel(spacer));
     	
     	JLabel editUtil = new JLabel("Edit Utility");
     	editUtil.setToolTipText("Edit Utility Details");
@@ -74,19 +94,19 @@ public class TaskBar {
     	
     	bar.add(new JLabel(spacer));
     	
-    	JLabel editStaff = new JLabel("Edit Staff");
-    	editStaff.setToolTipText("Add/Edit Staff Accounts");
-    	editStaff.setForeground(Color.WHITE);
-    	editStaff.setFont(font);
-    	editStaff.addMouseListener(new MouseAdapter() {
-    		public void mouseClicked(MouseEvent e){
-    			main.showAllStaff();
-    		}
-    	});
-    	bar.add(editStaff);
-    	
-    	
-    	bar.add(new JLabel(spacer));
+//    	JLabel editStaff = new JLabel("Edit Staff");
+//    	editStaff.setToolTipText("Add/Edit Staff Accounts");
+//    	editStaff.setForeground(Color.WHITE);
+//    	editStaff.setFont(font);
+//    	editStaff.addMouseListener(new MouseAdapter() {
+//    		public void mouseClicked(MouseEvent e){
+//    			main.showAllStaff();
+//    		}
+//    	});
+//    	bar.add(editStaff);
+//    	
+//    	
+//    	bar.add(new JLabel(spacer));
     	
     	
     	JLabel viewCust = new JLabel("View Customers");
@@ -131,10 +151,10 @@ public class TaskBar {
     	calendar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				main.showEditDate();
+				main.showPopup("Date", "");
 			}
 		});
-    	ImageIcon calicon = new ImageIcon(this.getClass().getResource("/data/calendar.png"));
+    	
     	calicon.setImage(calicon.getImage().getScaledInstance(30, 30, Image.SCALE_DEFAULT));
     	calendar.setIcon(calicon);
     	bar.add(calendar);
@@ -148,10 +168,10 @@ public class TaskBar {
     	profile.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				main.showStaffAccount(main.getCurrentAcct()[1]);
+				main.showPopup("SAccount", main.getCurrentAcct()[1]);
 			}
 		});
-    	ImageIcon proicon = new ImageIcon(this.getClass().getResource("/data/profile.png"));
+    	
     	proicon.setImage(proicon.getImage().getScaledInstance(35, 35, Image.SCALE_DEFAULT));
     	profile.setIcon(proicon);
     	bar.add(profile);
@@ -169,7 +189,7 @@ public class TaskBar {
     			main.flag = false;
 			}
 		});
-    	ImageIcon exitIcon = new ImageIcon(this.getClass().getResource("/data/logout.png"));
+    	
     	exitIcon.setImage(exitIcon.getImage().getScaledInstance(40,35, Image.SCALE_DEFAULT));
     	exit.setIcon(exitIcon);
     	bar.add(exit);
@@ -182,13 +202,26 @@ public class TaskBar {
 	
 	public void staffBar(){
     	String spacer = "  ";
-    	int gap = 37;
+    	int gap = 31;
     	
     	JPanel bar = new JPanel();
     	bar.setLayout(new FlowLayout(FlowLayout.LEADING));
     	bar.setBounds(0, 0, main.getWidth(), 40);
-    	bar.setBackground(new Color(100,60,200, 200));
+    	bar.setBackground(new Color(135,100,210));
     	panel.add(bar);
+    	
+    	JLabel staffpg = new JLabel("Home");
+    	staffpg.setToolTipText("Staff Page");
+    	staffpg.setForeground(Color.WHITE);
+    	staffpg.setFont(font);
+    	staffpg.addMouseListener(new MouseAdapter() {
+    		public void mouseClicked(MouseEvent e){
+    			main.showStaffMenu();;
+    		}
+    	});
+    	bar.add(staffpg);
+    	
+    	bar.add(new JLabel(spacer));
     	
     	JLabel editUtil = new JLabel("Edit Utility");
     	editUtil.setToolTipText("Edit Utility Details");
@@ -243,10 +276,9 @@ public class TaskBar {
     	profile.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				main.showStaffAccount(main.getCurrentAcct()[1]);
+				main.showPopup("SAccount", main.getCurrentAcct()[1]);
 			}
 		});
-    	ImageIcon proicon = new ImageIcon(this.getClass().getResource("/data/profile.png"));
     	proicon.setImage(proicon.getImage().getScaledInstance(35, 35, Image.SCALE_DEFAULT));
     	profile.setIcon(proicon);
     	bar.add(profile);
@@ -263,7 +295,6 @@ public class TaskBar {
     			main.flag = false;
 			}
 		});
-    	ImageIcon exitIcon = new ImageIcon(this.getClass().getResource("/data/logout.png"));
     	exitIcon.setImage(exitIcon.getImage().getScaledInstance(40,35, Image.SCALE_DEFAULT));
     	exit.setIcon(exitIcon);
     	bar.add(exit);
@@ -275,17 +306,15 @@ public class TaskBar {
 	
 	
 	public void customerBar(){
-    	String spacer = "  ";
-    	int gap = 44;
+    	int xPos =5;
     	
     	
     	JPanel bar = new JPanel();
-    	bar.setLayout(new FlowLayout(FlowLayout.LEADING));
+    	bar.setLayout(null);
     	bar.setBounds(0, 0, main.getWidth(), 40);
     	bar.setBackground(new Color(0,75,200, 200));
     	panel.add(bar);
     	
-    	bar.add(new JLabel(spacer));
     	
     	JLabel home = new JLabel("Home");
     	home.setToolTipText("View Bill History");
@@ -293,7 +322,6 @@ public class TaskBar {
     	home.setFont(font);
     	if(currentPanel.equals("CMenu")){
     		home.setFont(selected);
-    		gap = gap-1;
     	}
     	else{
     		home.addMouseListener(new MouseAdapter() {
@@ -302,9 +330,11 @@ public class TaskBar {
         		}
         	});
     	}
+    	home.setHorizontalAlignment(SwingConstants.CENTER);
+    	home.setBounds(xPos, 5, 80, 30);
+    	xPos+=home.getWidth();
     	bar.add(home);
     	
-    	bar.add(new JLabel(spacer));
     	
     	
     	JLabel viewHist = new JLabel("View History");
@@ -313,7 +343,6 @@ public class TaskBar {
     	viewHist.setFont(font);
     	if(currentPanel.equals("ViewHistoryScreen")){
     		viewHist.setFont(selected);
-    		gap = gap-2;
     	}
     	else{
     		viewHist.addMouseListener(new MouseAdapter() {
@@ -322,9 +351,11 @@ public class TaskBar {
         		}
         	});
     	}
+    	viewHist.setHorizontalAlignment(SwingConstants.CENTER);
+    	viewHist.setBounds(xPos, 5, 150, 30);
+    	xPos+=viewHist.getWidth();
     	bar.add(viewHist);
     	
-    	bar.add(new JLabel(spacer));
     	
     	JLabel editDraft = new JLabel("Edit Draft");
     	editDraft.setToolTipText("Edit Month's Bill");
@@ -332,33 +363,26 @@ public class TaskBar {
     	editDraft.setFont(font);
     	if (currentPanel.equals("EditDraft")){
     		editDraft.setFont(selected);
-    		gap = gap-2;
     	}
     	else {
     		editDraft.addMouseListener(new MouseAdapter() {
     		public void mouseClicked(MouseEvent e){
-    			if (!main.getCont().hasDraft(main.getCurrentAcct()[1])){
-            		main.setPrepage(true);
-            		main.showAddMeterReading();
-            	}
-        		else {
+    			
         			main.setPrepage(false);
-        			main.showEditDraft();
-        		}
+        			main.showEditDraft(main.getCurrentAcct()[1]);
+        		
     		}
     	});}
+    	editDraft.setHorizontalAlignment(SwingConstants.CENTER);
+    	editDraft.setBounds(xPos, 5, 130, 30);
+    	xPos+=editDraft.getWidth();
     	bar.add(editDraft);
     	
-    	
-    	
-
-    	
-    	//spacer
-    	JLabel[] labels = new JLabel[gap];
-    	for (JLabel x: labels){
-    		x = new JLabel(spacer);
-    		bar.add(x);
+    	if (!main.getCont().checkEditStatus(main.getCurrentAcct()[1])){
+    		editDraft.hide();
     	}
+    	
+    	
 
     	
     	
@@ -369,12 +393,14 @@ public class TaskBar {
     	profile.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				//show Customer Account
+				main.showPopup("CAccount", main.getCurrentAcct()[1]);
 			}
 		});
-    	ImageIcon proicon = new ImageIcon(this.getClass().getResource("/data/profile.png"));
     	proicon.setImage(proicon.getImage().getScaledInstance(35, 35, Image.SCALE_DEFAULT));
     	profile.setIcon(proicon);
+    	profile.setSize(30, 30);
+    	profile.setLocation(main.getWidth()-4*profile.getWidth(), 5);
+    	profile.setHorizontalAlignment(SwingConstants.CENTER);
     	bar.add(profile);
     	
     	
@@ -390,9 +416,11 @@ public class TaskBar {
     			main.flag = false;
 			}
 		});
-    	ImageIcon exitIcon = new ImageIcon(this.getClass().getResource("/data/logout.png"));
     	exitIcon.setImage(exitIcon.getImage().getScaledInstance(40,35, Image.SCALE_DEFAULT));
     	exit.setIcon(exitIcon);
+    	exit.setSize(30, 30);
+    	exit.setLocation(main.getWidth()-2*exit.getWidth(), 5);
+    	exit.setHorizontalAlignment(SwingConstants.CENTER);
     	bar.add(exit);
     	
     }

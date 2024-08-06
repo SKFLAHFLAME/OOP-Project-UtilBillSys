@@ -4,10 +4,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.print.attribute.standard.MediaName;
 import javax.sound.midi.VoiceStatus;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import java.awt.Font;
+import java.awt.Image;
+
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -17,12 +21,18 @@ import controller.MainFrame;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.lang.management.ManagementPermission;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.JTextArea;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class EditDraft extends JPanel {
     MainFrame main;
@@ -30,13 +40,15 @@ public class EditDraft extends JPanel {
     private JButton btnAddUtility;
     private JButton btnUpdateUtility;
     private JScrollPane scrollPane;
-    
+    private ImageIcon logo = new ImageIcon(EditDraft.class.getResource("/images/logo.png"));
+    private ImageIcon background = new ImageIcon(EditDraft.class.getResource("/images/background.jpg"));
     private String[][] draft;
     private JTable table;
     private String[][] data;
     private boolean unsaved = false;
     private DefaultTableModel model;
-    private Object[] columnNames = {"Utility Name", "Meter Reading", "Previous Reading", "Price", "Tax", "Amount Used"};
+    private DefaultTableModel priceModel;
+    private Object[] columnNames = {"Utility Name", "Meter Reading", "Previous Reading", "Amount Used", "Cost"};
     private JLabel lblError;
     private JButton btnEdit;
     private JScrollPane scrollPane_1;
@@ -45,14 +57,36 @@ public class EditDraft extends JPanel {
     private JTextArea txtrCurrentBill;
     private JLabel lblBillPrice;
     private JTextField txtTotal;
+    private JLabel lblBackGround;
+    private JLabel lblFilter;
+    private JLabel lblLogo;
+    private JLabel lblPsGroup;
+    private String [][] lastBill;
+    private String[] billDate;
+    private String[] sysDate;
+    private String userName;
+    private JButton btnBack;
 
-    public EditDraft(MainFrame main) {
+    public EditDraft(MainFrame main, String user) {
         this.main = main;
         main.setSize(1020,720);
         setLayout(null);
+        main.addTaskBar(this);
+        userName = user;
+        lastBill = main.getCont().getLastUserReading(userName);
+        
+        sysDate = main.getCont().getSystemDate();
+        
+        
+        try {
+        	billDate = lastBill[0][2].split("/");
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+        
 
         this.scrollPane = new JScrollPane();
-        this.scrollPane.setBounds(22, 104, 954, 292);
+        this.scrollPane.setBounds(12, 120, 977, 292);
         add(this.scrollPane);
 
         
@@ -63,40 +97,31 @@ public class EditDraft extends JPanel {
             }
         };
         this.table = new JTable(model);
+        this.table.addMouseListener(new MouseAdapter() {
+        	@Override
+        	public void mouseClicked(MouseEvent arg0) {
+        		if (arg0.getClickCount()==2){
+        			int sel = table.getSelectedRow();
+            		if (sel ==-1){return;}
+            		String name = (String) table.getValueAt(sel, 0);
+            		String mr= (String) table.getValueAt(sel, 1);
+            		main.showPopup("EditMeterReading", String.join(",", userName,name, mr));
+        		}
+        	}
+        });
         table.setRowHeight(25);
         table.setShowGrid(true);
         this.table. getTableHeader(). setReorderingAllowed(false);
 		this.table.getTableHeader().setResizingAllowed(false);
         this.table.setRowHeight(table.getRowHeight() + 10);
-        table.getColumnModel().getColumn(0).setPreferredWidth(120);
+        table.getColumnModel().getColumn(0).setPreferredWidth(100);
         table.getColumnModel().getColumn(1).setPreferredWidth(80);
-        table.getColumnModel().getColumn(2).setPreferredWidth(10);
+        table.getColumnModel().getColumn(2).setPreferredWidth(80);
         table.getColumnModel().getColumn(3).setPreferredWidth(40);
         table.getColumnModel().getColumn(4).setPreferredWidth(30);
-        table.getColumnModel().getColumn(5).setPreferredWidth(90);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         this.table.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
         this.table.getTableHeader().setFont(new Font("Trebuchet MS", Font.PLAIN, 25));
-        this.table.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent arg0) {
-                int editedRow = table.getEditingRow();
-                int editedCol = table.getEditingColumn();
-                if (editedRow == -1 || editedCol == -1) {
-                    return;
-                }
-                unsaved = true;
-                Object item = table.getValueAt(editedRow, editedCol);
-                if (editedCol == 1 || editedCol == 3) {
-                    if (item.equals("")) {
-                        item = 0.0;
-                    }
-                }
-                Object[] i = {editedRow, editedCol, item};
-                System.out.println(item);
-                System.out.println(i[0] + ", " + i[1] + ", " + i[2]);
-            }
-        });
         this.scrollPane.setViewportView(this.table);
         
         
@@ -112,40 +137,39 @@ public class EditDraft extends JPanel {
                 int edtRow = table.getSelectedRow();
                 if (edtRow == -1){return;}
                 String[] options = {"Yes", "No"};
-				int sel = JOptionPane.showOptionDialog(null, "Confirm Deletion?", "Delete", 0, 3, null, options, options[1]);
+				int sel = JOptionPane.showOptionDialog(null, "Confirm Reset?", "Reset", 0, 3, null, options, options[1]);
 				if(sel != 0){return;}
-                deleteRow(edtRow);
-                if (!main.getCont().hasDraft(main.getCurrentAcct()[1])){
-                	main.showAddMeterReading();
-                }
+                resetRow(edtRow);
             }
         });
-        btnReset.setBounds(672, 491, 140, 50);
+        btnReset.setBounds(838, 482, 151, 50);
         add(btnReset);
-
-        JButton btnAdd = new JButton("Add");
-        btnAdd.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
-        btnAdd.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                main.showAddMeterReading();
-            }
-        });
-        btnAdd.setBounds(790, 18, 129, 50);
-        add(btnAdd);
 
         JButton btnSubmit = new JButton("Confirm");
         btnSubmit.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
         btnSubmit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	String[] options = {"Yes", "No"};
-				int sel = JOptionPane.showOptionDialog(null, "Confirm Submission? It will remove this draft", "Submit", 0, 3, null, options, options[1]);
+				int sel = JOptionPane.showOptionDialog(null, "Confirm Change? This will Change Bill according to changes", "Submit", 0, 3, null, options, options[1]);
 				if(sel != 0){return;}
-                main.getCont().submitUserReading(main.getCurrentAcct()[1]);
-                main.getCont().clearDraft(main.getCurrentAcct()[1]);;
-                main.showCustMenu();
+                main.getCont().updateUserReading(userName);
+                main.showEditDraft(userName);
             }
         });
-        btnSubmit.setBounds(672, 569, 315, 47);
+        
+        this.btnBack = new JButton("Back");
+        this.btnBack.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent arg0) {
+        		if (main.getCurrentAcct()[0].equals("C")){
+        			main.showCustMenu();
+        		}
+        		else{main.flag=true;main.showAllCustomers();}
+        	}
+        });
+        this.btnBack.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+        this.btnBack.setBounds(672, 482, 151, 50);
+        add(this.btnBack);
+        btnSubmit.setBounds(672, 608, 317, 47);
         add(btnSubmit);
         
         this.lblError = new JLabel("");
@@ -162,109 +186,193 @@ public class EditDraft extends JPanel {
         		if (sel ==-1){return;}
         		String name = (String) table.getValueAt(sel, 0);
         		String mr= (String) table.getValueAt(sel, 1);
-        		main.showEditMeterReading(name, mr);
+        		main.showPopup("EditMeterReading", String.join(",", userName,name, mr));
         	}
         });
-        this.btnEdit.setBounds(847, 491, 140, 50);
+        this.btnEdit.setBounds(672, 545, 317, 50);
         add(this.btnEdit);
         
-        TaskBar bar = new TaskBar(this, main);
         
         this.scrollPane_1 = new JScrollPane();
-        this.scrollPane_1.setBounds(22, 414, 333, 241);
+        this.scrollPane_1.setBounds(12, 425, 360, 230);
         add(this.scrollPane_1);
         
-        this.tablePrice = new JTable();
-        this.tablePrice.setFont(new Font("Tahoma", Font.PLAIN, 13));
+        
+        String [] colName = {"Name","Price","Tax"};
+    	priceModel = new DefaultTableModel(colName, 0){
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        this.tablePrice = new JTable(priceModel);
+        this.tablePrice. getTableHeader(). setReorderingAllowed(false);
+		this.tablePrice.getTableHeader().setResizingAllowed(false);
+        tablePrice.getColumnModel().getColumn(1).setPreferredWidth(40);
+        tablePrice.getColumnModel().getColumn(2).setPreferredWidth(10);
+        tablePrice.setShowGrid(true);
+        tablePrice.setRowHeight(35);
+        this.tablePrice.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
+        tablePrice.getTableHeader().setFont(new Font("Trebuchet MS", Font.PLAIN, 20));
+        tablePrice.setEnabled(false);
         this.scrollPane_1.setViewportView(this.tablePrice);
         
         this.lblDate = new JLabel("Bill Date: ");
         this.lblDate.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
-        this.lblDate.setBounds(22, 65, 254, 26);
+        this.lblDate.setBounds(22, 81, 254, 26);
         add(this.lblDate);
         
         this.txtrCurrentBill = new JTextArea();
         this.txtrCurrentBill.setEditable(false);
+        txtrCurrentBill.setOpaque(false);
         this.txtrCurrentBill.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
         this.txtrCurrentBill.setText("Current Bill");
-        this.txtrCurrentBill.setBounds(367, 414, 276, 241);
+        this.txtrCurrentBill.setBounds(384, 425, 276, 230);
         add(this.txtrCurrentBill);
         
         this.lblBillPrice = new JLabel("Bill Price: ");
-        this.lblBillPrice.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
-        this.lblBillPrice.setBounds(760, 414, 83, 35);
+        this.lblBillPrice.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+        this.lblBillPrice.setBounds(754, 423, 96, 35);
         add(this.lblBillPrice);
         
         this.txtTotal = new JTextField();
-        this.txtTotal.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+        this.txtTotal.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
         this.txtTotal.setEditable(false);
         this.txtTotal.setText("$");
-        this.txtTotal.setBounds(847, 414, 129, 35);
+        this.txtTotal.setBounds(860, 423, 129, 35);
         add(this.txtTotal);
         this.txtTotal.setColumns(10);
-        redraw();
+        
+        this.lblLogo = new JLabel("logo");
+        this.lblLogo.setBounds(401, 49, 67, 58);
+        logo.setImage(logo.getImage().getScaledInstance(lblLogo.getHeight(), lblLogo.getHeight(), Image.SCALE_DEFAULT));
+        lblLogo.setIcon(logo);
+        add(this.lblLogo);
+        
+        this.lblPsGroup = new JLabel("PS Group");
+        this.lblPsGroup.setFont(new Font("Trebuchet MS", Font.PLAIN, 25));
+        this.lblPsGroup.setBounds(480, 65, 113, 30);
+        add(this.lblPsGroup);
+        
+        this.lblFilter = new JLabel("");
+        lblFilter.setOpaque(true);
+        this.lblFilter.setBackground(new Color(220,220,220, 230));
+        this.lblFilter.setBounds(0, 0, main.getWidth(), main.getHeight());
+        add(this.lblFilter);
+        
+        this.lblBackGround = new JLabel("");
+        this.lblBackGround.setBounds(0, 0, 999, 699);
+        lblBackGround.setSize(main.getWidth(), main.getHeight());
+        background.setImage(background.getImage().getScaledInstance(lblBackGround.getWidth(), lblBackGround.getHeight(), Image.SCALE_DEFAULT));
+        lblBackGround.setIcon(background);
+        add(this.lblBackGround);
+        
+        
+        
+        
         init();
+        
+        
         
     }
     
     public void init(){
-    	String [][] lastBill = main.getCont().getLastUserReading(main.getCurrentAcct()[1]);
+    	fillCurrentPrices();
+    	redraw();
+    	
+    	// Tells program to run later
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+            	showCurrentBill();
+            	if (lastBill==null){
+                	
+                	if (main.getCurrentAcct()[0].equals("C")) {
+                		main.showCustMenu();
+                		JOptionPane.showMessageDialog(null, "No History", "Error", JOptionPane.ERROR_MESSAGE);
+                	} else {
+                		String[] options = {"Yes", "No"};
+        				int sel = JOptionPane.showOptionDialog(null, "No History, Generate Bill?", "No History", 0, 3, null, options, options[1]);
+        				if(sel != 0){main.showAllCustomers();return;}
+        				main.getCont().generateBills(userName);
+        				init();
+                	}
+            	}
+            }
+        });
+    	
+    	
+    	
+        
+    }
+    public void showCurrentBill(){
+    	//bill area
+    	if (lastBill==null){txtrCurrentBill.setText("No History");return;}
     	String text = "Current Bill: "+lastBill[0][2]+ '\n';
-    	int total =0;
+    	double total =0;
     	for (int i =0; i<lastBill.length-1; i++){
     		text+= lastBill[i+1][0] +" : "+lastBill[i+1][1]+"\n";
     		total+=Double.valueOf(lastBill[i+1][2]);
     	}
-    	text+="Total : $"+total;
+    	text+="Total : $"+String.format("%.2f", total);
     	txtrCurrentBill.setText(text);
+    	lblDate.setText("Bill Date: "+billDate[1]+"/"+billDate[2]);
     }
-
-	public void addRow(){
-//		main.getCont().addReading("i", 0.0, "i", 0.0);
-//		redraw();
-		main.showAddFrame();
-//		redraw();
-	}
+    
+    public void fillCurrentPrices(){
+    	//price Table
+    	priceModel.setRowCount(0);
+        Readings[] readings = main.getCont().getAllReadings();
+        for(Readings r:readings){
+        	String[] row = {r.getUtilityName(), "$"+r.getPrice()+"/"+r.getUnit(), ""+r.getServiceCharge()+"%"};
+        	priceModel.addRow(row);
+        }
+        tablePrice.setModel(priceModel);
+        tablePrice.repaint();
+    }
+    
+    
 	
-	public void deleteRow(int row){
+	
+	public void resetRow(int row){
 		if(row ==-1){
 			return;
 		}
 		String readingName=(String) table.getValueAt(row, 0);
-		main.getCont().removeMeterReading(main.getCurrentAcct()[1], readingName);
-		redraw();
+		int currentReading = main.getCont().getCurrentTotalReading(userName, readingName);
+		main.getCont().editMeterReading(userName, readingName, currentReading);
+		
+		main.showEditDraft(userName);
 
 	}
 
     public void redraw() {
-    	draft = main.getCont().getDraft(main.getCurrentAcct()[1]);
+    	draft = main.getCont().getDraft(userName);
         this.model.setRowCount(0);
         double total=0;
         for (String[] d :draft) {
         	System.out.println(String.join(", ", d));
         	try {
         		Readings r = main.getCont().getReading(d[0]);
-                Object[] x = {d[0], d[1], "", "$"+String.format("%.2f", r.getPrice())+"/"+r.getUnit(), String.format("%.2f",r.getServiceCharge())+"%", Integer.valueOf(d[1])-Integer.valueOf("0")};
+        		int currentTotal = Integer.valueOf(d[1]);
+        		int pastTotal = main.getCont().getPastTotalReading(userName, r.getUtilityName());
+        		int amtUsed = currentTotal - pastTotal;
+        		
+        		
+                Object[] x = {d[0],d[1],pastTotal,amtUsed,"$"+String.format("%.2f", main.getCont().calculateReading(r.getUtilityName(),""+amtUsed))};
                 model.addRow(x);
-                total+=main.getCont().calculateReading(r.getUtilityName(),String.valueOf(d[1]));
+                total+=main.getCont().calculateReading(r.getUtilityName(),""+amtUsed);
 			} catch (Exception e) {
 				lblError.setText(d[0]+" Not Avaliable, Deleted");
-				main.getCont().removeMeterReading(main.getCurrentAcct()[1], d[0]);
+				main.getCont().removeMeterReading(userName, d[0]);
 				continue;
-				
-				
+
 			}
+        	txtTotal.setText(String.format("%.2f", total));
         	
         }
-//        String.format("%.2f", main.getCont().calculateReading(r.getUtilityName(),String.valueOf(d[1])))
-//        Object[] tot= {"Total","","","","",String.format("%.2f", total)};
-//        model.addRow(tot);
-//        for (Object[] i : changes) {
-//            data[(int) i[0]][(int) i[1]] = String.valueOf(i[2]);
-//            model.removeRow((int) i[0]);
-//            model.insertRow((int) i[0], data[(int) i[0]]);
-//        }
         table.setModel(model);
         table.repaint();
     }
+    
+    
+    
 }

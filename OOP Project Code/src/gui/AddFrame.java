@@ -10,6 +10,7 @@ import java.awt.Font;
 import javax.naming.InitialContext;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -30,7 +31,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 
-public class AddFrame extends JFrame{
+public class AddFrame extends JDialog{
 	MainFrame main;
 	private JPanel panel1;//Add Manually
 	private JPanel panel2;//Add by File
@@ -71,8 +72,9 @@ public class AddFrame extends JFrame{
 		main.flag = false;
 		getContentPane().setFont(new Font("Tahoma", Font.PLAIN, 17));
 		getContentPane().setLayout(null);
-		this.setSize(310,420);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		this.setSize(310,420);
+		
 		this.setLocationRelativeTo(main);
 		this.setResizable(false);
 		
@@ -422,5 +424,6 @@ public class AddFrame extends JFrame{
 	}
 
 
+	
 
 }
