@@ -14,9 +14,16 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.Map.Entry;
+
+import javax.management.InstanceNotFoundException;
+import javax.naming.spi.InitialContextFactoryBuilder;
+import javax.swing.JOptionPane;
+import javax.swing.text.DefaultEditorKit.PasteAction;
 
 import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
 
@@ -74,9 +81,9 @@ public class Controller {
         else {return false;}
     }
 
-    public void editUser(String oldUName, String newFName, String newEmail, String newUName, String newPass, String newAddress){
+    public void editUser(String oldUName, String newFName, String newEmail, String newPass, String newAddress){
         if(!this.isUser(oldUName)){return;}
-        Customer c = new Customer(newFName, newEmail, newUName, newPass, newAddress);
+        Customer c = new Customer(newFName, newEmail, oldUName, newPass, newAddress);
         ds.editUser(oldUName, c);
     }
 
@@ -101,6 +108,10 @@ public class Controller {
     }
     public Customer getCustomer(String name){
         return ds.getUser(name);
+    }
+    
+    public Customer[] getCustomer(String postal, String unitNo){
+        return ds.getUser(postal, unitNo);
     }
     
     public Customer[] getAllCustomers() {
@@ -150,9 +161,14 @@ public class Controller {
     	ds.removeReading(index);
     }
     
-    public double calculateReading(String readingName, String meterReading){
+    public double calculateReading(String readingName, String value){
+    	double discount =0;
+    	String meterReading = value;
+    	int average = this.getAverageReading(readingName);
+    	if (Integer.valueOf(value)<average){discount = 10;}
+    	if (Integer.valueOf(value)<0){meterReading ="0";}
     	Readings reading = ds.getReadings(readingName);
-    	return Double.valueOf(meterReading)*reading.getPrice()+(Double.valueOf(meterReading)*reading.getPrice()*reading.getServiceCharge()/100);
+    	return (Double.valueOf(meterReading)*reading.getPrice()+(Double.valueOf(meterReading)*reading.getPrice()*reading.getServiceCharge()/100))*((100-discount)/100);
     }
     
 
@@ -181,11 +197,212 @@ public class Controller {
         }
         ds.addUserReading(bill);
         
-
-
     }
+    
+    public void updateUserReading(String userName){
+    	DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd");
+    	LocalDateTime now = LocalDateTime.now();
+    	String date = dtf.format(now);
+    	
+        String[][][] userReadings=ds.getUserReadings(userName);
+        String[] billDate = userReadings[userReadings.length-1][0][2].split("/");
+        if (!billDate[1].equals(systemDate[0])&&!billDate[2].equals(systemDate[1])){
+        	JOptionPane.showMessageDialog(null, "Not Avaliable for editing", "Error", JOptionPane.ERROR_MESSAGE);
+        	return;
+        }
+        
+        System.out.println(userReadings.length);
+        String[][] draft = ds.getDraft(userName);
+        String[] initials = {userName, String.valueOf(userReadings.length), String.join("/", date,systemDate[0], systemDate[1])};
+        
+        String[][] bill = new String[draft.length+1][3];
+        bill[0] = initials;
+        // go thru each reading in draft
+        for(int i=0; i<draft.length;i++){
+        	int usage = Integer.valueOf(draft[i][1])-this.getPastTotalReading(userName, draft[i][0]);
+        	System.out.println(usage);
+        	String[] temp = new String[3];
+        	temp[0] = draft[i][0];
+        	temp[1] = String.valueOf(usage);
+        	temp[2] = String.format("%.2f", this.calculateReading(draft[i][0], String.valueOf(usage)));
+        	bill[i+1] = temp;
+        }
+        ds.editUserReading(userName,String.join("/", systemDate),bill);
+        
+    }
+    
+    public void generateBills(){
+    	DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd");
+    	LocalDateTime now = LocalDateTime.now();
+    	String date = dtf.format(now);
+    	
+    	for (Customer c:ds.getAllUser()){
+    		String userName = c.getUsername();
+    		String[][] previousBill = this.getLastUserReading(userName);
+    		
+    		
+    		
+    		String[][][] userReadings=ds.getUserReadings(userName);
+            String[] initials = {userName, String.valueOf(userReadings.length+1), String.join("/", date,systemDate[0], systemDate[1])};
+            
+            String[][] bill = new String[this.getAllReadings().length+1][3];
+            bill[0] = initials;
+            
+            if (previousBill==null){
+            	Readings[] readings = this.getAllReadings();
+            	HashMap<String, Integer> aveReadings = new HashMap<>();
+            	for (int i=0; i<readings.length;i++){
+            		int averageReading = this.getAverageReading(readings[i].getUtilityName());
+            		if (readings[i].getUnit().equals("-")){
+            			averageReading=1;
+            		}
+            		
+            		aveReadings.put(readings[i].getUtilityName(), averageReading);
+            	}
+            	int count=0;
+            	for (Entry<String, Integer>amt : aveReadings.entrySet()){
+            		String[] temp = {amt.getKey(), String.valueOf(amt.getValue()), String.format("%.2f",calculateReading(amt.getKey(), String.valueOf(amt.getValue())))};
+            		bill[count+1] = temp;
+            		count+=1;
+            	}
+            	this.addUserReading(bill);
+            	resetDraft(c.getUsername());
+            	continue;
+            }
+            
+            String[] previousDate = previousBill[0][2].split("/");
+    		if (previousDate[1].equals(systemDate[0])&& previousDate[2].equals(systemDate[1])){
+    			continue;
+    		}
+            
+            Readings[] readings = this.getAllReadings();
+        	HashMap<String, Integer> aveReadings = new HashMap<>();
+        	for (int i=0; i<readings.length;i++){
+        		aveReadings.put(readings[i].getUtilityName(), this.getAverageUserReading(c.getUsername(),readings[i].getUtilityName()));
+        	}
+        	int count=0;
+        	for (Entry<String, Integer>amt : aveReadings.entrySet()){
+        		String[] temp = {amt.getKey(), String.valueOf(amt.getValue()), String.format("%.2f",calculateReading(amt.getKey(), String.valueOf(amt.getValue())))};
+        		bill[count+1] = temp;
+        		count+=1;
+        	}
+        	this.addUserReading(bill);
+        	resetDraft(c.getUsername());
+        	continue;
+            
+            
+            
+    		
+    	}
+    }
+    
+    
+    public void generateBills(String userName){
+    	DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd");
+    	LocalDateTime now = LocalDateTime.now();
+    	String date = dtf.format(now);
+    	String[][] previousBill = this.getLastUserReading(userName);
+    		
+    		
+    		
+    	String[][][] userReadings=ds.getUserReadings(userName);
+        String[] initials = {userName, String.valueOf(userReadings.length+1), String.join("/", date,systemDate[0], systemDate[1])};
+            
+        String[][] bill = new String[this.getAllReadings().length+1][3];
+        bill[0] = initials;
+            
+        if (previousBill==null){
+        	Readings[] readings = this.getAllReadings();
+            HashMap<String, Integer> aveReadings = new HashMap<>();
+            for (int i=0; i<readings.length;i++){
+            	int averageReading = this.getAverageReading(readings[i].getUtilityName());
+            	if (readings[i].getUnit().equals("-")){
+            		averageReading=1;
+            	}
+            		
+            	aveReadings.put(readings[i].getUtilityName(), averageReading);
+            }
+            int count=0;
+            for (Entry<String, Integer>amt : aveReadings.entrySet()){
+            	String[] temp = {amt.getKey(), String.valueOf(amt.getValue()), String.format("%.2f",calculateReading(amt.getKey(), String.valueOf(amt.getValue())))};
+            	bill[count+1] = temp;
+            	count+=1;
+            }
+            this.addUserReading(bill);
+            resetDraft(userName);
+            return;
+        }
+            
+        String[] previousDate = previousBill[0][2].split("/");
+    	if (previousDate[1].equals(systemDate[0])&& previousDate[2].equals(systemDate[1])){
+    		return;
+    	}
+            
+        Readings[] readings = this.getAllReadings();
+        HashMap<String, Integer> aveReadings = new HashMap<>();
+        for (int i=0; i<readings.length;i++){
+        	aveReadings.put(readings[i].getUtilityName(), this.getAverageUserReading(userName,readings[i].getUtilityName()));
+        }
+        int count=0;
+        for (Entry<String, Integer>amt : aveReadings.entrySet()){
+        	String[] temp = {amt.getKey(), String.valueOf(amt.getValue()), String.format("%.2f",calculateReading(amt.getKey(), String.valueOf(amt.getValue())))};
+        	bill[count+1] = temp;
+        	count+=1;
+        }
+        this.addUserReading(bill);
+        resetDraft(userName);
+        return;
+            
+    		
+    	
+    }
+    
     public void addUserReading(String[][] userReading){
         ds.addUserReading(userReading);
+    }
+    
+    public int getAverageReading(String readingName){
+    	int count=0;
+    	int total =0;
+    	for (Customer c:ds.getAllUser()){
+    		String[][] previousBill = this.getLastUserReading(c.getUsername());
+    		if (previousBill==null){continue;}
+    		for (String[] i:previousBill){
+    			if (i[0].equals(readingName)){
+    				total+= Integer.valueOf(i[1]);
+    				count+=1;
+    			}
+    		}
+    	}
+    	if (count==0){count=1;}
+    	return total/count;
+    }
+    
+    public int getAverageUserReading(String userName,String readingName){
+    	int count=0;
+    	int total =0;
+    	int monthLimit = 4;
+    	String[][][] bills = this.getUserReading(userName);
+    	for (int i=bills.length; i>bills.length-monthLimit;i--){
+    		String[][] b = new String[1][];
+    		try {
+    			b = bills[i-1];
+			} catch (Exception e) {
+				continue;
+			}
+    		for (String[] x:b){
+    			if (x[0].equals(readingName)){
+    				total+= Integer.valueOf(x[1]);
+    				count+=1;
+    			}
+//    			else{
+//    				total+= this.getAverageReading(readingName);
+//    				count+=1;
+//    			}
+    		}
+    	}
+    	if (count==0){count=1;}
+    	return total/count;
     }
     
     public String[][] getLastUserReading(String userName){
@@ -199,8 +416,45 @@ public class Controller {
     public String[][][] getUserReading(String month, String year) {
     	return ds.getUserReadings(month,year);
     }
+    public int getCurrentTotalReading(String userName, String readingName){
+    	String[][][] pastUR = this.getUserReading(userName);
+    	int total =0 ;
+    	for (String [][] ur :pastUR){
+    		for (String [] item :ur){
+    			if (item[0].equals(readingName)){
+    				total += Integer.valueOf(item[1]);
+    			}
+    		}
+    	}
+    	return total;
+    }
+    public int getPastTotalReading(String userName, String readingName){
+    	String[][] currentBill = this.getLastUserReading(userName);
+    	int previousUsed = 0;
+    	// get reading value
+    	for (String [] i:currentBill){
+    		if (i[0].equals(readingName)){
+    			previousUsed = Integer.valueOf(i[1]);
+    			break;
+    		}
+    	}
+    	// get Total till now
+    	int currentTotal = this.getCurrentTotalReading(userName, readingName);
+    	//returns reading bill as of lastmonth
+    	String[] billDate = currentBill[0][2].split("/");
+    	
+    	if (Integer.valueOf(billDate[1])<Integer.valueOf(systemDate[0]) && Integer.valueOf(billDate[2])<=Integer.valueOf(systemDate[1]) )
+    	{
+    		return currentTotal;
+    	}
+    	else {return currentTotal-previousUsed;}
+    	
+    }
+    
+    
+    
 
-    //!Meter Readings
+    //!Meter/Draft Readings
     public void addMeterReading(String uName, String readingName, Integer meterReading) {
 		ds.addMeterReading(uName, readingName, meterReading);
 	}
@@ -211,12 +465,35 @@ public class Controller {
     	ds.removeMeterReading(userName, readingName);
     }
     
+    public void editMeterReading(String userName, String readingName, Integer editedValue){
+    	ds.editMeterReading(userName, readingName, editedValue);
+    }
+    
     public String[][] getDraft(String userName){
     	return ds.getDraft(userName);
     }
     
     public void clearDraft(String userName){
     	ds.removeDraft(userName);
+    }
+    
+    public void resetDraft(String userName){
+    	this.clearDraft(userName);
+    	Readings[] readings = this.getAllReadings();
+    	for (Readings r:readings){
+    		this.addMeterReading(userName, r.getUtilityName(), this.getCurrentTotalReading(userName, r.getUtilityName()));
+    	}
+    	System.out.println("reseted");
+    }
+    public boolean checkEditStatus(String userName){
+    	String[][] latestBill = this.getLastUserReading(userName);
+    	if (latestBill ==null){
+		return false;}
+    	String[] billDate = latestBill[0][2].split("/");
+    	if (Integer.valueOf(billDate[1])<Integer.valueOf(systemDate[0])&&Integer.valueOf(billDate[2])<=Integer.valueOf(systemDate[1])){
+    		return false;
+    	}
+    	return true;
     }
     
     //! Date Methods
@@ -371,15 +648,15 @@ public class Controller {
         if (!(System.getProperty("file.separator")=="/")){
             cdir = cdir.replace("\\", "/");}
         String[] cp = cdir.split("/");
-        cp[cp.length-1] = "src";
+        cp[cp.length-1] = "src";// redirects to SRC csv for easy access to edit data
         cdir = String.join("/", cp);
         System.out.println(cdir);
         
         try {
-            csvWriter(cdir+"/data/Staff.csv", staffData);
-            csvWriter(cdir+"/data/Customer.csv", customerData);
-            csvWriter(cdir+"/data/Readings.csv", readingsData);
-            csvWriter(cdir+"/data/UserReadings.csv", userR);
+            csvWriter(cdir+"/csv/Staff.csv", staffData);
+            csvWriter(cdir+"/csv/Customer.csv", customerData);
+            csvWriter(cdir+"/csv/Readings.csv", readingsData);
+            csvWriter(cdir+"/csv/UserReadings.csv", userR);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -394,15 +671,16 @@ public class Controller {
         if (!(System.getProperty("file.separator")=="/")){
             cdir = cdir.replace("\\", "/");}
         String[] cp = cdir.split("/");
-        cp[cp.length-1] = "src";
+        cp[cp.length-1] = "src";// redirects to SRC csv for easy access to edit data
         cdir = String.join("/", cp);
         System.out.println(cdir);
+        
 
         //Read files for data
         //Creating and adding csv contents into vectors
             String[][] customers;
 			try {
-				customers = csvReader(cdir+"/data/Customer.csv");
+				customers = csvReader(cdir+"/csv/Customer.csv");
 				//!customer
 	            for(String[]c:customers){
 	                this.addUser(c[0], c[1], c[2],c[3],c[4]);
@@ -428,12 +706,12 @@ public class Controller {
 	                }
 	            }
 			} catch (FileNotFoundException e) {
-				System.out.println(cdir+"/data/Customer.csv NOT FOUND");
+				System.out.println(cdir+"/csv/Customer.csv NOT FOUND");
 			}
 			
             String[][] staffAcct;
 			try {
-				staffAcct = csvReader(cdir+"/data/Staff.csv");
+				staffAcct = csvReader(cdir+"/csv/Staff.csv");
 				//!Staff
 	            for(String[]s:staffAcct){
 	                this.addStaff(s[0], s[1]);
@@ -441,23 +719,23 @@ public class Controller {
 	            
 	            
 			} catch (FileNotFoundException e) {
-				System.out.println(cdir+"/data/Staff.csv NOT FOUND");
+				System.out.println(cdir+"/csv/Staff.csv NOT FOUND");
 			}
 			
             String[][] readings;
 			try {
-				readings = csvReader(cdir+"/data/Readings.csv");
+				readings = csvReader(cdir+"/csv/Readings.csv");
 				//!Readings
 	            for(String[]r:readings){
 	                this.addReading(r[0], Double.parseDouble(r[1]), r[2], Double.parseDouble(r[3]));
 	            }
 			} catch (FileNotFoundException e) {
-				System.out.println(cdir+"/data/Readings.csv NOT FOUND");
+				System.out.println(cdir+"/csv/Readings.csv NOT FOUND");
 			}
 			
             String[][] userReadings;
 			try {
-				userReadings = csvReader(cdir+"/data/UserReadings.csv");
+				userReadings = csvReader(cdir+"/csv/UserReadings.csv");
 				//!User Readings
 	            int c=0;
 	            for(String[] ur:userReadings){
@@ -478,7 +756,7 @@ public class Controller {
 	                ds.addUserReading(b);
 	            }
 			} catch (FileNotFoundException e) {
-				System.out.println(cdir+"/data/UserReadings.csv NOT FOUND");
+				System.out.println(cdir+"/csv/UserReadings.csv NOT FOUND");
 			}
             
 

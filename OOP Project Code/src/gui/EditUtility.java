@@ -3,6 +3,7 @@ package gui;
 import controller.MainFrame;
 import data.Readings;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -12,6 +13,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.DefaultCellEditor;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -19,6 +21,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Color;
+import javax.swing.JLabel;
 
 public class EditUtility extends JPanel{
 	MainFrame main;
@@ -29,6 +32,8 @@ public class EditUtility extends JPanel{
 	private Object[] coloumnames={"Utility Name","Price (S$)","Unit", "Service Charge (%)"};
 	private JScrollPane scrollPane;
 	private JTable table;
+	private ImageIcon logo = new ImageIcon(this.getClass().getResource("/images/logo.png"));
+    private ImageIcon background = new ImageIcon(this.getClass().getResource("/images/background.jpg"));
 	private Vector<Object[]> changes = new Vector<>();//Row, Col, Val
 	private String[][]data;
 	private boolean unsaved = false;
@@ -36,11 +41,14 @@ public class EditUtility extends JPanel{
 	private DefaultTableModel model;
 	private JButton btnEditWithFile;
 	private JButton btnClearRow;
+	private JLabel lblBackground;
+	private JLabel lblFilter;
 	public EditUtility(MainFrame m){
+		setBackground(new Color(135, 206, 250));
 		this.main = m;
 		this.setLayout(null);
 		
-		this.btnBack = new JButton("Back");
+		this.btnBack = new JButton("<");
 		btnBack.setBorderPainted(false);
 //		btnBack.setBackground(Color.LIGHT_GRAY);
 		this.btnBack.addActionListener(new ActionListener() {
@@ -53,8 +61,8 @@ public class EditUtility extends JPanel{
 				else{main.showStaffMenu();}
 			}
 		});
-		this.btnBack.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		this.btnBack.setBounds(855, 558, 97, 25);
+		this.btnBack.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+		this.btnBack.setBounds(28, 47, 49, 44);
 		add(this.btnBack);
 		
 		this.btnDelete = new JButton("Delete");
@@ -79,7 +87,7 @@ public class EditUtility extends JPanel{
 			}
 		});
 		this.btnDelete.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
-		this.btnDelete.setBounds(810, 274, 187, 51);
+		this.btnDelete.setBounds(756, 170, 202, 51);
 		add(this.btnDelete);
 		
 		this.btnAddUtility = new JButton("Add Utility");
@@ -93,7 +101,7 @@ public class EditUtility extends JPanel{
 			}
 		});
 		this.btnAddUtility.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
-		this.btnAddUtility.setBounds(810, 401, 187, 50);
+		this.btnAddUtility.setBounds(756, 531, 202, 50);
 		add(this.btnAddUtility);
 		
 		this.btnUpdateUtility = new JButton("Update Utilities");
@@ -113,11 +121,11 @@ public class EditUtility extends JPanel{
 			}
 		});
 		this.btnUpdateUtility.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
-		this.btnUpdateUtility.setBounds(810, 464, 187, 52);
+		this.btnUpdateUtility.setBounds(756, 433, 202, 52);
 		add(this.btnUpdateUtility);
 		
 		this.scrollPane = new JScrollPane();
-		this.scrollPane.setBounds(12, 83, 786, 560);
+		this.scrollPane.setBounds(28, 102, 718, 549);
 		add(this.scrollPane);
 		
 		this.model = new DefaultTableModel(coloumnames, 0)
@@ -165,12 +173,12 @@ public class EditUtility extends JPanel{
 		this.btnEditWithFile = new JButton("Edit with File");
 		this.btnEditWithFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				main.flag = true;
+				main.flag=true;
 				main.showAddFrame();
 			}
 		});
 		this.btnEditWithFile.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
-		this.btnEditWithFile.setBounds(810, 338, 187, 50);
+		this.btnEditWithFile.setBounds(756, 347, 202, 50);
 		add(this.btnEditWithFile);
 		
 		this.btnClearRow = new JButton("Clear Row");
@@ -180,11 +188,27 @@ public class EditUtility extends JPanel{
 			}
 		});
 		this.btnClearRow.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
-		this.btnClearRow.setBounds(810, 211, 187, 50);
+		this.btnClearRow.setBounds(756, 264, 202, 50);
 		add(this.btnClearRow);
 		main.setSize(1020,720);
 		
-		TaskBar bar = new TaskBar(this, main);
+		main.addTaskBar(this);
+		
+        this.lblFilter = new JLabel("");
+        lblFilter.setOpaque(true);
+        this.lblFilter.setBackground(new Color(220,220,220, 230));
+        this.lblFilter.setBounds(0, 0, main.getWidth(), main.getHeight());
+        add(this.lblFilter);
+        
+        this.lblBackground = new JLabel("Background");
+		this.lblBackground.setBounds(0, 0, 1009, 690);
+		lblBackground.setSize(main.getWidth(), main.getHeight());
+        background.setImage(background.getImage().getScaledInstance(lblBackground.getWidth(), lblBackground.getHeight(), Image.SCALE_DEFAULT));
+        lblBackground.setIcon(background);
+        add(this.lblBackground);
+		
+		
+		
 		init();
 	}
 	

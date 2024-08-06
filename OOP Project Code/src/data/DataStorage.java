@@ -52,6 +52,24 @@ public class DataStorage {
         }
         return null;
     }
+    
+    public Customer[] getUser(String postal, String unitNo){
+    	Vector<Customer> filter = new Vector<>();
+    	for (Customer c : user){
+    		String[] address = c.getAddress().split(":");
+    		if (postal.equals("")){continue;}
+    		if (!address[0].equals(postal)){continue;}
+    		if (unitNo.equals("")){filter.add(c);continue;}
+    		if (address[1].equals(unitNo)){filter.add(c);}
+			
+    	}
+//    	if (filter.isEmpty()){
+//    		return null;
+//    	}
+    	Customer[] output = new Customer[filter.size()];
+    	filter.toArray(output);
+    	return output;
+    }
 
     public Customer[] getAllUser() {
         Customer[] c = new Customer[user.size()];
@@ -241,11 +259,23 @@ public class DataStorage {
     public void addUserReading(String[][] userReading){
         this.userReading.add(userReading);
     }
-
-    //add more here
+    
+    public void editUserReading(String username,String date, String[][] newBill){
+    	int index =0;
+    	for (String[][] bill : userReading){
+    		String[] billDate = bill[0][2].split("/");
+    		if (bill[0][0].equals(username)&&(String.join("/", billDate[1],billDate[2]).equals(date))){
+    			this.userReading.setElementAt(newBill, index);
+    			break;
+    		}
+    		
+    		index+=1;
+    	}
+    }
     
     public String[][] getLastUserReading(String userName){
     	String[][][] acctUR = this.getUserReadings(userName);
+    	if (acctUR.length==0){return null;}
     	String [][] last = acctUR[acctUR.length-1];
     	return last;
     }
@@ -268,6 +298,7 @@ public class DataStorage {
         return arr;
     }
     
+    
     public String[][][] getUserReadings(String month,String year){
         Vector<String[][]> ureading = new Vector<>();
         for(String[][] r: userReading){
@@ -286,6 +317,9 @@ public class DataStorage {
 		}
         return arr;
     }
+    
+    
+    
 
     public String[][][] getAllUserReadings(){
         String[][][] arr = new String[userReading.size()][][];

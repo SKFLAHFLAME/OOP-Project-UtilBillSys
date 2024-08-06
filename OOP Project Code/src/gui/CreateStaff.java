@@ -2,7 +2,6 @@ package gui;
 
 import javax.swing.JPanel;
 
-import controller.MainFrame;
 import javax.swing.JLabel;
 
 import java.awt.Color;
@@ -15,7 +14,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 public class CreateStaff extends JPanel{
-	MainFrame main;
 	private JLabel lblRegisterStaff;
 	private JLabel lblStaffId;
 	private JLabel lblPassword;
@@ -25,11 +23,12 @@ public class CreateStaff extends JPanel{
 	private JPasswordField passwordField;
 	private JCheckBox chckbxShowPassword;
 	private JLabel lblErrors;
+	private PopupDialog window;
 	
-	public CreateStaff(MainFrame m){
-		this.main=m;
+	public CreateStaff(PopupDialog popupDialog){
+		this.window=popupDialog;
 		this.setLayout(null);
-		main.setSize(470,340);
+		window.setSize(470,340);
 		
 		this.lblRegisterStaff = new JLabel("Register Staff");
 		this.lblRegisterStaff.setFont(new Font("Tahoma", Font.PLAIN, 25));
@@ -37,52 +36,52 @@ public class CreateStaff extends JPanel{
 		add(this.lblRegisterStaff);
 		
 		this.lblStaffId = new JLabel("Staff ID:");
-		this.lblStaffId.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		this.lblStaffId.setBounds(12, 92, 77, 19);
+		this.lblStaffId.setFont(new Font("Trebuchet MS", Font.PLAIN, 25));
+		this.lblStaffId.setBounds(12, 78, 106, 47);
 		add(this.lblStaffId);
 		
 		this.lblPassword = new JLabel("Password:");
-		this.lblPassword.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		this.lblPassword.setBounds(12, 130, 77, 24);
+		this.lblPassword.setFont(new Font("Trebuchet MS", Font.PLAIN, 25));
+		this.lblPassword.setBounds(12, 136, 112, 51);
 		add(this.lblPassword);
 		
-		this.btnBack = new JButton("Back");
+		this.btnBack = new JButton("Cancel");
 		this.btnBack.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				main.showAllStaff();
+				window.dispose();
 			}
 		});
-		this.btnBack.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		this.btnBack.setBounds(12, 262, 97, 25);
+		this.btnBack.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+		this.btnBack.setBounds(12, 246, 129, 41);
 		add(this.btnBack);
 		
 		this.btnRegister = new JButton("Register");
 		this.btnRegister.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if(main.getCurrentAcct()[0].equals("A")){
-					if (main.getCont().isStaff(textField.getText())||main.getCont().isUser(textField.getText())){lblErrors.setText("ID Already Used");return;}
+				if(window.main.getCurrentAcct()[0].equals("A")){
+					if (window.main.getCont().isStaff(textField.getText())||window.main.getCont().isUser(textField.getText())){lblErrors.setText("ID Already Used");return;}
 					System.out.println("Successful");
 					addStaff();
-					main.showAllStaff();
+					window.dispose();
 				}
 				else{lblErrors.setText("Not Admin");}
 			}
 		});
-		this.btnRegister.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		this.btnRegister.setBounds(341, 263, 97, 25);
+		this.btnRegister.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+		this.btnRegister.setBounds(309, 246, 129, 42);
 		add(this.btnRegister);
 		
 		this.textField = new JTextField();
-		this.textField.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		this.textField.setBounds(101, 81, 324, 34);
+		this.textField.setFont(new Font("Tw Cen MT", Font.PLAIN, 22));
+		this.textField.setBounds(128, 78, 295, 47);
 		add(this.textField);
 		this.textField.setColumns(10);
 		
 		this.passwordField = new JPasswordField();
-		this.passwordField.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		this.passwordField.setBounds(101, 125, 324, 34);
+		this.passwordField.setFont(new Font("Tw Cen MT", Font.PLAIN, 22));
+		this.passwordField.setBounds(128, 139, 295, 48);
 		add(this.passwordField);
 		
 		this.chckbxShowPassword = new JCheckBox("Show Password");
@@ -95,8 +94,8 @@ public class CreateStaff extends JPanel{
 				else{passwordField.setEchoChar((char)0x2022);}
 			}
 		});
-		this.chckbxShowPassword.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		this.chckbxShowPassword.setBounds(111, 168, 129, 34);
+		this.chckbxShowPassword.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+		this.chckbxShowPassword.setBounds(128, 194, 149, 34);
 		add(this.chckbxShowPassword);
 		
 		this.lblErrors = new JLabel("");
@@ -108,6 +107,6 @@ public class CreateStaff extends JPanel{
 	public void addStaff(){
 		String id = textField.getText();
 		String pass = new String(passwordField.getPassword());
-		main.getCont().addStaff(id, pass);
+		window.main.getCont().addStaff(id, pass);
 	}
 }

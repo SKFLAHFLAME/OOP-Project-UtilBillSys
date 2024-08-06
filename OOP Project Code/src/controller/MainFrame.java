@@ -4,10 +4,14 @@ import gui.*;
 import java.awt.CardLayout;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -23,15 +27,17 @@ public class MainFrame extends JFrame implements WindowListener{
     private String[] currentAcct = new String[2];//( S/C , Username)
     public boolean flag;
     private AddFrame frame;
+    private PopupDialog pop;
     private EditUtility eu;
 	private EditDraft ed;
-	private AddMeterReading amr;
-	private EditMeterReading emr;
+	private CMenu m;
 	private ViewHistoryScreen vhs;
 	private ImageIcon logo;
+	private String backgroundFP = "/images/background.jpg";
+	private String logoFP = "/images/logo.png";
 	
 
-    
+
 
 	public MainFrame(){
         
@@ -82,7 +88,7 @@ public class MainFrame extends JFrame implements WindowListener{
     //! Show Panels
 
     public void showCustMenu(){
-        CMenu m = new CMenu(this);
+        m = new CMenu(this);
         add(m, "menu");
         card.show(this.getContentPane(), "menu");
     }
@@ -120,41 +126,20 @@ public class MainFrame extends JFrame implements WindowListener{
         add(su, "Signup");
         card.show(this.getContentPane(), "Signup");
     }
-    public void showSSignUp(){
-        CreateStaff su = new CreateStaff(this);
-        add(su, "SSignup");
-        card.show(this.getContentPane(), "SSignup");
-    }
+    
     public void showEditUtility(){
         eu=new EditUtility(this);
         add(eu,"Util");
         card.show(this.getContentPane(), "Util");
     }
-    public void showEditDraft(){
-    	ed=new EditDraft(this);
+    public void showEditDraft(String user){
+    	ed=new EditDraft(this, user);
     	add(ed, "Edit");
     	card.show(this.getContentPane(), "Edit");
     }
-    public void showAddMeterReading(){
-    	amr=new AddMeterReading(this);
-    	add(amr, "AddMeterReading");
-    	card.show(this.getContentPane(), "AddMeterReading");
-    }
-    public void showEditMeterReading(String preName, String mr){
-    	emr=new EditMeterReading(this,preName,mr);
-    	add(emr, "EditMeterReading");
-    	card.show(this.getContentPane(), "EditMeterReading");
-    }
-    public void showStaffAccount(String id){
-    	SAccountPage ap=new SAccountPage(this, id);
-    	this.add(ap,"AP");
-    	card.show(getContentPane(), "AP");
-    }
-    public void showAllStaff() {
-    	ViewStaff vs = new ViewStaff(this);
-    	add(vs,"vs");
-    	card.show(getContentPane(), "vs");
-    }
+    
+    
+
     public void showAllCustomers() {
     	ViewAllCustomer vs = new ViewAllCustomer(this);
     	add(vs,"vs");
@@ -170,23 +155,53 @@ public class MainFrame extends JFrame implements WindowListener{
     	add(vs,"vs");
     	card.show(getContentPane(), "vs");
     }
-    public void showEditDate() {
-    	EditSysDate vs = new EditSysDate(this);
-    	add(vs,"vs");
-    	card.show(getContentPane(), "vs");
+    
+    
+    /**
+     * 
+     * @author samue
+     * @param panel
+     * @param parameters : for respective panels
+     * @param Staff Account Page : "SAccount"
+     * @param Customer Account Page : "CAccount"
+     * @return open Respective dialogs
+     * 
+     */
+    public void showPopup(String panel, CharSequence parameters){
+    	closeCurrentDialogs();
+    	pop = new PopupDialog(this, panel,parameters);
     }
     public void showAddFrame(){
+    	closeCurrentDialogs();
     	frame = new AddFrame(this);
     	frame.setVisible(true);
     }
     public void closeAddFrame(){
     	try {
     		frame.dispose();
-    		flag = false;
 		} catch (Exception e) {
 			return;
 		}
     	
+    }
+    public void closePopup(){
+    	try {
+    		pop.dispose();
+		} catch (Exception e) {
+			return;
+		}
+    }
+    
+    
+    
+    public void closeCurrentDialogs(){
+    	closeAddFrame();
+    	closePopup();
+    	
+    }
+    
+    public void addTaskBar(JPanel panel){
+    	TaskBar bar = new TaskBar(panel, this);
     }
 
 
@@ -229,14 +244,27 @@ public class MainFrame extends JFrame implements WindowListener{
 	public void setLogo(ImageIcon logo) {
 		this.logo = logo;
 	}
+    
+
+	public String getBackgroundFP() {
+		return backgroundFP;
+	}
+
+	public String getLogoFP() {
+		return logoFP;
+	}
+	public EditDraft getEd() {
+		return ed;
+	}
+	
 	
 
 	@Override
 	public void windowOpened(WindowEvent e) {
 		getCont().syncData();
 		
-		logo = new ImageIcon(cont.cdir+"/data/logo.png");
-		this.setIconImage(logo.getImage());
+		
+		this.setIconImage(new ImageIcon(this.getClass().getResource("/images/logo.png")).getImage());
 		System.out.println("Added");
 	}
  
@@ -273,7 +301,7 @@ public class MainFrame extends JFrame implements WindowListener{
 
 	@Override
 	public void windowDeactivated(WindowEvent e) {
-
+		
 		
 	}
 	public static void main(String[] args)
