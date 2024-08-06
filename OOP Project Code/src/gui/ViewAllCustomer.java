@@ -19,6 +19,8 @@ import javax.swing.JList;
 import javax.swing.JTree;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
@@ -30,6 +32,9 @@ import java.awt.event.InputMethodEvent;
 import java.awt.Color;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
+import javax.swing.JTextArea;
+import javax.swing.DropMode;
+import javax.swing.JToggleButton;
 
 public class ViewAllCustomer extends JPanel{
 	MainFrame main;
@@ -39,50 +44,39 @@ public class ViewAllCustomer extends JPanel{
 	private JScrollPane scrollPane;
 	private JLabel lblCustomerDetails;
 	private JTree tree;
-	private JButton btnBack;
 	private JTextField txtSearch;
 	private JLabel lblSearch;
 	private JLabel lblcaseSensetive;
 	private JButton btnEditUser;
+	private JTextArea txtrUnits;
 	
 	public ViewAllCustomer(MainFrame m) {
 		main=m;
 		this.setLayout(null);
 		
 		this.scrollPane = new JScrollPane();
-		this.scrollPane.setBounds(12, 59, 366, 288);
+		this.scrollPane.setBounds(12, 83, 650, 560);
 		add(this.scrollPane);
 		
 		model = new DefaultTreeModel(customer);
 		this.tree = new JTree(model);
+		tree.setRowHeight(30);
 		this.tree.addTreeSelectionListener(new TreeSelectionListener() {
 			public void valueChanged(TreeSelectionEvent arg0) {
-				btnBack.setLocation(12, 410);
-				btnEditUser.show();
+				if (arg0.getPath().getPathCount()==2){
+					btnEditUser.show();
+				}
+				else{btnEditUser.hide();}
 			}
 		});
-		this.tree.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		this.tree.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
 		this.scrollPane.setViewportView(this.tree);
-		populateTree();
 		
 		this.lblCustomerDetails = new JLabel("Customer Details");
-		this.lblCustomerDetails.setFont(new Font("Dialog", Font.BOLD, 20));
+		this.scrollPane.setColumnHeaderView(this.lblCustomerDetails);
+		this.lblCustomerDetails.setFont(new Font("Trebuchet MS", Font.BOLD, 25));
 		this.lblCustomerDetails.setHorizontalAlignment(SwingConstants.CENTER);
-		this.lblCustomerDetails.setBounds(12, 12, 366, 40);
-		add(this.lblCustomerDetails);
-		
-		this.btnBack = new JButton("Back");
-		this.btnBack.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (main.getCurrentAcct()[0].equals("A")) {
-					main.showAdminMenu();
-				}
-				else {main.showStaffMenu();}
-			}
-		});
-		this.btnBack.setFont(new Font("Dialog", Font.BOLD, 14));
-		this.btnBack.setBounds(135, 410, 123, 40);
-		add(this.btnBack);
+		populateTree();
 		
 		this.txtSearch = new JTextField();
 		this.txtSearch.addKeyListener(new KeyAdapter() {
@@ -97,19 +91,20 @@ public class ViewAllCustomer extends JPanel{
 			}
 		});
 
-		this.txtSearch.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		this.txtSearch.setBounds(87, 358, 291, 31);
+		this.txtSearch.setFont(new Font("Trebuchet MS", Font.PLAIN, 25));
+		this.txtSearch.setBounds(674, 285, 291, 44);
 		add(this.txtSearch);
 		this.txtSearch.setColumns(10);
 		
-		this.lblSearch = new JLabel("Search:");
-		this.lblSearch.setFont(new Font("Tahoma", Font.PLAIN, 17));
-		this.lblSearch.setBounds(22, 358, 62, 31);
+		this.lblSearch = new JLabel("Search User:");
+		this.lblSearch.setFont(new Font("Tw Cen MT", Font.PLAIN, 30));
+		this.lblSearch.setBounds(674, 238, 166, 34);
 		add(this.lblSearch);
 		
 		this.lblcaseSensetive = new JLabel("*Case Sensetive");
+		this.lblcaseSensetive.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
 		this.lblcaseSensetive.setForeground(Color.BLUE);
-		this.lblcaseSensetive.setBounds(87, 388, 132, 25);
+		this.lblcaseSensetive.setBounds(836, 247, 139, 25);
 		add(this.lblcaseSensetive);
 		
 		this.btnEditUser = new JButton("Edit User");
@@ -119,11 +114,38 @@ public class ViewAllCustomer extends JPanel{
 			}
 		});
 		btnEditUser.hide();
-		this.btnEditUser.setFont(new Font("Tahoma", Font.BOLD, 14));
-		this.btnEditUser.setBounds(256, 411, 124, 38);
+		this.btnEditUser.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+		this.btnEditUser.setBounds(674, 342, 166, 54);
 		add(this.btnEditUser);
-		main.setSize(400,500);
+		main.setSize(1020,720);
 		
+		TaskBar bar = new TaskBar(this, main);
+		
+		this.txtrUnits = new JTextArea();
+		txtrUnits.setOpaque(false);
+		txtrUnits.setEditable(false);
+		this.txtrUnits.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+		this.txtrUnits.setText("Units");
+		this.setUnits();
+		this.txtrUnits.setBounds(674, 409, 291, 235);
+		add(this.txtrUnits);
+		
+	}
+	
+	public void setUnits(){
+		Readings[] readings = main.getCont().getAllReadings();
+		HashMap<String, String> organisedUnits = new HashMap<>();
+		String text = "";
+		for (Readings r:readings){
+			organisedUnits.put(r.getUtilityName(), r.getUnit());
+		}
+//		int gap = 9-organisedUnits.size();
+//		for (int i=0; i<gap; i++){text+="\n";}
+		text += "Reading Units: \n";
+		for (Map.Entry<String, String> m : organisedUnits.entrySet()){
+			text += m.getKey()+" : " + m.getValue()+'\n';
+		}
+		txtrUnits.setText(text);
 	}
 	
 	public void populateTree() {
@@ -148,7 +170,7 @@ public class ViewAllCustomer extends JPanel{
 				DefaultMutableTreeNode bill= new DefaultMutableTreeNode("Bill "+ur[0][1]+":"+ur[0][2]);
 				for (int i =0; i<ur.length-1; i++){// go thru each reading
 					if (ur[i][0]==null){continue;}
-					bill.add(new DefaultMutableTreeNode(ur[i+1][0]+": "+ ur[i+1][1]));
+					bill.add(new DefaultMutableTreeNode(ur[i+1][0]+" used: "+ ur[i+1][1]));
 					total+=Double.valueOf(ur[i+1][2]);
 					allTotal+=Double.valueOf(ur[i+1][2]);
 				}
@@ -198,7 +220,7 @@ public class ViewAllCustomer extends JPanel{
 				DefaultMutableTreeNode bill= new DefaultMutableTreeNode("Bill "+ur[0][1]+":"+ur[0][2]);
 				for (int i =0; i<ur.length-1; i++){// go thru each reading
 					if (ur[i][0]==null){continue;}
-					bill.add(new DefaultMutableTreeNode(ur[i+1][0]+": "+ ur[i+1][1]));
+					bill.add(new DefaultMutableTreeNode(ur[i+1][0]+" used: "+ ur[i+1][1]));
 					total+=Double.valueOf(ur[i+1][2]);
 				}
 				String t = String.format("%.2f", total);

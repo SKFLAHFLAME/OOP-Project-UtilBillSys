@@ -3,7 +3,11 @@ package gui;
 import javax.swing.*;
 
 import controller.MainFrame;
+
+import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
@@ -23,7 +27,7 @@ public class AMenu extends JPanel{
     public AMenu(MainFrame m){
         this.main = m;
         this.setLayout(null);
-        main.setSize(500,340);
+        main.setSize(1020,720);
         
         this.lblAdminPage = new JLabel("Admin Page");
         this.lblAdminPage.addMouseListener(new MouseAdapter() {
@@ -33,7 +37,7 @@ public class AMenu extends JPanel{
         	}
         });
         this.lblAdminPage.setFont(new Font("Tahoma", Font.PLAIN, 30));
-        this.lblAdminPage.setBounds(125, 40, 204, 44);
+        this.lblAdminPage.setBounds(373, 228, 204, 44);
         add(this.lblAdminPage);
         
         this.btnLogOut = new JButton("Log Out");
@@ -45,7 +49,7 @@ public class AMenu extends JPanel{
         	}
         });
         this.btnLogOut.setFont(new Font("Tahoma", Font.PLAIN, 15));
-        this.btnLogOut.setBounds(170, 262, 97, 25);
+        this.btnLogOut.setBounds(498, 551, 97, 25);
         add(this.btnLogOut);
         
         this.btnEditUtilities = new JButton("Edit Utilities");
@@ -58,7 +62,7 @@ public class AMenu extends JPanel{
         	}
         });
         this.btnEditUtilities.setFont(new Font("Tahoma", Font.PLAIN, 17));
-        this.btnEditUtilities.setBounds(135, 105, 128, 59);
+        this.btnEditUtilities.setBounds(449, 401, 128, 59);
         add(this.btnEditUtilities);
         
         this.btnViewBills = new JButton("View Customers");
@@ -69,7 +73,7 @@ public class AMenu extends JPanel{
         	}
         });
         this.btnViewBills.setFont(new Font("Tahoma", Font.PLAIN, 17));
-        this.btnViewBills.setBounds(273, 106, 165, 29);
+        this.btnViewBills.setBounds(605, 391, 165, 29);
         add(this.btnViewBills);
         
         this.btnEditStaff = new JButton("Edit Staff");
@@ -79,7 +83,7 @@ public class AMenu extends JPanel{
         	}
         });
         this.btnEditStaff.setFont(new Font("Tahoma", Font.PLAIN, 17));
-        this.btnEditStaff.setBounds(12, 105, 113, 56);
+        this.btnEditStaff.setBounds(290, 402, 113, 56);
         add(this.btnEditStaff);
         
         this.btnAccount = new JButton("Account");
@@ -90,7 +94,7 @@ public class AMenu extends JPanel{
         	}
         });
         this.btnAccount.setFont(new Font("Tahoma", Font.PLAIN, 15));
-        this.btnAccount.setBounds(321, 57, 97, 25);
+        this.btnAccount.setBounds(602, 260, 97, 25);
         add(this.btnAccount);
         
         this.btnEditDate = new JButton("Edit Date");
@@ -100,7 +104,7 @@ public class AMenu extends JPanel{
         	}
         });
         this.btnEditDate.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        this.btnEditDate.setBounds(12, 57, 97, 25);
+        this.btnEditDate.setBounds(237, 244, 97, 25);
         add(this.btnEditDate);
         
         this.btnViewBills_1 = new JButton("View Bills");
@@ -110,10 +114,14 @@ public class AMenu extends JPanel{
         	}
         });
         this.btnViewBills_1.setFont(new Font("Tahoma", Font.PLAIN, 17));
-        this.btnViewBills_1.setBounds(273, 141, 167, 23);
+        this.btnViewBills_1.setBounds(603, 452, 167, 23);
         add(this.btnViewBills_1);
 
-
+        TaskBar bar = new TaskBar(this, main);
 
     }
+    
+    
+    
+    
 }

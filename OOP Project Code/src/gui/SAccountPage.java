@@ -118,7 +118,6 @@ public class SAccountPage extends JPanel{
 		this.showAccount();
 		this.showNormalScreen();
 		
-		System.out.println((textField.getLocation().y+textField.getSize().width+10)+" : "+(btnEdit.getLocation().x+btnEdit.getSize().height+10));
 		main.setSize((textField.getLocation().x+textField.getSize().width+40),(btnEdit.getLocation().y+btnEdit.getSize().height+60));
 		
 

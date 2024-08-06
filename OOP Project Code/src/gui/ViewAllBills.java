@@ -4,8 +4,10 @@ import javax.swing.JPanel;
 
 import controller.MainFrame;
 import data.Customer;
+import data.Readings;
 
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTree;
 import javax.swing.text.StyledEditorKit.ForegroundAction;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -18,6 +20,8 @@ import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
@@ -25,6 +29,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import java.awt.Color;
+import javax.swing.SwingConstants;
 
 public class ViewAllBills extends JPanel{
 	MainFrame main;
@@ -34,7 +40,6 @@ public class ViewAllBills extends JPanel{
 	private JComboBox comboMonth;
 	private JLabel lblYear;
 	private JComboBox comboYear;
-	private JButton btnBack;
 	private DefaultTreeModel model;
 	DefaultMutableTreeNode header = new DefaultMutableTreeNode("Date");
 	private String[] date;
@@ -42,11 +47,14 @@ public class ViewAllBills extends JPanel{
 	private String[] year;
 	private JTextField textField;
 	private JLabel lblSearchUser;
+	private JTextArea txtrUnits;
+	private JLabel lblcaseSensetive;
+	private JLabel lblCustomerBills;
 	
 	public ViewAllBills(MainFrame m){
 		main = m;
 		this.setLayout(null);
-		main.setSize(400, 490);
+		main.setSize(1020,720);
 		
 		//init month/year array
 		date = main.getCont().getSystemDate();
@@ -59,18 +67,24 @@ public class ViewAllBills extends JPanel{
 		temp.toArray(year);
 		
 		this.scrollPane = new JScrollPane();
-		this.scrollPane.setBounds(12, 45, 366, 259);
+		this.scrollPane.setBounds(12, 83, 650, 560);
 		add(this.scrollPane);
 		
 		
 		model = new DefaultTreeModel(header);
 		this.tree = new JTree(model);
-		this.tree.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		tree.setRowHeight(30);
+		this.tree.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
 		this.scrollPane.setViewportView(this.tree);
 		
+		this.lblCustomerBills = new JLabel("Customer Bills");
+		this.lblCustomerBills.setFont(new Font("Trebuchet MS", Font.BOLD, 25));
+		this.lblCustomerBills.setHorizontalAlignment(SwingConstants.CENTER);
+		this.scrollPane.setColumnHeaderView(this.lblCustomerBills);
+		
 		this.lblMonth = new JLabel("Month:");
-		this.lblMonth.setFont(new Font("Tahoma", Font.PLAIN, 17));
-		this.lblMonth.setBounds(12, 360, 60, 32);
+		this.lblMonth.setFont(new Font("STXinwei", Font.PLAIN, 25));
+		this.lblMonth.setBounds(674, 210, 83, 37);
 		add(this.lblMonth);
 		
 		this.comboMonth = new JComboBox(month);
@@ -80,13 +94,13 @@ public class ViewAllBills extends JPanel{
 				searchTree(comboMonth.getSelectedIndex(), comboYear.getSelectedItem(), textField.getText());
 			}
 		});
-		this.comboMonth.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		this.comboMonth.setBounds(81, 361, 117, 32);
+		this.comboMonth.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+		this.comboMonth.setBounds(769, 205, 178, 45);
 		add(this.comboMonth);
 		
 		this.lblYear = new JLabel("Year:");
-		this.lblYear.setFont(new Font("Tahoma", Font.PLAIN, 17));
-		this.lblYear.setBounds(12, 317, 54, 38);
+		this.lblYear.setFont(new Font("STXinwei", Font.PLAIN, 25));
+		this.lblYear.setBounds(668, 129, 83, 38);
 		add(this.lblYear);
 		
 		this.comboYear = new JComboBox(year);
@@ -120,24 +134,10 @@ public class ViewAllBills extends JPanel{
 				searchTree(comboMonth.getSelectedIndex(), comboYear.getSelectedItem(), textField.getText());
 			}
 		});
-		this.comboYear.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		this.comboYear.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
 		
-		this.comboYear.setBounds(81, 321, 117, 32);
+		this.comboYear.setBounds(769, 125, 178, 45);
 		add(this.comboYear);
-		
-		this.btnBack = new JButton("Back");
-		this.btnBack.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(main.getCurrentAcct()[0].equals("A")){
-					main.showAdminMenu();
-					return;
-				}
-				else{main.showStaffMenu();}
-			}
-		});
-		this.btnBack.setFont(new Font("Tahoma", Font.PLAIN, 17));
-		this.btnBack.setBounds(129, 409, 117, 40);
-		add(this.btnBack);
 		
 		this.textField = new JTextField();
 		this.textField.addKeyListener(new KeyAdapter() {
@@ -150,17 +150,34 @@ public class ViewAllBills extends JPanel{
 				searchTree(comboMonth.getSelectedIndex(), comboYear.getSelectedItem(), textField.getText());
 			}
 		});
-		this.textField.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		this.textField.setBounds(219, 362, 159, 32);
+		this.textField.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+		this.textField.setBounds(668, 336, 279, 45);
 		add(this.textField);
 		this.textField.setColumns(10);
 		
 		this.lblSearchUser = new JLabel("Search User:");
-		this.lblSearchUser.setFont(new Font("Tahoma", Font.PLAIN, 17));
-		this.lblSearchUser.setBounds(219, 315, 159, 34);
+		this.lblSearchUser.setFont(new Font("STXinwei", Font.PLAIN, 25));
+		this.lblSearchUser.setBounds(668, 278, 150, 45);
 		add(this.lblSearchUser);
 		
+		this.txtrUnits = new JTextArea();
+		txtrUnits.setOpaque(false);
+		txtrUnits.setEditable(false);
+		this.txtrUnits.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+		this.txtrUnits.setText("Units");
+		this.setUnits();
+		this.txtrUnits.setBounds(674, 409, 279, 235);
+		add(this.txtrUnits);
+		
 		searchTree(comboMonth.getSelectedIndex(), comboYear.getSelectedItem(), textField.getText());
+		
+		TaskBar bar = new TaskBar(this, main);
+		
+		this.lblcaseSensetive = new JLabel("*Case Sensetive");
+		this.lblcaseSensetive.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
+		this.lblcaseSensetive.setForeground(Color.BLUE);
+		this.lblcaseSensetive.setBounds(817, 288, 136, 26);
+		add(this.lblcaseSensetive);
 	}
 
 	
@@ -252,5 +269,21 @@ public class ViewAllBills extends JPanel{
 		
 		
 		
+	}
+	
+	public void setUnits(){
+		Readings[] readings = main.getCont().getAllReadings();
+		HashMap<String, String> organisedUnits = new HashMap<>();
+		String text = "";
+		for (Readings r:readings){
+			organisedUnits.put(r.getUtilityName(), r.getUnit());
+		}
+//		int gap = 9-organisedUnits.size();
+//		for (int i=0; i<gap; i++){text+="\n";}
+		text += "Reading Units: \n";
+		for (Map.Entry<String, String> m : organisedUnits.entrySet()){
+			text += m.getKey()+" : " + m.getValue()+'\n';
+		}
+		txtrUnits.setText(text);
 	}
 }
