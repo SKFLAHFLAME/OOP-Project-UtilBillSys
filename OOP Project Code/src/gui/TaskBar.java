@@ -59,89 +59,101 @@ public class TaskBar {
 	
 	
 	public void adminBar(){
-    	String spacer = "  ";
-    	int gap = 27;
- 
+		int xPos=0;
+		
     	JPanel bar = new JPanel();
-    	bar.setLayout(new FlowLayout(FlowLayout.LEADING));
+    	bar.setLayout(null);
     	bar.setBounds(0, 0, main.getWidth(), 40);
     	bar.setBackground(new Color(255,90,90));
     	panel.add(bar);
     	
+    	//!admin Home Header
     	JLabel adminpg = new JLabel("Home");
     	adminpg.setToolTipText("Admin Page");
     	adminpg.setForeground(Color.WHITE);
     	adminpg.setFont(font);
-    	adminpg.addMouseListener(new MouseAdapter() {
-    		public void mouseClicked(MouseEvent e){
-    			main.showAdminMenu();;
-    		}
-    	});
+    	if(currentPanel.equals("AMenu")){
+    		adminpg.setFont(selected);
+    	}
+    	else{
+    		adminpg.addMouseListener(new MouseAdapter() {
+        		public void mouseClicked(MouseEvent e){
+        			main.showAdminMenu();
+        		}
+        	});
+    	}
+    	adminpg.setHorizontalAlignment(SwingConstants.CENTER);
+    	adminpg.setBounds(xPos, 5, 80, 30);
+    	xPos+=adminpg.getWidth();
     	bar.add(adminpg);
     	
-    	bar.add(new JLabel(spacer));
     	
+    	//!Edit Utilities Header
     	JLabel editUtil = new JLabel("Edit Utility");
     	editUtil.setToolTipText("Edit Utility Details");
     	editUtil.setForeground(Color.WHITE);
     	editUtil.setFont(font);
-    	editUtil.addMouseListener(new MouseAdapter() {
-    		public void mouseClicked(MouseEvent e){
-    			main.showEditUtility();
-    		}
-    	});
+    	if(currentPanel.equals("EditUtility")){
+    		editUtil.setFont(selected);
+    	}
+    	else{
+    		editUtil.addMouseListener(new MouseAdapter() {
+        		public void mouseClicked(MouseEvent e){
+        			main.showEditUtility();
+        		}
+        	});
+    	}
+    	editUtil.setHorizontalAlignment(SwingConstants.CENTER);
+    	editUtil.setBounds(xPos, 5, 150, 30);
+    	xPos+=editUtil.getWidth();
     	bar.add(editUtil);
     	
-    	bar.add(new JLabel(spacer));
     	
-//    	JLabel editStaff = new JLabel("Edit Staff");
-//    	editStaff.setToolTipText("Add/Edit Staff Accounts");
-//    	editStaff.setForeground(Color.WHITE);
-//    	editStaff.setFont(font);
-//    	editStaff.addMouseListener(new MouseAdapter() {
-//    		public void mouseClicked(MouseEvent e){
-//    			main.showAllStaff();
-//    		}
-//    	});
-//    	bar.add(editStaff);
-//    	
-//    	
-//    	bar.add(new JLabel(spacer));
-    	
-    	
+    	//!view Customer Header
     	JLabel viewCust = new JLabel("View Customers");
     	viewCust.setToolTipText("View All Customer Accounts");
     	viewCust.setForeground(Color.WHITE);
     	viewCust.setFont(font);
-    	viewCust.addMouseListener(new MouseAdapter() {
-    		public void mouseClicked(MouseEvent e){
-    			main.showAllCustomers();
-    		}
-    	});
+    	if(currentPanel.equals("ViewAllCustomer")){
+    		viewCust.setFont(selected);
+    	}
+    	else{
+    		viewCust.addMouseListener(new MouseAdapter() {
+        		public void mouseClicked(MouseEvent e){
+        			main.showAllCustomers();
+        		}
+        	});
+    	}
+    	viewCust.setHorizontalAlignment(SwingConstants.CENTER);
+    	viewCust.setBounds(xPos, 5, 190, 30);
+    	xPos+=viewCust.getWidth();
     	bar.add(viewCust);
     	
-    	bar.add(new JLabel(spacer));
     	
+    	//!view Bill Header
     	JLabel viewBiils = new JLabel("View Bills");
     	viewBiils.setToolTipText("View All Bills by Date");
     	viewBiils.setForeground(Color.WHITE);
     	viewBiils.setFont(font);
-    	viewBiils.addMouseListener(new MouseAdapter() {
-    		public void mouseClicked(MouseEvent e){
-    			main.showAllBills();
-    		}
-    	});
+    	if(currentPanel.equals("ViewAllBills")){
+    		viewBiils.setFont(selected);
+    	}
+    	else{
+    		viewBiils.addMouseListener(new MouseAdapter() {
+        		public void mouseClicked(MouseEvent e){
+        			main.showAllBills();
+        		}
+        	});
+    	}
+    	viewBiils.setHorizontalAlignment(SwingConstants.CENTER);
+    	viewBiils.setBounds(xPos, 5, 140, 30);
+    	xPos+=viewBiils.getWidth();
     	bar.add(viewBiils);
     	
 
     	
-    	//spacer
-    	JLabel[] labels = new JLabel[gap];
-    	for (JLabel x: labels){
-    		x = new JLabel(spacer);
-    		bar.add(x);
-    	}
-    	bar.add(new JLabel("  "));
+    	
+    	
     	
     	
     	
@@ -157,6 +169,9 @@ public class TaskBar {
     	
     	calicon.setImage(calicon.getImage().getScaledInstance(30, 30, Image.SCALE_DEFAULT));
     	calendar.setIcon(calicon);
+    	calendar.setSize(30, 30);
+    	calendar.setLocation(main.getWidth()-6*calendar.getWidth(), 5);
+    	calendar.setHorizontalAlignment(SwingConstants.CENTER);
     	bar.add(calendar);
 
     	
@@ -174,6 +189,9 @@ public class TaskBar {
     	
     	proicon.setImage(proicon.getImage().getScaledInstance(35, 35, Image.SCALE_DEFAULT));
     	profile.setIcon(proicon);
+    	profile.setSize(30, 30);
+    	profile.setLocation(main.getWidth()-4*profile.getWidth(), 5);
+    	profile.setHorizontalAlignment(SwingConstants.CENTER);
     	bar.add(profile);
     	
     	
@@ -187,11 +205,15 @@ public class TaskBar {
     			main.showAllLogin();
     			main.setPrepage(false);
     			main.flag = false;
+    			main.closeCurrentDialogs();
 			}
 		});
     	
     	exitIcon.setImage(exitIcon.getImage().getScaledInstance(40,35, Image.SCALE_DEFAULT));
     	exit.setIcon(exitIcon);
+    	exit.setSize(30, 30);
+    	exit.setLocation(main.getWidth()-2*exit.getWidth(), 5);
+    	exit.setHorizontalAlignment(SwingConstants.CENTER);
     	bar.add(exit);
     	
     }
@@ -201,11 +223,10 @@ public class TaskBar {
 	
 	
 	public void staffBar(){
-    	String spacer = "  ";
-    	int gap = 31;
-    	
+    	int xPos =5;
+		
     	JPanel bar = new JPanel();
-    	bar.setLayout(new FlowLayout(FlowLayout.LEADING));
+    	bar.setLayout(null);
     	bar.setBounds(0, 0, main.getWidth(), 40);
     	bar.setBackground(new Color(135,100,210));
     	panel.add(bar);
@@ -214,60 +235,85 @@ public class TaskBar {
     	staffpg.setToolTipText("Staff Page");
     	staffpg.setForeground(Color.WHITE);
     	staffpg.setFont(font);
-    	staffpg.addMouseListener(new MouseAdapter() {
-    		public void mouseClicked(MouseEvent e){
-    			main.showStaffMenu();;
-    		}
-    	});
+    	if(currentPanel.equals("SMenu")){
+    		staffpg.setFont(selected);
+    	}
+    	else{
+    		staffpg.addMouseListener(new MouseAdapter() {
+        		public void mouseClicked(MouseEvent e){
+        			main.showStaffMenu();
+        		}
+        	});
+    	}
+    	staffpg.setHorizontalAlignment(SwingConstants.CENTER);
+    	staffpg.setBounds(xPos, 5, 80, 30);
+    	xPos+=staffpg.getWidth();
     	bar.add(staffpg);
     	
-    	bar.add(new JLabel(spacer));
     	
     	JLabel editUtil = new JLabel("Edit Utility");
     	editUtil.setToolTipText("Edit Utility Details");
     	editUtil.setForeground(Color.WHITE);
     	editUtil.setFont(font);
-    	editUtil.addMouseListener(new MouseAdapter() {
-    		public void mouseClicked(MouseEvent e){
-    			main.showEditUtility();
-    		}
-    	});
+    	if(currentPanel.equals("EditUtility")){
+    		editUtil.setFont(selected);
+    	}
+    	else{
+    		editUtil.addMouseListener(new MouseAdapter() {
+        		public void mouseClicked(MouseEvent e){
+        			main.showEditUtility();
+        		}
+        	});
+    	}
+    	editUtil.setHorizontalAlignment(SwingConstants.CENTER);
+    	editUtil.setBounds(xPos, 5, 150, 30);
+    	xPos+=editUtil.getWidth();
     	bar.add(editUtil);
     	
-    	bar.add(new JLabel(spacer));
     	
     	JLabel viewCust = new JLabel("View Customers");
     	viewCust.setToolTipText("View All Customer Accounts");
     	viewCust.setForeground(Color.WHITE);
     	viewCust.setFont(font);
-    	viewCust.addMouseListener(new MouseAdapter() {
-    		public void mouseClicked(MouseEvent e){
-    			main.showAllCustomers();
-    		}
-    	});
+    	if(currentPanel.equals("ViewAllCustomer")){
+    		viewCust.setFont(selected);
+    	}
+    	else{
+    		viewCust.addMouseListener(new MouseAdapter() {
+        		public void mouseClicked(MouseEvent e){
+        			main.showAllCustomers();
+        		}
+        	});
+    	}
+    	viewCust.setHorizontalAlignment(SwingConstants.CENTER);
+    	viewCust.setBounds(xPos, 5, 190, 30);
+    	xPos+=viewCust.getWidth();
     	bar.add(viewCust);
     	
-    	bar.add(new JLabel(spacer));
     	
     	JLabel viewBiils = new JLabel("View Bills");
     	viewBiils.setToolTipText("View All Bills by Months");
     	viewBiils.setForeground(Color.WHITE);
     	viewBiils.setFont(font);
-    	viewBiils.addMouseListener(new MouseAdapter() {
-    		public void mouseClicked(MouseEvent e){
-    			main.showAllBills();
-    		}
-    	});
+    	if(currentPanel.equals("ViewAllBills")){
+    		viewBiils.setFont(selected);
+    	}
+    	else{
+    		viewBiils.addMouseListener(new MouseAdapter() {
+        		public void mouseClicked(MouseEvent e){
+        			main.showAllBills();
+        		}
+        	});
+    	}
+    	viewBiils.setHorizontalAlignment(SwingConstants.CENTER);
+    	viewBiils.setBounds(xPos, 5, 140, 30);
+    	xPos+=viewBiils.getWidth();
     	bar.add(viewBiils);
     	
 
     	
-    	//spacer
-    	JLabel[] labels = new JLabel[gap];
-    	for (JLabel x: labels){
-    		x = new JLabel(spacer);
-    		bar.add(x);
-    	}
+    	
+    	
     	
     	
     	JLabel profile = new JLabel();
@@ -281,6 +327,9 @@ public class TaskBar {
 		});
     	proicon.setImage(proicon.getImage().getScaledInstance(35, 35, Image.SCALE_DEFAULT));
     	profile.setIcon(proicon);
+    	profile.setSize(30, 30);
+    	profile.setLocation(main.getWidth()-4*profile.getWidth(), 5);
+    	profile.setHorizontalAlignment(SwingConstants.CENTER);
     	bar.add(profile);
     	
     	
@@ -293,10 +342,14 @@ public class TaskBar {
     			main.showAllLogin();
     			main.setPrepage(false);
     			main.flag = false;
+    			main.closeCurrentDialogs();
 			}
 		});
     	exitIcon.setImage(exitIcon.getImage().getScaledInstance(40,35, Image.SCALE_DEFAULT));
     	exit.setIcon(exitIcon);
+    	exit.setSize(30, 30);
+    	exit.setLocation(main.getWidth()-2*exit.getWidth(), 5);
+    	exit.setHorizontalAlignment(SwingConstants.CENTER);
     	bar.add(exit);
     	
     }
@@ -414,6 +467,7 @@ public class TaskBar {
     			main.showAllLogin();
     			main.setPrepage(false);
     			main.flag = false;
+    			main.closeCurrentDialogs();
 			}
 		});
     	exitIcon.setImage(exitIcon.getImage().getScaledInstance(40,35, Image.SCALE_DEFAULT));

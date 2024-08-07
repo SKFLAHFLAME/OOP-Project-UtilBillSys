@@ -102,18 +102,6 @@ public class MainFrame extends JFrame implements WindowListener{
         add(m, "menu");
         card.show(this.getContentPane(), "menu");
     }
-
-    public void showLogin(){
-        Login l = new Login(this);
-        add(l, "login");
-        card.show(this.getContentPane(), "login");
-    }
-
-    public void showStaffLogin(){
-        SLogin sl = new SLogin(this);
-        add(sl, "Slogin");
-        card.show(this.getContentPane(), "Slogin");
-    }
     
     public void showAllLogin(){
         AllLogin l = new AllLogin(this);
@@ -125,6 +113,11 @@ public class MainFrame extends JFrame implements WindowListener{
         SignUp su = new SignUp(this);
         add(su, "Signup");
         card.show(this.getContentPane(), "Signup");
+    }
+    public void showResetDetails(){
+        ResetDetails rd = new ResetDetails(this);
+        add(rd, "RD");
+        card.show(this.getContentPane(), "RD");
     }
     
     public void showEditUtility(){
@@ -139,7 +132,6 @@ public class MainFrame extends JFrame implements WindowListener{
     }
     
     
-
     public void showAllCustomers() {
     	ViewAllCustomer vs = new ViewAllCustomer(this);
     	add(vs,"vs");
@@ -156,14 +148,20 @@ public class MainFrame extends JFrame implements WindowListener{
     	card.show(getContentPane(), "vs");
     }
     
+	
+	
+	//!Frame section
     
     /**
      * 
      * @author samue
      * @param panel
-     * @param parameters : for respective panels
-     * @param Staff Account Page : "SAccount"
-     * @param Customer Account Page : "CAccount"
+     * @param parameters : for respective panels - parameters needed
+     * @param Staff Account Page : "SAccount" - ID
+     * @param Customer Account Page : "CAccount" - UserName
+     * @param Edit Date: "Date" - 
+     * @param Edit Meter Reading : "EditMeterReading" - Username, Readingname, new Value
+     * @param Create Staff : "SSignUp" - ""
      * @return open Respective dialogs
      * 
      */

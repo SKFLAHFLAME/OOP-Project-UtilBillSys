@@ -36,14 +36,14 @@ public class SAccountPage extends JPanel{
 
 
 		
-		this.lblId = new JLabel("ID:");
-		this.lblId.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		this.lblId.setBounds(29, 69, 90, 28);
+		this.lblId = new JLabel("Staff ID:");
+		this.lblId.setFont(new Font("Trebuchet MS", Font.PLAIN, 25));
+		this.lblId.setBounds(29, 69, 114, 28);
 		add(this.lblId);
 		
 		this.lblPassword = new JLabel("Password:");
-		this.lblPassword.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		this.lblPassword.setBounds(29, 139, 97, 40);
+		this.lblPassword.setFont(new Font("Trebuchet MS", Font.PLAIN, 25));
+		this.lblPassword.setBounds(29, 139, 120, 40);
 		add(this.lblPassword);
 		
 		this.btnBack = new JButton("Close");
@@ -79,9 +79,9 @@ public class SAccountPage extends JPanel{
 		add(this.btnEdit);
 		
 		this.textField = new JTextField();
-		this.textField.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		this.textField.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
 		textField.setEditable(false);
-		this.textField.setBounds(131, 69, 348, 40);
+		this.textField.setBounds(159, 69, 320, 40);
 		add(this.textField);
 		this.textField.setColumns(10);
 		
@@ -91,9 +91,9 @@ public class SAccountPage extends JPanel{
 		add(this.lblAccountPage);
 		
 		this.passwordField = new JPasswordField();
-		this.passwordField.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		this.passwordField.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
 		passwordField.setEditable(false);
-		this.passwordField.setBounds(131, 139, 348, 40);
+		this.passwordField.setBounds(159, 139, 320, 40);
 		add(this.passwordField);
 		
 		this.chckbxShowPassword = new JCheckBox("Show Password");
@@ -106,7 +106,7 @@ public class SAccountPage extends JPanel{
 			}
 		});
 		this.chckbxShowPassword.setFont(new Font("Tw Cen MT", Font.PLAIN, 17));
-		this.chckbxShowPassword.setBounds(131, 186, 173, 28);
+		this.chckbxShowPassword.setBounds(159, 189, 173, 28);
 		add(this.chckbxShowPassword);
 		this.showAccount();
 		this.showNormalScreen();
