@@ -160,6 +160,7 @@ public class EditDraft extends JPanel {
         this.btnBack = new JButton("Back");
         this.btnBack.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent arg0) {
+        		main.closePopup();
         		if (main.getCurrentAcct()[0].equals("C")){
         			main.showCustMenu();
         		}

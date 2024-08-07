@@ -86,6 +86,7 @@ public class CMenu extends JPanel{
         	public void actionPerformed(ActionEvent arg0) {
         		main.clearCurrentAcct();
         		main.showAllLogin();
+        		main.closeCurrentDialogs();
         	} 
         });
         btnLogOut.setBounds(248, 536, 113, 39);

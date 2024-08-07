@@ -125,6 +125,7 @@ public class AMenu extends JPanel{
 			public void actionPerformed(ActionEvent arg0) {
                 main.clearCurrentAcct();
         		main.showAllLogin();
+        		main.closeCurrentDialogs();
         	}
         });
         this.btnLogOut.setFont(new Font("Tahoma", Font.PLAIN, 15));

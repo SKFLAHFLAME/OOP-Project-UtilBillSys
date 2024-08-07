@@ -112,6 +112,7 @@ public class SMenu extends JPanel{
 			public void actionPerformed(ActionEvent e) {
                 main.clearCurrentAcct();
         		main.showAllLogin();
+        		main.closeCurrentDialogs();
         	}
         });
         this.btnLogOut.setFont(new Font("Tahoma", Font.PLAIN, 15));

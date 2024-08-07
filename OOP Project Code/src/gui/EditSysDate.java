@@ -35,7 +35,7 @@ public class EditSysDate extends JPanel{
 		this.btnBack = new JButton("Cancel");
 		this.btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(!window.main.getCurrentAcct()[0].equals("A")){window.main.showLogin();return;}
+				if(!window.main.getCurrentAcct()[0].equals("A")){window.main.showAllLogin();return;}
 				window.dispose();
 			}
 		});

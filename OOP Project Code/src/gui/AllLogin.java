@@ -180,6 +180,7 @@ public class AllLogin extends JPanel{
 			}
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				main.showResetDetails();
 			}
 		});
 		this.lblForgotPassword.setHorizontalAlignment(SwingConstants.TRAILING);
