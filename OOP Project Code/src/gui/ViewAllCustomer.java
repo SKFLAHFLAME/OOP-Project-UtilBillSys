@@ -114,13 +114,15 @@ public class ViewAllCustomer extends JPanel{
 		this.lblcaseSensetive.setBounds(841, 239, 139, 25);
 		add(this.lblcaseSensetive);
 		
+		
 		this.btnEditUser = new JButton("Edit User");
 		this.btnEditUser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String user = tree.getSelectionPath().getLastPathComponent().toString();
 				if (tglbtnSearchMethod.isSelected()){
-					String user = tree.getSelectionPath().getLastPathComponent().toString();
 					main.showEditDraft(user);
 				}
+				else {main.showPopup("CAccount", user);}
 			}
 		});
 		btnEditUser.hide();
@@ -128,6 +130,7 @@ public class ViewAllCustomer extends JPanel{
 		this.btnEditUser.setBounds(674, 342, 291, 54);
 		add(this.btnEditUser);
 		main.setSize(1020,720);
+		
 		
 		this.txtrUnits = new JTextArea();
 		txtrUnits.setOpaque(false);
