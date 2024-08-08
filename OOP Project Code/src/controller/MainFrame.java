@@ -2,39 +2,93 @@ package controller;
 
 import gui.*;
 import java.awt.CardLayout;
-import javax.swing.JFrame;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.File;
 
-public class MainFrame extends JFrame{
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
+import com.formdev.flatlaf.FlatIntelliJLaf;
+
+
+
+
+public class MainFrame extends JFrame implements WindowListener{
     private CardLayout card;
     private Controller cont;
     private boolean prepage=false;
     private String[] currentAcct = new String[2];//( S/C , Username)
     public boolean flag;
-    AddFrame frame;
+    private AddFrame frame;
+    private PopupDialog pop;
     private EditUtility eu;
+	private EditDraft ed;
+	private CMenu m;
+	private ViewHistoryScreen vhs;
+	private ImageIcon logo;
+	private String backgroundFP = "/images/background.jpg";
+	private String logoFP = "/images/logo.png";
+	
 
-    public MainFrame(){
+
+
+	public MainFrame(){
         
         this.setTitle("Utility Billing System");
-        this.setSize(400,300);
+//        this.setSize(400,300);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setSize(1050,720);
+        this.setResizable(false);
         this.setLocationRelativeTo(null);
-            
+        
+        try {
+			UIManager.setLookAndFeel(new FlatIntelliJLaf());
+		} catch (UnsupportedLookAndFeelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			try {
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			} catch (ClassNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (InstantiationException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IllegalAccessException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (UnsupportedLookAndFeelException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+        
         this.cont = new Controller();
+//    	getCont().setSystemDate("7", "2020");
         
             
         card = new CardLayout();
         this.setLayout(card);
+        this.addWindowListener(this);
             
-        this.showLogin();
-        getCont().initialiseUsers();
+        this.showAllLogin();
+        getCont().initialiseItems();
             
         this.setVisible(true);
         
     }
+    
+    //! Show Panels
 
     public void showCustMenu(){
-        CMenu m = new CMenu(this);
+        m = new CMenu(this);
         add(m, "menu");
         card.show(this.getContentPane(), "menu");
     }
@@ -48,17 +102,11 @@ public class MainFrame extends JFrame{
         add(m, "menu");
         card.show(this.getContentPane(), "menu");
     }
-
-    public void showLogin(){
-        Login l = new Login(this);
+    
+    public void showAllLogin(){
+        AllLogin l = new AllLogin(this);
         add(l, "login");
         card.show(this.getContentPane(), "login");
-    }
-
-    public void showStaffLogin(){
-        SLogin sl = new SLogin(this);
-        add(sl, "Slogin");
-        card.show(this.getContentPane(), "Slogin");
     }
     
     public void showSignUp(){
@@ -66,22 +114,92 @@ public class MainFrame extends JFrame{
         add(su, "Signup");
         card.show(this.getContentPane(), "Signup");
     }
-    public void showSSignUp(){
-        CreateStaff su = new CreateStaff(this);
-        add(su, "SSignup");
-        card.show(this.getContentPane(), "SSignup");
+    public void showResetDetails(){
+        ResetDetails rd = new ResetDetails(this);
+        add(rd, "RD");
+        card.show(this.getContentPane(), "RD");
     }
+    
     public void showEditUtility(){
         eu=new EditUtility(this);
         add(eu,"Util");
         card.show(this.getContentPane(), "Util");
     }
+    public void showEditDraft(String user){
+    	ed=new EditDraft(this, user);
+    	add(ed, "Edit");
+    	card.show(this.getContentPane(), "Edit");
+    }
+    
+    
+    public void showAllCustomers() {
+    	ViewAllCustomer vs = new ViewAllCustomer(this);
+    	add(vs,"vs");
+    	card.show(getContentPane(), "vs");
+    }
+    public void showViewHistoryScreen(){
+    	vhs = new ViewHistoryScreen(this);
+    	add(vhs, "vhs");
+    	card.show(getContentPane(), "vhs");
+    }
+	public void showAllBills() {
+    	ViewAllBills vs = new ViewAllBills(this);
+    	add(vs,"vs");
+    	card.show(getContentPane(), "vs");
+    }
+    
+	
+	
+	//!Frame section
+    
+    /**
+     * 
+     * @author samue
+     * @param panel
+     * @param parameters : for respective panels - parameters needed
+     * @param Staff Account Page : "SAccount" - ID
+     * @param Customer Account Page : "CAccount" - UserName
+     * @param Edit Date: "Date" - 
+     * @param Edit Meter Reading : "EditMeterReading" - Username, Readingname, new Value
+     * @param Create Staff : "SSignUp" - ""
+     * @return open Respective dialogs
+     * 
+     */
+    public void showPopup(String panel, CharSequence parameters){
+    	closeCurrentDialogs();
+    	pop = new PopupDialog(this, panel,parameters);
+    }
     public void showAddFrame(){
+    	closeCurrentDialogs();
     	frame = new AddFrame(this);
     	frame.setVisible(true);
     }
     public void closeAddFrame(){
-    	frame.dispose();
+    	try {
+    		frame.dispose();
+		} catch (Exception e) {
+			return;
+		}
+    	
+    }
+    public void closePopup(){
+    	try {
+    		pop.dispose();
+		} catch (Exception e) {
+			return;
+		}
+    }
+    
+    
+    
+    public void closeCurrentDialogs(){
+    	closeAddFrame();
+    	closePopup();
+    	
+    }
+    
+    public void addTaskBar(JPanel panel){
+    	TaskBar bar = new TaskBar(panel, this);
     }
 
 
@@ -115,6 +233,78 @@ public class MainFrame extends JFrame{
 
 	public EditUtility getEu() {
 		return eu;
+	}
+
+	public ImageIcon getLogo() {
+		return logo;
+	}
+
+	public void setLogo(ImageIcon logo) {
+		this.logo = logo;
+	}
+    
+
+	public String getBackgroundFP() {
+		return backgroundFP;
+	}
+
+	public String getLogoFP() {
+		return logoFP;
+	}
+	public EditDraft getEd() {
+		return ed;
+	}
+	
+	
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		getCont().syncData();
+		
+		
+		this.setIconImage(new ImageIcon(this.getClass().getResource("/images/logo.png")).getImage());
+		System.out.println("Added");
+	}
+ 
+	@Override
+	public void windowClosing(WindowEvent e) {
+        getCont().saveData();
+        System.out.println("Saved");
+		
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		System.out.println("Exited");
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		
+		
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+
+		
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		
+		
+	}
+	public static void main(String[] args)
+	{
+		MainFrame ex = new MainFrame();
 	}
 
     

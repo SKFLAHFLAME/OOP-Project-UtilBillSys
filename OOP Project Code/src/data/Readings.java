@@ -7,62 +7,76 @@ public class Readings {
     private double price;
     private double serviceCharge;
     
-    public Readings(){
-        utilityName = null;
-        readings = 0.0;
+    // Default constructor
+    public Readings() {
+        this.utilityName = null;
+        this.readings = 0.0;
+        this.unit = null;
+        this.price = 0.0;
+        this.serviceCharge = 0.0;
     }
-    public Readings(String name, double reading){
-        utilityName = name;
-        readings = reading;
+    
+    // Constructor with name and initial reading
+    public Readings(String name, double reading) {
+        this.utilityName = name;
+        this.readings = reading;
     }
-    public Readings(String name, double price,String unit, double serviceCharge){
+    
+    // Constructor with full details
+    public Readings(String name, double price, String unit, double serviceCharge) {
         this.utilityName = name;
         this.price = price;
-        this.unit=unit;
+        this.unit = unit;
         this.serviceCharge = serviceCharge;
     }
     
-    public Readings(String name,double mreading, double price,String unit, double serviceCharge){
+    // Constructor with all details
+    public Readings(String name, double mreading, double price, String unit, double serviceCharge) {
         this.utilityName = name;
         this.readings = mreading;
         this.price = price;
-        this.unit=unit;
+        this.unit = unit;
         this.serviceCharge = serviceCharge;
     }
     
-    
-
+    // Getters and Setters
     public String getUtilityName() {
         return utilityName;
     }
+    
     public void setUtilityName(String utilityName) {
         this.utilityName = utilityName;
     }
+    
     public double getReadings() {
         return readings;
     }
+    
     public void setReadings(double readings) {
         this.readings = readings;
     }
+    
     public double getPrice() {
         return price;
     }
+    
     public void setPrice(double price) {
         this.price = price;
     }
-
+    
     public double getServiceCharge() {
         return serviceCharge;
     }
-
+    
     public void setServiceCharge(double serviceCharge) {
         this.serviceCharge = serviceCharge;
     }
-	public String getUnit() {
-		return unit;
-	}
-	public void setUnit(String unit) {
-		this.unit = unit;
-	}
     
+    public String getUnit() {
+        return unit;
+    }
+    
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
 }
