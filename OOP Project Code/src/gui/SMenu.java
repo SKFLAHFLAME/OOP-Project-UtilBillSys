@@ -11,6 +11,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -32,8 +33,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 public class SMenu extends JPanel{
-    MainFrame main;
-    private JButton btnLogOut;
+	MainFrame main; // Reference to the MainFrame instance    
+	private JButton btnLogOut;
     private JButton btnEditUtilities;
     private JButton btnViewCustomer;
     private JButton btnAccount;
@@ -73,11 +74,11 @@ public class SMenu extends JPanel{
         this.panel.add(this.btnAccount);
         this.btnAccount.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent arg0) {
-        		main.setPrepage(false);
+                main.setPrepage(false); // Set the previous page flag
         		main.showPopup("SAccount", main.getCurrentAcct()[1]);
         	}
         });
-        btnAccount.hide();
+        btnAccount.hide(); // Hide the Account button
         this.btnAccount.setFont(new Font("Tahoma", Font.PLAIN, 15));
         
         this.btnViewCustomer = new JButton("View Customer");
@@ -158,24 +159,24 @@ public class SMenu extends JPanel{
         this.txtrAccount = new JTextArea();
         txtrAccount.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         this.txtrAccount.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
-        this.txtrAccount.setEditable(false);
-//      this.txtrAccount.setBackground(SystemColor.control);
+        this.txtrAccount.setEditable(false); // Make text area non-editable
+        //this.txtrAccount.setBackground(SystemColor.control); // Background color commented out
         this.txtrAccount.addMouseListener(new MouseAdapter() {
-        	@Override
-        		public void mouseEntered(MouseEvent e) {
-        			txtrAccount.setBackground(SystemColor.control);
-        		}
-        	@Override
-        		public void mouseExited(MouseEvent e) {
-        			txtrAccount.setBackground(Color.WHITE);
-                		
-        		}
-        	@Override
-        		public void mouseClicked(MouseEvent e) {
-        			main.setPrepage(false);
-        			main.showPopup("SAccount", main.getCurrentAcct()[1]);
-        		}
-        	});
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                txtrAccount.setBackground(SystemColor.control); // Change background on mouse enter
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                txtrAccount.setBackground(Color.WHITE); // Change background on mouse exit
+            }
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                main.setPrepage(false); // Set previous page flag
+                main.showPopup("SAccount", main.getCurrentAcct()[1]); // Show account popup
+            }
+        });
+
         this.txtrAccount.setText("Account");
         this.txtrAccount.setBounds(517, 80, 141, 51);
         this.panel.add(this.txtrAccount);
@@ -194,7 +195,7 @@ public class SMenu extends JPanel{
         String [] colName = {"Name","Price","Tax"};
     	priceModel = new DefaultTableModel(colName, 0){
             public boolean isCellEditable(int row, int column) {
-                return false;
+                return false; // Make table cells non-editable
             }
         };
         this.tablePrice = new JTable(priceModel);
@@ -220,44 +221,46 @@ public class SMenu extends JPanel{
     }
     
     public void init(){
-    	showDate();
-    	showAcctDetails();
-    	showAverageReadings();
-    	fillCurrentPrices();
+        showDate(); // Display the current date
+        showAcctDetails(); // Display account details
+        showAverageReadings(); // Display average meter readings
+        fillCurrentPrices(); // Fill the price table with current prices
     }
     
     public void showAverageReadings(){
-    	String text = "Average Usage: \nAs of: ";
-    	text += date[0]+"/"+date[1]+'\n';
-    	for (Readings r:main.getCont().getAllReadings()){
-    		int ave=main.getCont().getAverageReading(r.getUtilityName());
-    		text+= r.getUtilityName()+" : "+ave+'\n';
-    	}
-    	
-    	txtrAverageReadings.setText(text);
+        // Build the text for average readings
+        String text = "Average Usage: \nAs of: ";
+        text += date[0] + "/" + date[1] + '\n'; // Append date
+        for (Readings r : main.getCont().getAllReadings()){
+            int ave = main.getCont().getAverageReading(r.getUtilityName()); // Get average reading
+            text += r.getUtilityName() + " : " + ave + '\n'; // Append reading
+        }
+        
+        txtrAverageReadings.setText(text); // Update text area with average readings
     }
     
     public void fillCurrentPrices(){
-    	//price Table
-    	priceModel.setRowCount(0);
-        Readings[] readings = main.getCont().getAllReadings();
-        for(Readings r:readings){
-        	String[] row = {r.getUtilityName(), "$"+r.getPrice()+"/"+r.getUnit(), ""+r.getServiceCharge()+"%"};
-        	priceModel.addRow(row);
+        // Clear the existing rows in the price table
+        priceModel.setRowCount(0);
+        Readings[] readings = main.getCont().getAllReadings(); // Get all readings
+        for (Readings r : readings){
+            String[] row = {r.getUtilityName(), "$" + r.getPrice() + "/" + r.getUnit(), "" + r.getServiceCharge() + "%"}; // Create row data
+            priceModel.addRow(row); // Add row to table model
         }
-        tablePrice.setModel(priceModel);
-        tablePrice.repaint();
+        tablePrice.setModel(priceModel); // Set the table model
+        tablePrice.repaint(); // Repaint table to reflect changes
     }
     
     public void showDate(){
-    	date = main.getCont().getSystemDate();
-    	String d = "Date: \n"+String.join(" / ", date);
-    	txtrDate.setText(d);
+        date = main.getCont().getSystemDate(); // Get system date
+        String d = "Date: \n" + String.join(" / ", date); // Format date
+        txtrDate.setText(d); // Update text area with date
     }
     
     public void showAcctDetails(){
-    	String text = "ID : "+main.getCurrentAcct()[1]+'\n'
-    			+ "Access : Staff";
-    	txtrAccount.setText(text);
+        // Build text for account details
+        String text = "ID : " + main.getCurrentAcct()[1] + '\n' 
+                + "Access : Staff"; // Append account details
+        txtrAccount.setText(text); // Update text area with account details
     }
 }

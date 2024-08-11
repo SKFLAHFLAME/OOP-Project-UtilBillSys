@@ -20,7 +20,7 @@ import javax.swing.SwingUtilities;
 import controller.MainFrame;
 
 public class TaskBar {
-	MainFrame main;
+	MainFrame main; // Reference to the main frame controller
 	private JPanel panel;
 	private Font font = new Font("Trebuchet MS", Font.PLAIN, 24);
 	private Font selected = new Font("Trebuchet MS", Font.BOLD, 24);
@@ -31,35 +31,36 @@ public class TaskBar {
 	ImageIcon proicon = new ImageIcon(this.getClass().getResource("/images/profile.png"));
 	ImageIcon exitIcon = new ImageIcon(this.getClass().getResource("/images/logout.png"));
 	
-	public TaskBar(JPanel panel, MainFrame m){
-		main=m;
-		this.panel = panel;
-		currentPanel = panel.getClass().getSimpleName();
-		switch (main.getCurrentAcct()[0]) {
-		case "A":
-			adminBar();
-			break;
-			
-		case "S":
-			staffBar();
-			break;
-			
-		case "C":
-			customerBar();
-			break;
+	// Constructor for TaskBar
+		public TaskBar(JPanel panel, MainFrame m){
+			main = m; // Initialize main frame reference
+			this.panel = panel; // Initialize panel reference
+			currentPanel = panel.getClass().getSimpleName(); // Get the name of the current panel
+			// Display the appropriate task bar based on account type
+			switch (main.getCurrentAcct()[0]) {
+			case "A":
+				adminBar(); // Admin task bar
+				break;
+				
+			case "S":
+				staffBar(); // Staff task bar
+				break;
+				
+			case "C":
+				customerBar(); // Customer task bar
+				break;
 
-		default:
-			main.showAllLogin();
-			break;
+			default:
+				main.showAllLogin(); // Show login if account type is not recognized
+				break;
+			}
 		}
-		
-		
-	}
 	
 	
 	
+	// Method to create the admin task bar
 	public void adminBar(){
-		int xPos=0;
+		int xPos = 0; // Initial x position for the labels
 		
     	JPanel bar = new JPanel();
     	bar.setLayout(null);
@@ -73,12 +74,12 @@ public class TaskBar {
     	adminpg.setForeground(Color.WHITE);
     	adminpg.setFont(font);
     	if(currentPanel.equals("AMenu")){
-    		adminpg.setFont(selected);
+    		adminpg.setFont(selected); // Highlight the selected panel
     	}
     	else{
     		adminpg.addMouseListener(new MouseAdapter() {
         		public void mouseClicked(MouseEvent e){
-        			main.showAdminMenu();
+        			main.showAdminMenu(); // Show admin menu on click
         		}
         	});
     	}
@@ -94,12 +95,12 @@ public class TaskBar {
     	editUtil.setForeground(Color.WHITE);
     	editUtil.setFont(font);
     	if(currentPanel.equals("EditUtility")){
-    		editUtil.setFont(selected);
+    		editUtil.setFont(selected); // Highlight the selected panel
     	}
     	else{
     		editUtil.addMouseListener(new MouseAdapter() {
         		public void mouseClicked(MouseEvent e){
-        			main.showEditUtility();
+        			main.showEditUtility(); // Show edit utility page on click
         		}
         	});
     	}
@@ -115,12 +116,12 @@ public class TaskBar {
     	viewCust.setForeground(Color.WHITE);
     	viewCust.setFont(font);
     	if(currentPanel.equals("ViewAllCustomer")){
-    		viewCust.setFont(selected);
+    		viewCust.setFont(selected); // Highlight the selected panel
     	}
     	else{
     		viewCust.addMouseListener(new MouseAdapter() {
         		public void mouseClicked(MouseEvent e){
-        			main.showAllCustomers();
+        			main.showAllCustomers(); // Show all customers page on click
         		}
         	});
     	}
@@ -136,12 +137,12 @@ public class TaskBar {
     	viewBiils.setForeground(Color.WHITE);
     	viewBiils.setFont(font);
     	if(currentPanel.equals("ViewAllBills")){
-    		viewBiils.setFont(selected);
+    		viewBiils.setFont(selected); // Highlight the selected panel
     	}
     	else{
     		viewBiils.addMouseListener(new MouseAdapter() {
         		public void mouseClicked(MouseEvent e){
-        			main.showAllBills();
+        			main.showAllBills(); // Show all bills page on click
         		}
         	});
     	}
@@ -163,7 +164,7 @@ public class TaskBar {
     	calendar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				main.showPopup("Date", "");
+				main.showPopup("Date", ""); // Show date popup on click
 			}
 		});
     	
@@ -183,7 +184,7 @@ public class TaskBar {
     	profile.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				main.showPopup("SAccount", main.getCurrentAcct()[1]);
+				main.showPopup("SAccount", main.getCurrentAcct()[1]); // Show account popup on click
 			}
 		});
     	
@@ -201,11 +202,11 @@ public class TaskBar {
 //    	exit.setBounds(bar.getWidth()-40, 0, 25, 25);
     	exit.addMouseListener(new MouseAdapter() {
     		public void mouseClicked(MouseEvent e) {
-				main.clearCurrentAcct();
-    			main.showAllLogin();
-    			main.setPrepage(false);
-    			main.flag = false;
-    			main.closeCurrentDialogs();
+				main.clearCurrentAcct(); // Clear current account
+    			main.showAllLogin(); // Show login page
+    			main.setPrepage(false); // Reset prepage flag
+    			main.flag = false; // Reset flag
+    			main.closeCurrentDialogs(); // Close any open dialogs
 			}
 		});
     	
@@ -222,9 +223,10 @@ public class TaskBar {
 	
 	
 	
+	// Method to create the staff task bar
 	public void staffBar(){
-    	int xPos =5;
-		
+	    int xPos = 5; // Initial x position for the labels
+			
     	JPanel bar = new JPanel();
     	bar.setLayout(null);
     	bar.setBounds(0, 0, main.getWidth(), 40);
@@ -236,12 +238,12 @@ public class TaskBar {
     	staffpg.setForeground(Color.WHITE);
     	staffpg.setFont(font);
     	if(currentPanel.equals("SMenu")){
-    		staffpg.setFont(selected);
+    		staffpg.setFont(selected); // Highlight the selected panel
     	}
     	else{
     		staffpg.addMouseListener(new MouseAdapter() {
         		public void mouseClicked(MouseEvent e){
-        			main.showStaffMenu();
+        			main.showStaffMenu(); // Show staff menu on click
         		}
         	});
     	}
@@ -256,12 +258,12 @@ public class TaskBar {
     	editUtil.setForeground(Color.WHITE);
     	editUtil.setFont(font);
     	if(currentPanel.equals("EditUtility")){
-    		editUtil.setFont(selected);
+    		editUtil.setFont(selected); // Highlight the selected panel
     	}
     	else{
     		editUtil.addMouseListener(new MouseAdapter() {
         		public void mouseClicked(MouseEvent e){
-        			main.showEditUtility();
+        			main.showEditUtility(); // Show utility page on click
         		}
         	});
     	}
@@ -276,12 +278,12 @@ public class TaskBar {
     	viewCust.setForeground(Color.WHITE);
     	viewCust.setFont(font);
     	if(currentPanel.equals("ViewAllCustomer")){
-    		viewCust.setFont(selected);
+    		viewCust.setFont(selected);	// Highlight the selected panel
     	}
     	else{
     		viewCust.addMouseListener(new MouseAdapter() {
         		public void mouseClicked(MouseEvent e){
-        			main.showAllCustomers();
+        			main.showAllCustomers();	// Show customer page on click
         		}
         	});
     	}
@@ -296,12 +298,12 @@ public class TaskBar {
     	viewBiils.setForeground(Color.WHITE);
     	viewBiils.setFont(font);
     	if(currentPanel.equals("ViewAllBills")){
-    		viewBiils.setFont(selected);
+    		viewBiils.setFont(selected); // Highlight the selected panel
     	}
     	else{
     		viewBiils.addMouseListener(new MouseAdapter() {
         		public void mouseClicked(MouseEvent e){
-        			main.showAllBills();
+        			main.showAllBills(); // Show all bills page on click
         		}
         	});
     	}
@@ -317,12 +319,11 @@ public class TaskBar {
     	
     	
     	JLabel profile = new JLabel();
-    	profile.setToolTipText("View/Edit Current Account");
-//    	profile.setBounds(bar.getWidth()-40, 0, 25, 25);
+    	profile.setToolTipText("View/Edit Current Account"); // Tooltip text
     	profile.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				main.showPopup("SAccount", main.getCurrentAcct()[1]);
+				main.showPopup("SAccount", main.getCurrentAcct()[1]); // Show account popup on click
 			}
 		});
     	proicon.setImage(proicon.getImage().getScaledInstance(35, 35, Image.SCALE_DEFAULT));
@@ -338,11 +339,11 @@ public class TaskBar {
 //    	exit.setBounds(bar.getWidth()-40, 0, 25, 25);
     	exit.addMouseListener(new MouseAdapter() {
     		public void mouseClicked(MouseEvent e) {
-				main.clearCurrentAcct();
-    			main.showAllLogin();
-    			main.setPrepage(false);
-    			main.flag = false;
-    			main.closeCurrentDialogs();
+				main.clearCurrentAcct(); // Clear current account
+    			main.showAllLogin(); // Show login page
+    			main.setPrepage(false); // Reset prepage flag
+    			main.flag = false; // Reset flag
+    			main.closeCurrentDialogs(); // Close any open dialogs
 			}
 		});
     	exitIcon.setImage(exitIcon.getImage().getScaledInstance(40,35, Image.SCALE_DEFAULT));
@@ -357,9 +358,9 @@ public class TaskBar {
 	
 	
 	
-	
+	// Method to create the customer task bar
 	public void customerBar(){
-    	int xPos =5;
+    	int xPos = 5; // Initial x position for the labels
     	
     	
     	JPanel bar = new JPanel();
@@ -374,12 +375,12 @@ public class TaskBar {
     	home.setForeground(Color.WHITE);
     	home.setFont(font);
     	if(currentPanel.equals("CMenu")){
-    		home.setFont(selected);
+    		home.setFont(selected); // Highlight the selected panel
     	}
     	else{
     		home.addMouseListener(new MouseAdapter() {
         		public void mouseClicked(MouseEvent e){
-        			main.showCustMenu();
+        			main.showCustMenu(); // Show customer menu on click
         		}
         	});
     	}
@@ -395,12 +396,12 @@ public class TaskBar {
     	viewHist.setForeground(Color.WHITE);
     	viewHist.setFont(font);
     	if(currentPanel.equals("ViewHistoryScreen")){
-    		viewHist.setFont(selected);
+    		viewHist.setFont(selected);	// Highlight the selected panel
     	}
     	else{
     		viewHist.addMouseListener(new MouseAdapter() {
         		public void mouseClicked(MouseEvent e){
-        			main.showViewHistoryScreen();
+        			main.showViewHistoryScreen();	// Show History Screen on click
         		}
         	});
     	}
@@ -415,14 +416,14 @@ public class TaskBar {
     	editDraft.setForeground(Color.WHITE);
     	editDraft.setFont(font);
     	if (currentPanel.equals("EditDraft")){
-    		editDraft.setFont(selected);
+    		editDraft.setFont(selected);	// Highlight the selected panel
     	}
     	else {
     		editDraft.addMouseListener(new MouseAdapter() {
     		public void mouseClicked(MouseEvent e){
     			
         			main.setPrepage(false);
-        			main.showEditDraft(main.getCurrentAcct()[1]);
+        			main.showEditDraft(main.getCurrentAcct()[1]);	// Show Edit Draft
         		
     		}
     	});}
@@ -463,11 +464,11 @@ public class TaskBar {
 //    	exit.setBounds(bar.getWidth()-40, 0, 25, 25);
     	exit.addMouseListener(new MouseAdapter() {
     		public void mouseClicked(MouseEvent e) {
-				main.clearCurrentAcct();
-    			main.showAllLogin();
-    			main.setPrepage(false);
-    			main.flag = false;
-    			main.closeCurrentDialogs();
+				main.clearCurrentAcct(); // Clear current account
+    			main.showAllLogin(); // Show login page
+    			main.setPrepage(false); // Reset prepage flag
+    			main.flag = false; // Reset flag
+    			main.closeCurrentDialogs(); // Close any open dialogs
 			}
 		});
     	exitIcon.setImage(exitIcon.getImage().getScaledInstance(40,35, Image.SCALE_DEFAULT));

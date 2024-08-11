@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.SystemColor;
 import java.awt.FlowLayout;
 
+//Panel class for the main menu interface of the application
 public class CMenu extends JPanel{
     MainFrame main;
     private String[] date;
@@ -39,6 +40,7 @@ public class CMenu extends JPanel{
 	private JLabel lblAcct;
 	private JPanel panel_1;
 
+    // Constructor initializing the CMenu panel
     public CMenu(MainFrame main){
     	setBackground(new Color(135, 206, 250));
         this.main = main;
@@ -105,7 +107,7 @@ public class CMenu extends JPanel{
 //            	}
 //        		else {
         			main.setPrepage(false);
-        			main.showEditDraft(main.getCurrentAcct()[1]);
+        			main.showEditDraft(main.getCurrentAcct()[1]);      // Show draft editing screen
 //        		}
         		
         	}
@@ -117,6 +119,7 @@ public class CMenu extends JPanel{
         this.panel.add(this.btnShowHistoryScreen);
         btnShowHistoryScreen.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
+                // Show history screen or display warning if no history
         		String[][][] ur = main.getCont().getUserReading(main.getCurrentAcct()[1]);
         		if (ur.length!=0){
         			main.showViewHistoryScreen();
@@ -166,6 +169,7 @@ public class CMenu extends JPanel{
         	}
         	@Override
         	public void mouseClicked(MouseEvent e) {
+                // Show popup with account details
         		main.showPopup("CAccount", main.getCurrentAcct()[1]);
         	}
         });
@@ -199,57 +203,63 @@ public class CMenu extends JPanel{
         init();
     }
     
+ // Method to initialize the data displayed on the menu
     public void init(){
-    	showDate();
-        showPrices();
-        showCurrentBill();
-        showAcctDetails();
-        checkEditStatus();
-        
+        showDate(); // Display the current date
+        showPrices(); // Display current utility prices
+        showCurrentBill(); // Display the latest bill
+        showAcctDetails(); // Display account details
+        checkEditStatus(); // Check if editing is allowed
     }
     
+    // Method to check if the current draft can be edited
     public void checkEditStatus(){
-    	if (!main.getCont().checkEditStatus(main.getCurrentAcct()[1])){
-    		btnViewCurrentDraft.setEnabled(false);
-    	}
-    }
-    
-    public void showPrices(){
-    	Readings[] readings = main.getCont().getAllReadings();
-    	String text = "Utility Prices: \n";
-    	
-    	for (Readings r:readings){
-    		text+= r.getUtilityName()+" : $"+r.getPrice()+"/"+r.getUnit()+'\n';
-    	}
-    	txtrCurrentPrices.setText(text);
-    }
-    
-    public void showCurrentBill(){
-    	String [][] lastBill;
-        lastBill = main.getCont().getLastUserReading(main.getCurrentAcct()[1]);
-        if (lastBill != null){
-        	String text = "Latest Bill: "+lastBill[0][2]+ '\n';
-        	double total =0;
-        	for (int i =0; i<lastBill.length-1; i++){
-        		text+= lastBill[i+1][0] +" : "+lastBill[i+1][1]+"\n";
-        		total+=Double.valueOf(lastBill[i+1][2]);
-        	}
-        	text+="Total : $"+String.format("%.2f", total);
-        	txtrCurrentBill.setText(text);
+        if (!main.getCont().checkEditStatus(main.getCurrentAcct()[1])){
+            btnViewCurrentDraft.setEnabled(false); // Disable the edit button if editing is not allowed
         }
-        else {txtrCurrentBill.setText("No History");}
-    	
-    	
-    	
     }
+    
+    // Method to display current utility prices
+    public void showPrices(){
+        Readings[] readings = main.getCont().getAllReadings();
+        String text = "Utility Prices: \n";
+        
+        // Build the text for utility prices
+        for (Readings r : readings){
+            text += r.getUtilityName() + " : $" + r.getPrice() + "/" + r.getUnit() + '\n';
+        }
+        txtrCurrentPrices.setText(text); // Set the text in the current prices text area
+    }
+    
+    // Method to display the latest bill
+    public void showCurrentBill(){
+        String[][] lastBill = main.getCont().getLastUserReading(main.getCurrentAcct()[1]);
+        if (lastBill != null){
+            String text = "Latest Bill: " + lastBill[0][2] + '\n';
+            double total = 0;
+            
+            // Build the text for the current bill
+            for (int i = 0; i < lastBill.length - 1; i++){
+                text += lastBill[i + 1][0] + " : " + lastBill[i + 1][1] + "\n";
+                total += Double.valueOf(lastBill[i + 1][2]);
+            }
+            text += "Total : $" + String.format("%.2f", total);
+            txtrCurrentBill.setText(text); // Set the text in the current bill text area
+        } else {
+            txtrCurrentBill.setText("No History"); // Display message if no bill history
+        }
+    }
+    
+    // Method to display the current date
     public void showDate(){
-    	date = main.getCont().getSystemDate();
-    	String d = "Date: \n"+String.join(" / ", date);
-    	txtrDate.setText(d);
+        date = main.getCont().getSystemDate();
+        String d = "Date: \n" + String.join(" / ", date);
+        txtrDate.setText(d); // Set the text in the date text area
     }
+    
+    // Method to display account details
     public void showAcctDetails(){
-    	String text = "Welcome "+main.getCurrentAcct()[1];
-    	
-    	lblAcct.setText(text);
+        String text = "Welcome " + main.getCurrentAcct()[1];
+        lblAcct.setText(text); // Set the text in the account label
     }
 }

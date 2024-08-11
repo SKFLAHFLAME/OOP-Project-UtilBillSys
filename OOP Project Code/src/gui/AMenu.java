@@ -21,7 +21,7 @@ import java.awt.event.KeyEvent;
 
 public class AMenu extends JPanel{
     MainFrame main;
-    String[] date;
+    String[] date;	// Stores the current system date
     private JButton btnLogOut;
     private JButton btnEditUtilities;
     private JButton btnViewBills;
@@ -40,20 +40,20 @@ public class AMenu extends JPanel{
 	private JScrollPane scrollPane;
 	private JButton btnAdd;
 	private JButton btnDelete;
-	private JList list;
+	private JList list;	// Displays staff accounts
 	private JLabel lblCurrentStaffAccounts;
-	private JTextField txtSearch;
+	private JTextField txtSearch;	// Search field for filtering staff list
 	private JScrollPane scrollPane_1;
 	private JTextArea txtrAverageReadings;
     
     public AMenu(MainFrame m){
     	setBackground(new Color(135, 206, 250));
         this.main = m;
-        date  = main.getCont().getSystemDate();
+        date  = main.getCont().getSystemDate();	// Fetch system date
         this.setLayout(null);
         main.setSize(1020,720);
 
-        main.addTaskBar(this);
+        main.addTaskBar(this);	// Add task bar to the panel
         
         this.panel = new JPanel();
         this.panel.setBounds(150, 70, 689, 568);
@@ -66,11 +66,11 @@ public class AMenu extends JPanel{
         this.panel.add(this.btnEditDate);
         this.btnEditDate.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		main.showPopup("Date", "");
+        		main.showPopup("Date", "");	// Show date popup
         	}
         });
         this.btnEditDate.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        btnEditDate.hide();
+        btnEditDate.hide();	// Initially hide the button
         
         this.btnEditUtilities = new JButton("Edit Utilities");
         this.btnEditUtilities.setBounds(12, 433, 346, 38);
@@ -79,7 +79,7 @@ public class AMenu extends JPanel{
         	@Override
 			public void actionPerformed(ActionEvent e) {
         		main.setPrepage(true);
-        		main.showEditUtility();
+        		main.showEditUtility();	// Show edit utility page
         		
         	}
         });
@@ -91,7 +91,7 @@ public class AMenu extends JPanel{
         this.btnViewBills.addActionListener(new ActionListener() {
         	@Override
 			public void actionPerformed(ActionEvent e) {
-        		main.showAllCustomers();
+        		main.showAllCustomers();	// Show all customers
         	}
         });
         this.btnViewBills.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
@@ -101,7 +101,7 @@ public class AMenu extends JPanel{
         this.panel.add(this.btnViewBills_1);
         this.btnViewBills_1.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		main.showAllBills();
+        		main.showAllBills();	// Show all customer
         	}
         });
         this.btnViewBills_1.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
@@ -112,7 +112,7 @@ public class AMenu extends JPanel{
         this.btnAccount.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent arg0) {
         		main.setPrepage(true);
-        		main.showPopup("SAccount", main.getCurrentAcct()[1]);
+        		main.showPopup("SAccount", main.getCurrentAcct()[1]);	// Show account popup
         	}
         });
         this.btnAccount.setFont(new Font("Tahoma", Font.PLAIN, 15));
@@ -123,9 +123,9 @@ public class AMenu extends JPanel{
         this.btnLogOut.addActionListener(new ActionListener() {
         	@Override
 			public void actionPerformed(ActionEvent arg0) {
-                main.clearCurrentAcct();
-        		main.showAllLogin();
-        		main.closeCurrentDialogs();
+                main.clearCurrentAcct(); // Clear current account
+                main.showAllLogin(); // Show login page
+                main.closeCurrentDialogs(); // Close any open dialogs
         	}
         });
         this.btnLogOut.setFont(new Font("Tahoma", Font.PLAIN, 15));
@@ -156,15 +156,15 @@ public class AMenu extends JPanel{
         this.txtrDate.addMouseListener(new MouseAdapter() {
         	@Override
         	public void mouseClicked(MouseEvent e) {
-        		main.showPopup("Date", "");
+        		main.showPopup("Date", "");	// Show date popup on click
         	}
         	@Override
         	public void mouseEntered(MouseEvent e) {
-        		txtrDate.setBackground(SystemColor.control);
+                txtrDate.setBackground(SystemColor.control); // Change background on hover
         	}
         	@Override
         	public void mouseExited(MouseEvent e) {
-        		txtrDate.setBackground(Color.WHITE);
+                txtrDate.setBackground(Color.WHITE); // Revert background color
         	}
         });
         this.txtrDate.setEditable(false);
@@ -185,7 +185,7 @@ public class AMenu extends JPanel{
         		if (e.getClickCount() ==2){
 					if (list.getSelectedIndex()==-1){return;}
 					String ID = (String) list.getSelectedValue();
-					main.showPopup("SAccount", ID);
+                    main.showPopup("SAccount", ID); // Show staff account details on double-click
 				}
         	}
         });
@@ -201,7 +201,7 @@ public class AMenu extends JPanel{
         this.btnAdd.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
         this.btnAdd.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		main.showPopup("SSignUp", "");
+                main.showPopup("SSignUp", ""); // Show sign-up popup
         	}
         });
         this.btnAdd.setBounds(580, 489, 97, 25);
@@ -211,13 +211,14 @@ public class AMenu extends JPanel{
         this.btnDelete.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
         this.btnDelete.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
+                // Remove selected staff member
         		if (list.getSelectedIndex()==-1){return;}
         		String[] options = {"Yes", "No"};
 				int sel = JOptionPane.showOptionDialog(null, "Confirm Delete?", "Delete", 0, 3, null, options, options[1]);
 				if (sel !=0){return;}
 				if (list.getSelectedIndex()==-1){return;}
 				String selectedID = (String) list.getSelectedValue();
-				main.getCont().removeStaff(selectedID);
+				main.getCont().removeStaff(selectedID);	// Remove staff
 				populateList();
         	}
         });
@@ -232,7 +233,7 @@ public class AMenu extends JPanel{
         	}
         	@Override
         	public void keyReleased(KeyEvent e) {
-        		searchList(txtSearch.getText());
+        		searchList(txtSearch.getText());	// Filter staff list based on search input
         	}
         });
         this.txtSearch.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
@@ -260,18 +261,21 @@ public class AMenu extends JPanel{
         init();
 
     }
+    
+    // Initializes the panel with essential data
     public void init(){
     	showDate();
     	showAverageReadings();
     	populateList();
     }
     
+    // Updates the date display on the UI
     public void showDate(){
     	
     	String d = "Date: \n"+String.join(" / ", date);
     	txtrDate.setText(d);
     }
-    
+    // Displays average utility readings for the current date
     public void showAverageReadings(){
     	String text = "Average Usage: \nAs of: ";
     	text += date[0]+"/"+date[1]+'\n';
@@ -283,6 +287,7 @@ public class AMenu extends JPanel{
     	txtrAverageReadings.setText(text);
     }
     
+    // Fills the staff list with usernames, excluding "admin"
     public void populateList(){
 		DefaultListModel<String> model = new DefaultListModel<>();
 		Staff[] allStaff = main.getCont().getAllStaff();
@@ -293,6 +298,8 @@ public class AMenu extends JPanel{
 		list.setModel(model);
 		
 	}
+    
+    // Searches and filters the staff list based on the input ID
     public void searchList(String id){
 		DefaultListModel<String> model = new DefaultListModel<>();
 		Staff[] allStaff = main.getCont().getAllStaff();
