@@ -6,6 +6,7 @@ import data.Readings;
 import data.Staff;
 
 import java.awt.event.MouseWheelEvent;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -44,7 +45,7 @@ import org.omg.PortableInterceptor.IORInterceptor;
 import org.w3c.dom.UserDataHandler;
 
 public class Controller {
-    private DataStorage ds = new DataStorage();
+    private DataStorage ds = new DataStorage();	// Data storage instance to manage data
     private String[] systemDate = new String[2];//MM, YYYY
     public String cdir;
     
@@ -62,6 +63,7 @@ public class Controller {
 //        ds.addUserReading(m);
     }
 
+    //To check if a given username corresponds to a user in the system.
     public boolean isUser(String name) {
     	try {
     		return name.equals(ds.getUser(name).getUsername());
@@ -71,6 +73,7 @@ public class Controller {
         
     }
     
+    //To verify if a given name belongs to a staff member.
     public boolean isStaff(String id){
     	try {
 			return id.equals(ds.getStaff(id).getUsername());
@@ -79,6 +82,7 @@ public class Controller {
 		}
     }
 
+    //Check username and password
     public boolean verifyUser(String name, String password){
         Customer u = ds.getUser(name);
         if (u!=null){
@@ -87,7 +91,8 @@ public class Controller {
         }
         else {return false;}
     }
-
+    
+    //Check id and password
     public boolean verifyStaff(String id, String password){
         Staff u = ds.getStaff(id);
         if (u!=null){
@@ -662,41 +667,25 @@ public class Controller {
     }
  
     //!CSV methods
-    public String[][] csvReader(String filepath) throws FileNotFoundException {
-		File file = new File(filepath);
-		
-		Scanner scanner = new Scanner(file);
-		scanner.useDelimiter(",");
-		Vector<String[]> data = new Vector<>();
-		int x=0;
-		while(scanner.hasNext()){
-			String line = scanner.nextLine();
-			StringTokenizer st = new StringTokenizer(line, ",");
-			Vector<String> v = new Vector<>();
-			int c=0;
-			while (st.hasMoreTokens()){
-				v.add(st.nextToken());
-				c+=1;
-			}
-			String[] a = new String[c];
-			v.toArray(a);
-			c=0;
-			data.add(a);
+    public String[][] csvReader(String filepath) throws IOException {
+		BufferedReader read = null;
+		try {
+			File in = new File(filepath);
+			read = new BufferedReader(new FileReader(in));
+			
+		} catch (Exception e) {
+			InputStream in = this.getClass().getResourceAsStream(filepath);
+			read = new BufferedReader(new InputStreamReader(in));
 		}
-		String[][] finaldata = new String[data.size()][2];
-		data.toArray(finaldata);
-		scanner.close();
-		// //Testing method
-		// for (String[]e:finaldata){
-		// 	System.out.println(e.length);
-		// 	for (String y :e){
-		// 		System.out.print(y+"\t");
-		// 	}
-		// 	System.out.println();
-		// }
-
-		return finaldata;
-		
+		String line;
+		Vector<String[]> file = new Vector<>();
+		while ((line = read.readLine())!=null){
+			String [] l = line.split(",");
+			file.add(l);
+		}
+		String [][] f= new String[file.size()][];
+		file.toArray(f);
+		return f;
 	}
 	
 	public void csvWriter(String filepath, String[][] data) throws IOException {
@@ -817,7 +806,11 @@ public class Controller {
         //Creating and adding csv contents into vectors
             String[][] customers;
 			try {
-				customers = csvReader(cdir+"/csv/Customer.csv");
+				try {
+					customers = csvReader(cdir+"/csv/Customer.csv");
+				} catch (Exception e) {
+					customers = csvReader("/csv/Customer.csv");
+				}
 				
 				//!customer
 	            for(String[]c:customers){
@@ -843,37 +836,49 @@ public class Controller {
 	                    ds.addMeterReading(c[0], items[0], mr);
 	                }
 	            }
-			} catch (FileNotFoundException e) {
+			} catch (IOException e) {
 				System.out.println(cdir+"/csv/Customer.csv NOT FOUND");
 			}
 			
             String[][] staffAcct;
 			try {
-				staffAcct = csvReader(cdir+"/csv/Staff.csv");
+				try {
+					staffAcct = csvReader(cdir+"/csv/Staff.csv");
+				} catch (Exception e) {
+					staffAcct = csvReader("/csv/Staff.csv");
+				}
 				//!Staff
 	            for(String[]s:staffAcct){
 	                this.addStaff(s[0], s[1]);
 	            }
 	            
 	            
-			} catch (FileNotFoundException e) {
+			} catch (IOException e) {
 				System.out.println(cdir+"/csv/Staff.csv NOT FOUND");
 			}
 			
             String[][] readings;
 			try {
-				readings = csvReader(cdir+"/csv/Readings.csv");
+				try {
+					readings = csvReader(cdir+"/csv/Readings.csv");
+				} catch (Exception e) {
+					readings = csvReader("/csv/Readings.csv");
+				}
 				//!Readings
 	            for(String[]r:readings){
 	                this.addReading(r[0], Double.parseDouble(r[1]), r[2], Double.parseDouble(r[3]));
 	            }
-			} catch (FileNotFoundException e) {
+			} catch (IOException e) {
 				System.out.println(cdir+"/csv/Readings.csv NOT FOUND");
 			}
 			
             String[][] userReadings;
 			try {
-				userReadings = csvReader(cdir+"/csv/UserReadings.csv");
+				try {
+					userReadings = csvReader(cdir+"/csv/UserReadings.csv");
+				} catch (Exception e) {
+					userReadings = csvReader("/csv/UserReadings.csv");
+				}
 				//!User Readings
 	            int c=0;
 	            for(String[] ur:userReadings){
@@ -893,14 +898,10 @@ public class Controller {
 	                bill.toArray(b);
 	                ds.addUserReading(b);
 	            }
-			} catch (FileNotFoundException e) {
+			} catch (IOException e) {
 				System.out.println(cdir+"/csv/UserReadings.csv NOT FOUND");
 				setSystemDate("1", "2020");
 			}
-            
-
-    }
-
-	
-
+        }
 }
+	

@@ -25,6 +25,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Vector;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
@@ -250,7 +251,7 @@ public class AddFrame extends JDialog{
 				
 				try {
 					populateList();
-				} catch (FileNotFoundException e) {
+				} catch (IOException e) {
 					System.out.println("No file found");
 				}
 			}
@@ -319,7 +320,7 @@ public class AddFrame extends JDialog{
 	
 
 	//! Populate List Method
-	private void populateList() throws FileNotFoundException{
+	private void populateList() throws IOException{
 		if (fileSelected == null){System.out.println("No File to populate with");return;}
 		fileContents = main.getCont().csvReader(fileSelected);
 		lines=new String[fileContents.length];

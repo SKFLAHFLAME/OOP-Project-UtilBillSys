@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.management.ManagementPermission;
 import java.sql.Savepoint;
 import java.util.HashMap;
@@ -431,7 +432,7 @@ public class EditDraft extends JPanel {
 		String[][] mReadings = null;
 		try {
 			mReadings = main.getCont().csvReader(fileSelected);
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			return;
 		}
 		String [] latestReading = mReadings[0];
