@@ -15,9 +15,15 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
+import java.awt.Image;
+
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -31,9 +37,13 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 import java.awt.Color;
 import javax.swing.SwingConstants;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
+import javax.swing.event.TreeSelectionEvent;
 
 public class ViewAllBills extends JPanel{
-	MainFrame main;
+    MainFrame main; // Reference to the main application frame
 	private JScrollPane scrollPane;
 	private JTree tree;
 	private JLabel lblMonth;
@@ -50,21 +60,22 @@ public class ViewAllBills extends JPanel{
 	private JTextArea txtrUnits;
 	private JLabel lblcaseSensetive;
 	private JLabel lblCustomerBills;
+	private JButton btnExport;
 	
 	public ViewAllBills(MainFrame m){
-		main = m;
+        main = m; // Initialize main application frame
 		this.setLayout(null);
 		main.setSize(1020,720);
 		
-		//init month/year array
-		date = main.getCont().getSystemDate();
-		Vector<String> temp = new Vector<>();
-		temp.add("All");
-		for (int i=Integer.valueOf(date[1]); i>=2000;i--){
-			temp.add(String.valueOf(i));
-		}
-		year = new String[temp.size()];
-		temp.toArray(year);
+		// Initialize month/year array
+        date = main.getCont().getSystemDate(); // Retrieve current system date
+        Vector<String> temp = new Vector<>();
+        temp.add("All"); // Add "All" option for year selection
+        for (int i = Integer.valueOf(date[1]); i >= 2000; i--) {
+            temp.add(String.valueOf(i)); // Add years from current to 2000
+        }
+        year = new String[temp.size()];
+        temp.toArray(year); // Convert vector to array
 		
 		this.scrollPane = new JScrollPane();
 		this.scrollPane.setBounds(12, 83, 650, 560);
@@ -73,6 +84,14 @@ public class ViewAllBills extends JPanel{
 		
 		model = new DefaultTreeModel(header);
 		this.tree = new JTree(model);
+		this.tree.addTreeSelectionListener(new TreeSelectionListener() {
+			public void valueChanged(TreeSelectionEvent e) {
+				if (e.getPath().getPathCount()==4){
+					btnExport.show();
+				}
+				else {btnExport.hide();}
+			}
+		});
 		tree.setRowHeight(30);
 		this.tree.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
 		this.scrollPane.setViewportView(this.tree);
@@ -100,43 +119,46 @@ public class ViewAllBills extends JPanel{
 		
 		this.lblYear = new JLabel("Year:");
 		this.lblYear.setFont(new Font("STXinwei", Font.PLAIN, 25));
-		this.lblYear.setBounds(668, 129, 83, 38);
+		this.lblYear.setBounds(674, 144, 83, 38);
 		add(this.lblYear);
 		
-		this.comboYear = new JComboBox(year);
-		comboYear.setSelectedItem("All");
-		
-		this.comboYear.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				int selMonth = comboMonth.getSelectedIndex();
-				if (comboYear.getSelectedItem().equals(date[1])){
-					Vector<String> temp = new Vector<>();
-					int c=0;
-					for (String m:month){
-						temp.add(m);
-						if (c==Integer.parseInt(date[0])){break;}
-						c++;
-					}
-					month = new String[temp.size()];
-					temp.toArray(month);
-					comboMonth.setModel(new DefaultComboBoxModel<>(month));
-					try {
-						comboMonth.setSelectedIndex(selMonth);
-					} catch (Exception e2) {
-						comboMonth.setSelectedIndex(comboMonth.getModel().getSize()-1);
-					}
-				}
-				else {String[] mon = {"All","January", "February", "March","April","May","June","July","August","September","October","November","December"};
-					month  = mon;
-					comboMonth.setModel(new DefaultComboBoxModel<>(month));
-					comboMonth.setSelectedIndex(selMonth);}
-				
-				searchTree(comboMonth.getSelectedIndex(), comboYear.getSelectedItem(), textField.getText());
-			}
-		});
+		// Initialize and configure year combo box
+        this.comboYear = new JComboBox(year);
+        comboYear.setSelectedItem("All"); // Set default selection
+
+        this.comboYear.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int selMonth = comboMonth.getSelectedIndex(); // Get selected month
+                if (comboYear.getSelectedItem().equals(date[1])) { // If the selected year is the current year
+                    Vector<String> temp = new Vector<>();
+                    int c = 0;
+                    for (String m : month) {
+                        temp.add(m); // Add months up to the current month
+                        if (c == Integer.parseInt(date[0])) {
+                            break;
+                        }
+                        c++;
+                    }
+                    month = new String[temp.size()];
+                    temp.toArray(month); // Update month array
+                    comboMonth.setModel(new DefaultComboBoxModel<>(month)); // Update combo box model
+                    try {
+                        comboMonth.setSelectedIndex(selMonth); // Set selected month
+                    } catch (Exception e2) {
+                        comboMonth.setSelectedIndex(comboMonth.getModel().getSize() - 1); // Fallback if exception occurs
+                    }
+                } else {
+                    String[] mon = {"All", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+                    month = mon; // Reset month options
+                    comboMonth.setModel(new DefaultComboBoxModel<>(month)); // Update combo box model
+                    comboMonth.setSelectedIndex(selMonth); // Set selected month
+                }
+                searchTree(comboMonth.getSelectedIndex(), comboYear.getSelectedItem(), textField.getText()); // Search tree based on year selection
+            }
+        });
 		this.comboYear.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
 		
-		this.comboYear.setBounds(769, 125, 178, 45);
+		this.comboYear.setBounds(769, 140, 178, 45);
 		add(this.comboYear);
 		
 		this.textField = new JTextField();
@@ -178,112 +200,150 @@ public class ViewAllBills extends JPanel{
 		this.lblcaseSensetive.setForeground(Color.BLUE);
 		this.lblcaseSensetive.setBounds(817, 288, 136, 26);
 		add(this.lblcaseSensetive);
+		
+		this.btnExport = new JButton("");
+		btnExport.hide();
+		this.btnExport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String user = tree.getSelectionPath().getLastPathComponent().toString().split(" : ")[0];
+				String[] date = tree.getSelectionPath().getLastPathComponent().toString().split(" : ")[1].split("/");
+				if (main.getCont().printBills(user, date[1], date[2])){
+					JOptionPane.showMessageDialog(null, "Saved Bill");
+				}
+				else {JOptionPane.showMessageDialog(null, "Bill Saved failed");}
+			}
+		});
+		this.btnExport.setBounds(889, 83, 58, 37);
+		ImageIcon print = new ImageIcon(this.getClass().getResource("/images/print.png"));
+		print.setImage(print.getImage().getScaledInstance(btnExport.getHeight(), btnExport.getHeight(), Image.SCALE_DEFAULT));
+		btnExport.setIcon(print);
+		add(this.btnExport);
 	}
 
-	
-	public void searchTree(Object M, Object Y, String user){//month in number, Year, userName
-		String month = String.format("%02d",M);
-		String year = (String) Y;
-		String[] monthList = {month};
-		String[] yearList = {year};
-		header.removeAllChildren();
+	// Method to search and filter tree data
+	public void searchTree(Object M, Object Y, String user) { // Method to search and filter tree data
+	    String month = String.format("%02d", M); // Format month as two digits
+	    String year = (String) Y; // Convert year object to string
+	    String[] monthList = {month}; // Initialize monthList with selected month
+	    String[] yearList = {year}; // Initialize yearList with selected year
+	    header.removeAllChildren(); // Clear all children from the root node
 
-		if (M.equals(0)){
-			String[] temp = new String[this.month.length-1];
-			for (int i=0 ; i<this.month.length-1 ;i++){
-				temp[i] = String.format("%02d",i+1);
-			}
-			monthList = temp;
-		}
+	    // Adjust monthList if month is 0 (to include all months)
+	    if (M.equals(0)) {
+	        String[] temp = new String[this.month.length - 1];
+	        for (int i = 0; i < this.month.length - 1; i++) {
+	            temp[i] = String.format("%02d", i + 1); // Format months as two digits
+	        }
+	        monthList = temp; // Update monthList with all months
+	    }
 
-		if (year.equals("All")){
-			String[] temp = new String[this.year.length-1];
-			for (int i=0; i<this.year.length-1 ;i++){
-				temp[i] = this.year[i+1];
-			}
-			yearList = temp;
-		}
+	    // Adjust yearList if year is "All" (to include all years)
+	    if (year.equals("All")) {
+	        String[] temp = new String[this.year.length - 1];
+	        for (int i = 0; i < this.year.length - 1; i++) {
+	            temp[i] = this.year[i + 1]; // Exclude the first year from list
+	        }
+	        yearList = temp; // Update yearList with all years
+	    }
 
-		for (String y:yearList){
-			if((int)M>Integer.valueOf(date[0]) && date[1].equals(y)){continue;}
-			DefaultMutableTreeNode yr = new DefaultMutableTreeNode(y);
-			header.add(yr);
-			double yearTotal=0;
-			boolean continuee = true;
-			for (String m :monthList){
-				if (continuee == false){continue;}
-				if (y.equals(date[1])&& Integer.valueOf(date[0])==Integer.valueOf(m)){
-					continuee = false;
+	    // Iterate through each year in yearList
+	    for (String y : yearList) {
+	        if ((int) M > Integer.valueOf(date[0]) && date[1].equals(y)) {
+	            continue; // Skip if month is beyond the current year
+	        }
+	        DefaultMutableTreeNode yr = new DefaultMutableTreeNode(y); // Create node for year
+	        header.add(yr); // Add year node to header
+	        double yearTotal = 0; // Initialize total for the year
+	        boolean continuee = true; // Flag to control loop continuation
+
+	        // Iterate through each month in monthList
+	        for (String m : monthList) {
+	            if (!continuee) {
+	                continue; // Skip if loop continuation flag is false
+	            }
+	            if (y.equals(date[1]) && Integer.valueOf(date[0]) == Integer.valueOf(m)) {
+	                continuee = false; // Stop processing if the month is the current month
+	            }
+	            DefaultMutableTreeNode mth = new DefaultMutableTreeNode(this.month[Integer.valueOf(m)]); // Create node for month
+	            yr.add(mth); // Add month node to year node
+
+	            Customer[] accts = main.getCont().getAllCustomers(); // Get all customers
+	            Vector<String[][]> filtered = new Vector<>(); // Vector to hold filtered bills
+
+	            // Get bills for the specified month and year
+	            String[][][] bills = main.getCont().getUserReading(m, y);
+	            double monthlyTotal = 0; // Initialize total for the month
+
+	            // Filter bills based on user
+	            for (String[][] b : bills) {
+	                for (String[] i : b) {
+	                    try {
+	                        monthlyTotal += Double.parseDouble(i[2]); // Calculate monthly total
+	                    } catch (Exception e) {
+	                        continue; // Skip if parsing fails
+	                    }
+	                }
+	                if (b[0][0].startsWith(user)) {
+	                    filtered.add(b); // Add to filtered list if user matches
+	                }
+	            }
+
+	            // Iterate through filtered bills
+	            for (String[][] ur : filtered) {
+	                DefaultMutableTreeNode u = new DefaultMutableTreeNode(ur[0][0] + " : " + ur[0][2]); // Create node for user bill
+	                double userTotal = 0; // Initialize total for the user
+
+	                // Add items to user node
+	                for (String[] item : ur) {
+	                    try {
+	                        Double.valueOf(item[2]); // Validate item value
+	                    } catch (Exception e) {
+	                        continue; // Skip if parsing fails
+	                    }
+	                    userTotal += Double.valueOf(item[2]); // Calculate user total
+	                    u.add(new DefaultMutableTreeNode(item[0] + " : " + item[1])); // Add item details
+	                }
+	                u.add(new DefaultMutableTreeNode("Bill Total: $" + String.format("%.2f", userTotal))); // Add total to user node
+	                mth.add(u); // Add user node to month node
+	            }
+	            if (monthlyTotal==0.0 && (Integer.valueOf(m) == Integer.valueOf(main.getCont().getSystemDate()[0])&&Integer.valueOf(y) >= Integer.valueOf(main.getCont().getSystemDate()[1]))){
+					mth.add(new DefaultMutableTreeNode(String.format("No Bill Generated this Month")));// adds this if month viewed is current and has no bills
 				}
-				DefaultMutableTreeNode mth = new DefaultMutableTreeNode(this.month[Integer.valueOf(m)]);
-				yr.add(mth);
+				else if (monthlyTotal==0.0 && (Integer.valueOf(m) < Integer.valueOf(main.getCont().getSystemDate()[0])||Integer.valueOf(y) < Integer.valueOf(main.getCont().getSystemDate()[1]))){
+					mth.add(new DefaultMutableTreeNode(String.format("No Bill Generated")));// adds this if month is previous month and no bills
+				}
+				else {mth.add(new DefaultMutableTreeNode(String.format("Month Revenue: $"+"%.2f",monthlyTotal)));}
+				yearTotal+=monthlyTotal;//show total if month has bills
+	        }
+	        // yr.add(new DefaultMutableTreeNode("Year Total: $" + String.format("%.2f", yearTotal))); // Optional: Add year total
+	    }
 
-				Customer[] accts = main.getCont().getAllCustomers();
-				Vector<String[][]> filtered = new Vector<>();
-				// Filter accts
-				String[][][] bills = main.getCont().getUserReading(m, y);
-				double monthlyTotal = 0;
-				for (String[][] b:bills){
-					for (String[] i:b){
-						try {
-							monthlyTotal+=Double.parseDouble(i[2]);
-						}
-						catch (Exception e) {continue;}
-						
-					}
-					if (b[0][0].startsWith(user)){
-						filtered.add(b);
-					}
-				}
-				
-				for (String [][] ur : filtered){
-					DefaultMutableTreeNode u = new DefaultMutableTreeNode(ur[0][0]+" : "+ur[0][2]);
-					double userTotal=0;
-					for(String[] item:ur){
-						try {
-							Double.valueOf(item[2]);
-						}
-						catch (Exception e) {
-							continue;
-						}
-						userTotal+= Double.valueOf(item[2]);
-						u.add(new DefaultMutableTreeNode(item[0]+" : " + item[1]));
-					}
-					u.add(new DefaultMutableTreeNode("Bill Total: $"+String.format("%.2f",userTotal)));
-					mth.add(u);
-				}
-				mth.add(new DefaultMutableTreeNode(String.format("Month Revenue: $"+"%.2f",monthlyTotal)));
-				yearTotal+=monthlyTotal;
-			}
-//			yr.add(new DefaultMutableTreeNode("Year Total: $"+String.format("%.2f", yearTotal)));
-		}
-		
-		model.reload();
-		tree.setModel(model);
-		if (yearList.length == 1){
-			tree.expandRow(1);
-			if (monthList.length==1){
-				tree.expandRow(2);
-			}
-		}
-		
-		
-		
+	    model.reload(); // Reload the tree model
+	    tree.setModel(model); // Set updated model to tree
+
+	    // Expand rows if there's only one year or month in the list
+	    if (yearList.length == 1) {
+	        tree.expandRow(1);
+	        if (monthList.length == 1) {
+	            tree.expandRow(2);
+	        }
+	    }
 	}
-	
-	public void setUnits(){
-		Readings[] readings = main.getCont().getAllReadings();
-		HashMap<String, String> organisedUnits = new HashMap<>();
-		String text = "";
-		for (Readings r:readings){
-			organisedUnits.put(r.getUtilityName(), r.getUnit());
-		}
-//		int gap = 9-organisedUnits.size();
-//		for (int i=0; i<gap; i++){text+="\n";}
-		text += "Reading Units: \n";
-		for (Map.Entry<String, String> m : organisedUnits.entrySet()){
-			text += m.getKey()+" : " + m.getValue()+'\n';
-		}
-		txtrUnits.setText(text);
+
+	public void setUnits() { // Method to set units data
+	    Readings[] readings = main.getCont().getAllReadings(); // Get all readings
+	    HashMap<String, String> organisedUnits = new HashMap<>(); // HashMap to store units
+	    String text = "Reading Units: \n"; // Initialize text with header
+
+	    // Populate HashMap with utility names and their units
+	    for (Readings r : readings) {
+	        organisedUnits.put(r.getUtilityName(), r.getUnit());
+	    }
+
+	    // Build the text to display units
+	    for (Map.Entry<String, String> m : organisedUnits.entrySet()) {
+	        text += m.getKey() + " : " + m.getValue() + '\n'; // Add utility and unit to text
+	    }
+	    txtrUnits.setText(text); // Update text area with units data
 	}
 }

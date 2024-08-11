@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+//Class representing the account management page of the application
 public class CAccountPage extends JPanel{
 	PopupDialog window;
 	String userName;
@@ -49,7 +50,9 @@ public class CAccountPage extends JPanel{
 	private JLabel lblErrors;
 	private JLabel lblLogo;
 	private JLabel lblPsGroup;
+	private JButton btnDeleteAccount;
 	
+    // Constructor initializes the UI components and sets up the layout
 	public CAccountPage(PopupDialog popupDialog, String userName){
 		this.window=popupDialog;
 		this.userName = userName;
@@ -220,9 +223,10 @@ public class CAccountPage extends JPanel{
 		this.txtEmail.setColumns(10);
 		
 		this.lblErrors = new JLabel("");
+		this.lblErrors.setVerticalAlignment(SwingConstants.TOP);
 		this.lblErrors.setFont(new Font("Trebuchet MS", Font.ITALIC, 15));
 		this.lblErrors.setForeground(Color.RED);
-		this.lblErrors.setBounds(330, 32, 223, 40);
+		this.lblErrors.setBounds(330, 399, 223, 40);
 		add(this.lblErrors);
 		
 		this.lblLogo = new JLabel("");
@@ -235,66 +239,115 @@ public class CAccountPage extends JPanel{
 		this.lblPsGroup.setFont(new Font("Trebuchet MS", Font.PLAIN, 20));
 		this.lblPsGroup.setBounds(104, 11, 112, 28);
 		add(this.lblPsGroup);
+		
+		this.btnDeleteAccount = new JButton("Delete");
+		btnDeleteAccount.setFocusable(false);
+		this.btnDeleteAccount.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int sel = JOptionPane.showConfirmDialog(null, "Delete User?", "Confirm", 0);
+				if (sel !=0){return;}
+				window.main.getCont().removeUser(userName);
+				if (window.main.getCurrentAcct()[0].equals("C")){
+					window.main.showAllLogin();
+				}
+				window.dispose();
+			}
+		});
+		this.btnDeleteAccount.setForeground(Color.WHITE);
+		this.btnDeleteAccount.setBackground(Color.RED);
+		this.btnDeleteAccount.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+		this.btnDeleteAccount.setBounds(441, 11, 112, 37);
+		add(this.btnDeleteAccount);
 		this.showAccount();
 		this.showNormalScreen();
 		
 		window.setSize((txtUName.getLocation().x+txtUName.getSize().width+40),(btnEdit.getLocation().y+btnEdit.getSize().height+60));
 		
-
+		btnEdit.grabFocus();
 	}
 	
 
+	// Switches the panel to editing mode, allowing the user to modify account details
 	public void showEditScreen(){
-		editing=true;
-		btnEdit.setText("Finish");
-		btnBack.setText("Cancel");
-		txtFullname.setEditable(true);
-		txtEmail.setEditable(true);
-		txtPostal.setEditable(true);
-		txtUnitno.setEditable(true);
-		passwordField.setEditable(true);
-		passwordField.setEchoChar((char)0);
-		chckbxShowPassword.hide();
-		
+	    // Set the editing flag to true
+	    editing = true;
+	    
+	    // Change button labels to indicate the current mode
+	    btnEdit.setText("Finish");
+	    btnBack.setText("Cancel");
+	    
+	    // Enable text fields for editing
+	    txtFullname.setEditable(true);
+	    txtEmail.setEditable(true);
+	    txtPostal.setEditable(true);
+	    txtUnitno.setEditable(true);
+	    passwordField.setEditable(true);
+	    
+	    // Show the password in plain text
+	    passwordField.setEchoChar((char)0);
+	    
+	    // Hide the checkbox for showing/hiding password
+	    chckbxShowPassword.hide();
 	}
 
+	// Switches the panel back to normal view mode, preventing changes to account details
 	public void showNormalScreen(){
-		editing = false;
-		btnEdit.setText("Edit");
-		btnBack.setText("Close");
-		txtUName.setEditable(false);
-		txtFullname.setEditable(false);
-		txtEmail.setEditable(false);
-		txtPostal.setEditable(false);
-		txtUnitno.setEditable(false);
-		
-		passwordField.setEditable(false);
-		chckbxShowPassword.show();
-		chckbxShowPassword.setSelected(false);
-		passwordField.setEchoChar((char)0x2022);
-		showAccount();
-		
+	    // Set the editing flag to false
+	    editing = false;
+	    
+	    // Change button labels to indicate the current mode
+	    btnEdit.setText("Edit");
+	    btnBack.setText("Close");
+	    
+	    // Disable text fields to prevent editing
+	    txtUName.setEditable(false);
+	    txtFullname.setEditable(false);
+	    txtEmail.setEditable(false);
+	    txtPostal.setEditable(false);
+	    txtUnitno.setEditable(false);
+	    
+	    // Disable password field editing and hide plain text
+	    passwordField.setEditable(false);
+	    chckbxShowPassword.show();
+	    chckbxShowPassword.setSelected(false);
+	    passwordField.setEchoChar((char)0x2022);
+	    
+	    // Refresh the displayed account details
+	    showAccount();
 	}
+
+	// Displays the current account details in the text fields and password field
 	public void showAccount(){
-		acct = window.main.getCont().getCustomer(userName);
-		txtUName.setText(acct.getUsername());
-		txtFullname.setText(acct.getName());
-		txtEmail.setText(acct.getEmail());
-		String[] addr = acct.getAddress().split(":");
-		txtPostal.setText(addr[0]);
-		try {
-			txtUnitno.setText(addr[1]);
-		} catch (Exception e) {
-			txtUnitno.setText("");
-		}
-		
-		
-		
-		passwordField.setText(acct.getPassword());
+	    // Retrieve the Customer object for the given username
+	    acct = window.main.getCont().getCustomer(userName);
+	    
+	    // Set the text fields with the account details
+	    txtUName.setText(acct.getUsername());
+	    txtFullname.setText(acct.getName());
+	    txtEmail.setText(acct.getEmail());
+	    
+	    // Split the address into postal code and unit number
+	    String[] addr = acct.getAddress().split(":");
+	    txtPostal.setText(addr[0]);
+	    
+	    // Handle cases where the address might not contain a unit number
+	    try {
+	        txtUnitno.setText(addr[1]);
+	    } catch (Exception e) {
+	        txtUnitno.setText("");
+	    }
+	    
+	    // Set the password field with the current password
+	    passwordField.setText(acct.getPassword());
 	}
+
+	// Saves the updated account details
 	public void saveChanges(String userName, String password, String newFName, String newEmail, String newAddress){
-		window.main.getCont().editUser(userName, newFName, newEmail, password, newAddress);
-		this.userName = userName;
-		showAccount();
+	    // Call the controller to update the user details
+	    window.main.getCont().editUser(userName, newFName, newEmail, password, newAddress);
+	    
+	    // Update the local username and refresh the account details display
+	    this.userName = userName;
+	    showAccount();
 	}
 }

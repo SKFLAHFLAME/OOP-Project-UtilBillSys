@@ -21,15 +21,21 @@ import controller.MainFrame;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.management.ManagementPermission;
+import java.sql.Savepoint;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.JTextArea;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -66,6 +72,7 @@ public class EditDraft extends JPanel {
     private String[] sysDate;
     private String userName;
     private JButton btnBack;
+    private JButton btnUpload;
 
     public EditDraft(MainFrame main, String user) {
         this.main = main;
@@ -93,7 +100,7 @@ public class EditDraft extends JPanel {
         
         this.model = new DefaultTableModel(columnNames, 0){
             public boolean isCellEditable(int row, int column) {
-                return false;
+                return false;	// Cells are not editable
             }
         };
         this.table = new JTable(model);
@@ -149,8 +156,7 @@ public class EditDraft extends JPanel {
         btnSubmit.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
         btnSubmit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	String[] options = {"Yes", "No"};
-				int sel = JOptionPane.showOptionDialog(null, "Confirm Change? This will Change Bill according to changes", "Submit", 0, 3, null, options, options[1]);
+				int sel = JOptionPane.showConfirmDialog(null, "Confirm Change? This will Change Bill according to changes", "Submit", 0);
 				if(sel != 0){return;}
                 main.getCont().updateUserReading(userName);
                 main.showEditDraft(userName);
@@ -219,7 +225,7 @@ public class EditDraft extends JPanel {
         
         this.lblDate = new JLabel("Bill Date: ");
         this.lblDate.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
-        this.lblDate.setBounds(22, 81, 254, 26);
+        this.lblDate.setBounds(22, 81, 350, 26);
         add(this.lblDate);
         
         this.txtrCurrentBill = new JTextArea();
@@ -246,6 +252,17 @@ public class EditDraft extends JPanel {
         this.lblLogo = new JLabel("logo");
         this.lblLogo.setBounds(401, 49, 67, 58);
         logo.setImage(logo.getImage().getScaledInstance(lblLogo.getHeight(), lblLogo.getHeight(), Image.SCALE_DEFAULT));
+        
+        this.btnUpload = new JButton("Upload Readings");
+        btnUpload.hide();
+        this.btnUpload.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		uploadReadings();
+        	}
+        });
+        this.btnUpload.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+        this.btnUpload.setBounds(790, 67, 199, 40);
+        add(this.btnUpload);
         lblLogo.setIcon(logo);
         add(this.lblLogo);
         
@@ -271,44 +288,72 @@ public class EditDraft extends JPanel {
         
         
         init();
+        checkDraft();
         
         
         
     }
     
     public void init(){
-    	fillCurrentPrices();
+    	// Initialize the panel by filling current prices and redrawing the table
+        fillCurrentPrices();
     	redraw();
     	
-    	// Tells program to run later
+    	
+    	// Schedule a task to be executed later on the Event Dispatch Thread
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
             	showCurrentBill();
+                // shows upload button if user is staff or admin
+            	if (!main.getCurrentAcct()[0].equals("C")){
+            		btnUpload.show();
+            	}
+                // Check if there's no bill history
             	if (lastBill==null){
-                	
+                	// Handle the scenario where there is no bill history
                 	if (main.getCurrentAcct()[0].equals("C")) {
                 		main.showCustMenu();
                 		JOptionPane.showMessageDialog(null, "No History", "Error", JOptionPane.ERROR_MESSAGE);
                 	} else {
-                		String[] options = {"Yes", "No"};
-        				int sel = JOptionPane.showOptionDialog(null, "No History, Generate Bill?", "No History", 0, 3, null, options, options[1]);
+                        // Prompt the user to generate a bill if history is missing
+        				int sel = JOptionPane.showConfirmDialog(null, "No History, Generate Bill?", "No History", 0);
         				if(sel != 0){main.showAllCustomers();return;}
+                        // Generate a new bill and reinitialize the panel
         				main.getCont().generateBills(userName);
         				init();
                 	}
             	}
+            	// Add an ActionListener to a button (not shown in this snippet)
+            	else if (!main.getCurrentAcct()[0].equals("C")&& !main.getCont().checkEditStatus(userName)) {
+            	    // Check if the current account is not a customer ("C") and if the bill is not the latest
+            		int sel = JOptionPane.showConfirmDialog(null, "Not Latest Bill, Generate Bill?", "No History", 0);
+    				if(sel != 0){return;}	// Exit if the user selects "No"
+    			    // If the user selects "Yes", generate the bills and reinitialize the view
+    				main.getCont().generateBills(userName);
+    			    init(); // Reinitialize the view to reflect the changes
+            	}
             }
         });
     	
-    	
-    	
         
     }
+    
+ // Method to check if there's a draft for the current user
+    public void checkDraft(){
+        // If no draft exists for the user, reset the draft
+    	if (!main.getCont().hasDraft(userName)){
+    		main.getCont().resetDraft(userName);
+            redraw(); // Redraw the interface to reflect the reset draft
+    		
+    	}
+    }
+    // Display the current bill information
     public void showCurrentBill(){
-    	//bill area
+        // Update the bill area with the current bill information
     	if (lastBill==null){txtrCurrentBill.setText("No History");return;}
     	String text = "Current Bill: "+lastBill[0][2]+ '\n';
     	double total =0;
+        // Iterate through the bill details and calculate the total
     	for (int i =0; i<lastBill.length-1; i++){
     		text+= lastBill[i+1][0] +" : "+lastBill[i+1][1]+"\n";
     		total+=Double.valueOf(lastBill[i+1][2]);
@@ -317,63 +362,107 @@ public class EditDraft extends JPanel {
     	txtrCurrentBill.setText(text);
     	lblDate.setText("Bill Date: "+billDate[1]+"/"+billDate[2]);
     }
-    
-    public void fillCurrentPrices(){
-    	//price Table
-    	priceModel.setRowCount(0);
-        Readings[] readings = main.getCont().getAllReadings();
-        for(Readings r:readings){
-        	String[] row = {r.getUtilityName(), "$"+r.getPrice()+"/"+r.getUnit(), ""+r.getServiceCharge()+"%"};
-        	priceModel.addRow(row);
-        }
-        tablePrice.setModel(priceModel);
-        tablePrice.repaint();
-    }
-    
-    
 	
 	
 	public void resetRow(int row){
+        // Reset the data in the specified row of the meter readings table
 		if(row ==-1){
-			return;
+			return;// No row selected
 		}
 		String readingName=(String) table.getValueAt(row, 0);
 		int currentReading = main.getCont().getCurrentTotalReading(userName, readingName);
-		main.getCont().editMeterReading(userName, readingName, currentReading);
-		
+		main.getCont().editMeterReading(userName, readingName, currentReading); // Reset meter reading
+		// Refresh the draft view after resetting
 		main.showEditDraft(userName);
 
-	}
+    }
+
+    public void fillCurrentPrices(){
+        // Populate the price table with current utility prices
+        priceModel.setRowCount(0); // Clear existing rows
+        Readings[] readings = main.getCont().getAllReadings(); // Fetch all readings from the controller
+        
+        // Add each reading to the price table
+        for (Readings r : readings) {
+            String[] row = {r.getUtilityName(), "$" + r.getPrice() + "/" + r.getUnit(), "" + r.getServiceCharge() + "%"};
+            priceModel.addRow(row);
+        }
+        tablePrice.setModel(priceModel); // Update the table model
+        tablePrice.repaint(); // Repaint the table to reflect changes
+    }
 
     public void redraw() {
+        // Redraw the table with updated draft data
     	draft = main.getCont().getDraft(userName);
-        this.model.setRowCount(0);
+        this.model.setRowCount(0);// Clear existing rows
         double total=0;
         for (String[] d :draft) {
-        	System.out.println(String.join(", ", d));
+        	System.out.println(String.join(", ", d));// Debug output
         	try {
         		Readings r = main.getCont().getReading(d[0]);
         		int currentTotal = Integer.valueOf(d[1]);
         		int pastTotal = main.getCont().getPastTotalReading(userName, r.getUtilityName());
         		int amtUsed = currentTotal - pastTotal;
+        		String indication = "";
+        		if (main.getCont().hasDiscount(r.getUtilityName(), ""+amtUsed)){
+        			indication="*";
+        		}
         		
-        		
-                Object[] x = {d[0],d[1],pastTotal,amtUsed,"$"+String.format("%.2f", main.getCont().calculateReading(r.getUtilityName(),""+amtUsed))};
+        		// Calculate and display the amount used and cost
+                Object[] x = {d[0],
+                		d[1],
+                		pastTotal,
+                		amtUsed,
+                		"$"+String.format("%.2f", 
+                		main.getCont().calculateReading(r.getUtilityName(),""+amtUsed))+indication};
                 model.addRow(x);
-                total+=main.getCont().calculateReading(r.getUtilityName(),""+amtUsed);
-			} catch (Exception e) {
-				lblError.setText(d[0]+" Not Avaliable, Deleted");
-				main.getCont().removeMeterReading(userName, d[0]);
-				continue;
-
-			}
-        	txtTotal.setText(String.format("%.2f", total));
-        	
+                total += main.getCont().calculateReading(r.getUtilityName(), "" + amtUsed);
+            } catch (Exception e) {
+                // Handle exceptions (e.g., missing or invalid readings)
+                lblError.setText(d[0] + " Not Available, Deleted");
+                main.getCont().removeMeterReading(userName, d[0]); // Remove invalid reading
+                continue;
+            }
+            txtTotal.setText(String.format("%.2f", total)); // Update the total amount
         }
-        table.setModel(model);
-        table.repaint();
+        table.setModel(model); // Update the table model
+        table.repaint(); // Repaint the table to reflect changes
     }
+
     
+    
+    public void uploadReadings(){
+    	JFileChooser chooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+    	chooser.setFileFilter(new FileNameExtensionFilter(".csv","csv"));
+    	chooser.setFileFilter(new FileNameExtensionFilter(".txt","txt"));
+    	int r = chooser.showOpenDialog(null);
+    	String fileSelected = null;
+		if (r == JFileChooser.APPROVE_OPTION){
+			fileSelected = chooser.getSelectedFile().getAbsolutePath();
+		}
+		else {
+			System.out.println("Cancelled");
+			return;
+		}
+		String[][] mReadings = null;
+		try {
+			mReadings = main.getCont().csvReader(fileSelected);
+		} catch (IOException e) {
+			return;
+		}
+		String [] latestReading = mReadings[0];
+		Readings[] readings = main.getCont().getAllReadings();
+//		try {
+			main.getCont().clearDraft(userName);
+			
+			for (int i=0; i<latestReading.length;i++){
+				main.getCont().addMeterReading(userName, readings[i].getUtilityName(), Integer.valueOf(latestReading[i]));}
+//		} catch (Exception e) {
+//			JOptionPane.showMessageDialog(null, "Wrong Format (Reading1, Reading2, ...)");
+//		}
+			main.showEditDraft(userName);
+		
+    }
     
     
 }
