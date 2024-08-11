@@ -34,7 +34,7 @@ public class ViewHistoryScreen extends JPanel {
     private DefaultMutableTreeNode userName;
     private ImageIcon logo = new ImageIcon(AllLogin.class.getResource("/images/logo.png"));
     private ImageIcon background = new ImageIcon(AllLogin.class.getResource("/images/background.jpg"));
-    private ImageIcon print = new ImageIcon(AllLogin.class.getResource("/images/print.png"));
+    private ImageIcon print = new ImageIcon(this.getClass().getResource("/images/print.png"));
     private JScrollPane scrollPane;
     private JLabel lblCustomerDetails;
     private JTree tree;
