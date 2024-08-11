@@ -21,15 +21,20 @@ import controller.MainFrame;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.FileNotFoundException;
 import java.lang.management.ManagementPermission;
+import java.sql.Savepoint;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.JTextArea;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -66,6 +71,7 @@ public class EditDraft extends JPanel {
     private String[] sysDate;
     private String userName;
     private JButton btnBack;
+    private JButton btnUpload;
 
     public EditDraft(MainFrame main, String user) {
         this.main = main;
@@ -149,8 +155,7 @@ public class EditDraft extends JPanel {
         btnSubmit.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
         btnSubmit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	String[] options = {"Yes", "No"};
-				int sel = JOptionPane.showOptionDialog(null, "Confirm Change? This will Change Bill according to changes", "Submit", 0, 3, null, options, options[1]);
+				int sel = JOptionPane.showConfirmDialog(null, "Confirm Change? This will Change Bill according to changes", "Submit", 0);
 				if(sel != 0){return;}
                 main.getCont().updateUserReading(userName);
                 main.showEditDraft(userName);
@@ -219,7 +224,7 @@ public class EditDraft extends JPanel {
         
         this.lblDate = new JLabel("Bill Date: ");
         this.lblDate.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
-        this.lblDate.setBounds(22, 81, 254, 26);
+        this.lblDate.setBounds(22, 81, 350, 26);
         add(this.lblDate);
         
         this.txtrCurrentBill = new JTextArea();
@@ -246,6 +251,17 @@ public class EditDraft extends JPanel {
         this.lblLogo = new JLabel("logo");
         this.lblLogo.setBounds(401, 49, 67, 58);
         logo.setImage(logo.getImage().getScaledInstance(lblLogo.getHeight(), lblLogo.getHeight(), Image.SCALE_DEFAULT));
+        
+        this.btnUpload = new JButton("Upload Readings");
+        btnUpload.hide();
+        this.btnUpload.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		uploadReadings();
+        	}
+        });
+        this.btnUpload.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+        this.btnUpload.setBounds(790, 67, 199, 40);
+        add(this.btnUpload);
         lblLogo.setIcon(logo);
         add(this.lblLogo);
         
@@ -271,6 +287,7 @@ public class EditDraft extends JPanel {
         
         
         init();
+        checkDraft();
         
         
         
@@ -280,29 +297,43 @@ public class EditDraft extends JPanel {
     	fillCurrentPrices();
     	redraw();
     	
+    	
     	// Tells program to run later
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
             	showCurrentBill();
+            	if (!main.getCurrentAcct()[0].equals("C")){
+            		btnUpload.show();
+            	}
             	if (lastBill==null){
                 	
                 	if (main.getCurrentAcct()[0].equals("C")) {
                 		main.showCustMenu();
                 		JOptionPane.showMessageDialog(null, "No History", "Error", JOptionPane.ERROR_MESSAGE);
                 	} else {
-                		String[] options = {"Yes", "No"};
-        				int sel = JOptionPane.showOptionDialog(null, "No History, Generate Bill?", "No History", 0, 3, null, options, options[1]);
+        				int sel = JOptionPane.showConfirmDialog(null, "No History, Generate Bill?", "No History", 0);
         				if(sel != 0){main.showAllCustomers();return;}
         				main.getCont().generateBills(userName);
         				init();
                 	}
             	}
+            	else if (!main.getCurrentAcct()[0].equals("C")&& !main.getCont().checkEditStatus(userName)) {
+            		int sel = JOptionPane.showConfirmDialog(null, "Not Latest Bill, Generate Bill?", "No History", 0);
+    				if(sel != 0){return;}
+    				main.getCont().generateBills(userName);
+    				init();
+            	}
             }
         });
     	
-    	
-    	
         
+    }
+    public void checkDraft(){
+    	if (!main.getCont().hasDraft(userName)){
+    		main.getCont().resetDraft(userName);
+    		redraw();
+    		
+    	}
     }
     public void showCurrentBill(){
     	//bill area
@@ -356,9 +387,18 @@ public class EditDraft extends JPanel {
         		int currentTotal = Integer.valueOf(d[1]);
         		int pastTotal = main.getCont().getPastTotalReading(userName, r.getUtilityName());
         		int amtUsed = currentTotal - pastTotal;
+        		String indication = "";
+        		if (main.getCont().hasDiscount(r.getUtilityName(), ""+amtUsed)){
+        			indication="*";
+        		}
         		
         		
-                Object[] x = {d[0],d[1],pastTotal,amtUsed,"$"+String.format("%.2f", main.getCont().calculateReading(r.getUtilityName(),""+amtUsed))};
+                Object[] x = {d[0],
+                		d[1],
+                		pastTotal,
+                		amtUsed,
+                		"$"+String.format("%.2f", 
+                		main.getCont().calculateReading(r.getUtilityName(),""+amtUsed))+indication};
                 model.addRow(x);
                 total+=main.getCont().calculateReading(r.getUtilityName(),""+amtUsed);
 			} catch (Exception e) {
@@ -374,6 +414,39 @@ public class EditDraft extends JPanel {
         table.repaint();
     }
     
+    
+    public void uploadReadings(){
+    	JFileChooser chooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+    	chooser.setFileFilter(new FileNameExtensionFilter(".csv","csv"));
+    	chooser.setFileFilter(new FileNameExtensionFilter(".txt","txt"));
+    	int r = chooser.showOpenDialog(null);
+    	String fileSelected = null;
+		if (r == JFileChooser.APPROVE_OPTION){
+			fileSelected = chooser.getSelectedFile().getAbsolutePath();
+		}
+		else {
+			System.out.println("Cancelled");
+			return;
+		}
+		String[][] mReadings = null;
+		try {
+			mReadings = main.getCont().csvReader(fileSelected);
+		} catch (FileNotFoundException e) {
+			return;
+		}
+		String [] latestReading = mReadings[0];
+		Readings[] readings = main.getCont().getAllReadings();
+//		try {
+			main.getCont().clearDraft(userName);
+			
+			for (int i=0; i<latestReading.length;i++){
+				main.getCont().addMeterReading(userName, readings[i].getUtilityName(), Integer.valueOf(latestReading[i]));}
+//		} catch (Exception e) {
+//			JOptionPane.showMessageDialog(null, "Wrong Format (Reading1, Reading2, ...)");
+//		}
+			main.showEditDraft(userName);
+		
+    }
     
     
 }

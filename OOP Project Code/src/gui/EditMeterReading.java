@@ -97,7 +97,7 @@ public class EditMeterReading extends JPanel {
 				window.dispose();
 			}
 		});
-		btnBack.setBounds(15, 241, 122, 43);
+		btnBack.setBounds(15, 241, 147, 43);
 		add(btnBack);
 		
 		JButton btnAdd = new JButton("Update");
@@ -115,7 +115,7 @@ public class EditMeterReading extends JPanel {
                 window.dispose();
 			}
 		});
-		btnAdd.setBounds(320, 241, 115, 43);
+		btnAdd.setBounds(288, 241, 147, 43);
 		add(btnAdd);
 		
 		this.lblUnit = new JLabel("Unit");

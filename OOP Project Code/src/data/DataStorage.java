@@ -39,6 +39,7 @@ public class DataStorage {
         for(Customer cust:user){
             if(cust.getUsername().equals(userName)){
                 user.remove(c);
+                break;
             }
             c+=1;
         }
@@ -47,6 +48,15 @@ public class DataStorage {
     public Customer getUser(String name) {
         for(Customer u:user){
             if (u.getUsername().equals(name)){
+                return u;
+            }
+        }
+        return null;
+    }
+    
+    public Customer getUserByEmail(String email) {
+        for(Customer u:user){
+            if (u.getEmail().equals(email)){
                 return u;
             }
         }

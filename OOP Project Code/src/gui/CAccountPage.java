@@ -49,6 +49,7 @@ public class CAccountPage extends JPanel{
 	private JLabel lblErrors;
 	private JLabel lblLogo;
 	private JLabel lblPsGroup;
+	private JButton btnDeleteAccount;
 	
 	public CAccountPage(PopupDialog popupDialog, String userName){
 		this.window=popupDialog;
@@ -220,9 +221,10 @@ public class CAccountPage extends JPanel{
 		this.txtEmail.setColumns(10);
 		
 		this.lblErrors = new JLabel("");
+		this.lblErrors.setVerticalAlignment(SwingConstants.TOP);
 		this.lblErrors.setFont(new Font("Trebuchet MS", Font.ITALIC, 15));
 		this.lblErrors.setForeground(Color.RED);
-		this.lblErrors.setBounds(330, 32, 223, 40);
+		this.lblErrors.setBounds(330, 399, 223, 40);
 		add(this.lblErrors);
 		
 		this.lblLogo = new JLabel("");
@@ -235,12 +237,31 @@ public class CAccountPage extends JPanel{
 		this.lblPsGroup.setFont(new Font("Trebuchet MS", Font.PLAIN, 20));
 		this.lblPsGroup.setBounds(104, 11, 112, 28);
 		add(this.lblPsGroup);
+		
+		this.btnDeleteAccount = new JButton("Delete");
+		btnDeleteAccount.setFocusable(false);
+		this.btnDeleteAccount.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int sel = JOptionPane.showConfirmDialog(null, "Delete User?", "Confirm", 0);
+				if (sel !=0){return;}
+				window.main.getCont().removeUser(userName);
+				if (window.main.getCurrentAcct()[0].equals("C")){
+					window.main.showAllLogin();
+				}
+				window.dispose();
+			}
+		});
+		this.btnDeleteAccount.setForeground(Color.WHITE);
+		this.btnDeleteAccount.setBackground(Color.RED);
+		this.btnDeleteAccount.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+		this.btnDeleteAccount.setBounds(441, 11, 112, 37);
+		add(this.btnDeleteAccount);
 		this.showAccount();
 		this.showNormalScreen();
 		
 		window.setSize((txtUName.getLocation().x+txtUName.getSize().width+40),(btnEdit.getLocation().y+btnEdit.getSize().height+60));
 		
-
+		btnEdit.grabFocus();
 	}
 	
 

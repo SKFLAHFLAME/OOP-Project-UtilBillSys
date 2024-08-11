@@ -3,6 +3,7 @@ package gui;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -22,6 +23,10 @@ import java.util.Collections;
 import java.util.Vector;
 import controller.MainFrame;
 import java.awt.Color;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
 
 public class ViewHistoryScreen extends JPanel {
     MainFrame main;
@@ -29,6 +34,7 @@ public class ViewHistoryScreen extends JPanel {
     private DefaultMutableTreeNode userName;
     private ImageIcon logo = new ImageIcon(AllLogin.class.getResource("/images/logo.png"));
     private ImageIcon background = new ImageIcon(AllLogin.class.getResource("/images/background.jpg"));
+    private ImageIcon print = new ImageIcon(AllLogin.class.getResource("/images/print.png"));
     private JScrollPane scrollPane;
     private JLabel lblCustomerDetails;
     private JTree tree;
@@ -47,6 +53,7 @@ public class ViewHistoryScreen extends JPanel {
     private JLabel lblLogo;
     private JLabel lblPsGroup;
     private JButton btnBack;
+    private JButton btnExport;
 
     public ViewHistoryScreen(MainFrame m) {
     	setBackground(new Color(135, 206, 250));
@@ -76,6 +83,15 @@ public class ViewHistoryScreen extends JPanel {
         this.scrollPane.setBounds(12, 59, 582, 372);
         this.panel.add(this.scrollPane);
         this.tree = new JTree(model);
+        this.tree.addTreeSelectionListener(new TreeSelectionListener() {
+        	public void valueChanged(TreeSelectionEvent e) {
+        		if (e.getPath().getPathCount() == 2){
+        			btnExport.show();
+        		}
+        		else{btnExport.hide();}
+        	}
+        });
+        
         this.tree.setRowHeight(30);
         this.tree.setFont(new Font("Tw Cen MT", Font.PLAIN, 27));
         this.scrollPane.setViewportView(this.tree);
@@ -169,6 +185,23 @@ public class ViewHistoryScreen extends JPanel {
         this.btnBack.setFont(new Font("Trebuchet MS", Font.PLAIN, 25));
         this.btnBack.setBounds(12, 11, 45, 37);
         this.panel.add(this.btnBack);
+        
+        this.btnExport = new JButton("");
+        this.btnExport.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent arg0) {
+        		String path = tree.getSelectionPath().getLastPathComponent().toString();
+        		String[] date = path.split("/");
+        		if (main.getCont().printBills(main.getCurrentAcct()[1],date[1], date[2])){
+					JOptionPane.showMessageDialog(null, "Saved Bill");
+				}
+				else {JOptionPane.showMessageDialog(null, "Bill Saved failed");}	
+        	}
+        });
+        this.btnExport.setBounds(549, 11, 45, 37);
+        btnExport.hide();
+        print.setImage(print.getImage().getScaledInstance(btnExport.getHeight(), btnExport.getHeight(), Image.SCALE_DEFAULT));
+        btnExport.setIcon(print);
+        this.panel.add(this.btnExport);
                                 
         
         this.lblBackground = new JLabel("");

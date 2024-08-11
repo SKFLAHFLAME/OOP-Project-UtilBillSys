@@ -15,9 +15,15 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
+import java.awt.Image;
+
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -31,6 +37,10 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 import java.awt.Color;
 import javax.swing.SwingConstants;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
+import javax.swing.event.TreeSelectionEvent;
 
 public class ViewAllBills extends JPanel{
 	MainFrame main;
@@ -50,6 +60,7 @@ public class ViewAllBills extends JPanel{
 	private JTextArea txtrUnits;
 	private JLabel lblcaseSensetive;
 	private JLabel lblCustomerBills;
+	private JButton btnExport;
 	
 	public ViewAllBills(MainFrame m){
 		main = m;
@@ -73,6 +84,14 @@ public class ViewAllBills extends JPanel{
 		
 		model = new DefaultTreeModel(header);
 		this.tree = new JTree(model);
+		this.tree.addTreeSelectionListener(new TreeSelectionListener() {
+			public void valueChanged(TreeSelectionEvent e) {
+				if (e.getPath().getPathCount()==4){
+					btnExport.show();
+				}
+				else {btnExport.hide();}
+			}
+		});
 		tree.setRowHeight(30);
 		this.tree.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
 		this.scrollPane.setViewportView(this.tree);
@@ -100,7 +119,7 @@ public class ViewAllBills extends JPanel{
 		
 		this.lblYear = new JLabel("Year:");
 		this.lblYear.setFont(new Font("STXinwei", Font.PLAIN, 25));
-		this.lblYear.setBounds(668, 129, 83, 38);
+		this.lblYear.setBounds(674, 144, 83, 38);
 		add(this.lblYear);
 		
 		this.comboYear = new JComboBox(year);
@@ -136,7 +155,7 @@ public class ViewAllBills extends JPanel{
 		});
 		this.comboYear.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
 		
-		this.comboYear.setBounds(769, 125, 178, 45);
+		this.comboYear.setBounds(769, 140, 178, 45);
 		add(this.comboYear);
 		
 		this.textField = new JTextField();
@@ -178,6 +197,24 @@ public class ViewAllBills extends JPanel{
 		this.lblcaseSensetive.setForeground(Color.BLUE);
 		this.lblcaseSensetive.setBounds(817, 288, 136, 26);
 		add(this.lblcaseSensetive);
+		
+		this.btnExport = new JButton("");
+		btnExport.hide();
+		this.btnExport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String user = tree.getSelectionPath().getLastPathComponent().toString().split(" : ")[0];
+				String[] date = tree.getSelectionPath().getLastPathComponent().toString().split(" : ")[1].split("/");
+				if (main.getCont().printBills(user, date[1], date[2])){
+					JOptionPane.showMessageDialog(null, "Saved Bill");
+				}
+				else {JOptionPane.showMessageDialog(null, "Bill Saved failed");}
+			}
+		});
+		this.btnExport.setBounds(889, 83, 58, 37);
+		ImageIcon print = new ImageIcon(this.getClass().getResource("/images/print.png"));
+		print.setImage(print.getImage().getScaledInstance(btnExport.getHeight(), btnExport.getHeight(), Image.SCALE_DEFAULT));
+		btnExport.setIcon(print);
+		add(this.btnExport);
 	}
 
 	
@@ -187,7 +224,6 @@ public class ViewAllBills extends JPanel{
 		String[] monthList = {month};
 		String[] yearList = {year};
 		header.removeAllChildren();
-
 		if (M.equals(0)){
 			String[] temp = new String[this.month.length-1];
 			for (int i=0 ; i<this.month.length-1 ;i++){
@@ -252,7 +288,13 @@ public class ViewAllBills extends JPanel{
 					u.add(new DefaultMutableTreeNode("Bill Total: $"+String.format("%.2f",userTotal)));
 					mth.add(u);
 				}
-				mth.add(new DefaultMutableTreeNode(String.format("Month Revenue: $"+"%.2f",monthlyTotal)));
+				if (monthlyTotal==0.0 && (Integer.valueOf(m) == Integer.valueOf(main.getCont().getSystemDate()[0])&&Integer.valueOf(y) >= Integer.valueOf(main.getCont().getSystemDate()[1]))){
+					mth.add(new DefaultMutableTreeNode(String.format("No Bill Generated this Month")));
+				}
+				else if (monthlyTotal==0.0 && (Integer.valueOf(m) < Integer.valueOf(main.getCont().getSystemDate()[0])||Integer.valueOf(y) < Integer.valueOf(main.getCont().getSystemDate()[1]))){
+					mth.add(new DefaultMutableTreeNode(String.format("No Bill Generated")));
+				}
+				else {mth.add(new DefaultMutableTreeNode(String.format("Month Revenue: $"+"%.2f",monthlyTotal)));}
 				yearTotal+=monthlyTotal;
 			}
 //			yr.add(new DefaultMutableTreeNode("Year Total: $"+String.format("%.2f", yearTotal)));
@@ -286,4 +328,5 @@ public class ViewAllBills extends JPanel{
 		}
 		txtrUnits.setText(text);
 	}
+	
 }

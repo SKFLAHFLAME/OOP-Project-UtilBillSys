@@ -8,8 +8,15 @@ import data.Staff;
 import java.awt.event.MouseWheelEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -19,13 +26,22 @@ import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.Map.Entry;
+import java.util.Objects;
 
+import javax.crypto.spec.PSource;
 import javax.management.InstanceNotFoundException;
 import javax.naming.spi.InitialContextFactoryBuilder;
+import javax.security.auth.x500.X500Principal;
+import javax.sound.midi.VoiceStatus;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.text.DefaultEditorKit.PasteAction;
 
 import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
+import org.omg.PortableInterceptor.IORInterceptor;
+import org.w3c.dom.UserDataHandler;
 
 public class Controller {
     private DataStorage ds = new DataStorage();
@@ -110,6 +126,10 @@ public class Controller {
         return ds.getUser(name);
     }
     
+    public Customer getCustomerByEmail(String email){
+        return ds.getUserByEmail(email);
+    }
+    
     public Customer[] getCustomer(String postal, String unitNo){
         return ds.getUser(postal, unitNo);
     }
@@ -144,6 +164,9 @@ public class Controller {
     public void removeStaff(String id){
     	ds.removeStaff(id);
     }
+    public void removeUser (String userName){
+    	ds.removeUser(userName);
+    }
     
     public void addReading(String name, double price, String unit, double serviceCharge){
     	Readings readings = new Readings(name, price, unit, serviceCharge);
@@ -171,9 +194,15 @@ public class Controller {
     	return (Double.valueOf(meterReading)*reading.getPrice()+(Double.valueOf(meterReading)*reading.getPrice()*reading.getServiceCharge()/100))*((100-discount)/100);
     }
     
+    public boolean hasDiscount(String readingName, String value){
+    	int average = this.getAverageReading(readingName);
+    	if (Integer.valueOf(value)<average){return true;}
+    	return false;
+    }
+    
 
     
-    //! User Readings
+    //! User Readings/ Bill Methods
     public void submitUserReading(String userName){
     	DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     	LocalDateTime now = LocalDateTime.now();
@@ -357,6 +386,111 @@ public class Controller {
     	
     }
     
+    // exports bill selected
+    public boolean printBills(String username, String month, String year){
+    	//gets user bill that month
+    	String [][] bill = null;
+    	for (String[][] b : this.getUserReading(month, year)){
+    		if (b[0][0].equals(username)){
+    			bill = b;
+    			break;
+    		}
+    	}
+    	if (bill == null){return false;}// do not generate a empty bill
+    	Customer customer = this.getCustomer(bill[0][0]);
+    	JFileChooser chooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+    	chooser.setFileFilter(new FileNameExtensionFilter(".csv","csv"));
+    	chooser.setFileFilter(new FileNameExtensionFilter(".txt","txt"));
+    	int r = chooser.showSaveDialog(null);
+    	String fileSelected = null;
+		if (r == JFileChooser.APPROVE_OPTION){
+			fileSelected = chooser.getSelectedFile().getAbsolutePath();
+		}
+		else {
+			System.out.println("Cancelled");
+			return false;
+		}
+		Vector<String[]> textout = new Vector<>();
+		if (chooser.getFileFilter().getDescription().equals(".csv")){
+			fileSelected+=".csv";
+			String [] addr = customer.getAddress().split(":");
+			String [][] top = {{"PS Group\n"},
+					{"User : ",bill[0][0]},
+					{"Bill No : " ,bill[0][1]},
+					{"Bill Date : ",bill[0][2]+'\n'}, 
+					{"Name : ",customer.getName()},
+					{"Email : ",customer.getEmail()},
+					{"Postal Code : ",addr[0]},
+					{"Unit No. : ",addr[1]+'\n'},
+					{"Reading Name","Amount Used","Average Reading","Cost"}};
+			for (String[] item :top){textout.add(item);}
+			for (int i =0; i<bill.length-1;i++){
+				String unit = getReading(bill[i+1][0]).getUnit();
+				String hasDiscount = "";
+				if (Integer.valueOf(bill[i+1][1])<this.getAverageReading(bill[i+1][0])){hasDiscount = "*";}
+				String[] item = 
+						{bill[i+1][0],
+						bill[i+1][1]+" "+unit+"  "+hasDiscount,
+						this.getAverageReading(bill[i+1][0])+" "+unit,
+						"$"+bill[i+1][2]};
+				textout.add(item);
+			}
+			String[][] x = new String[textout.size()][];
+			textout.toArray(x);
+			try {
+				csvWriter(fileSelected, x);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		else {
+			fileSelected += ".txt";
+			String [] addr = customer.getAddress().split(":");
+			String [][] top = {{"PS Group\n"},
+					{"User : "+bill[0][0]},
+					{"Bill No : " +bill[0][1]},
+					{"Bill Date : "+bill[0][2]+'\n'}, 
+					{"Name : "+customer.getName()},
+					{"Email : "+customer.getEmail()},
+					{"Postal Code : "+addr[0]},
+					{"Unit No. : "+addr[1]+'\n'},
+					{"\'*\' shows a discount given\n"}};
+			for (String[] item :top){textout.add(item);}
+			for (int i =0; i<bill.length-1;i++){
+				String unit = getReading(bill[i+1][0]).getUnit();
+				String hasDiscount = "";
+				if (Integer.valueOf(bill[i+1][1])<this.getAverageReading(bill[i+1][0])){hasDiscount = "*";}
+				String[][] item = 
+						{{"Reading : "+bill[i+1][0]},
+						{"	Amount used : "+bill[i+1][1]+" "+unit+"  "+hasDiscount},
+						{"	Average Reading : " + this.getAverageReading(bill[i+1][0])+" "+unit},
+						{"	Cost : $"+bill[i+1][2]}, 
+						{""}};
+				textout.add(item[0]);
+				textout.add(item[1]);
+				textout.add(item[2]);
+				textout.add(item[3]);
+				textout.add(item[4]);
+			}
+			String[][] x = new String[textout.size()][];
+			textout.toArray(x);
+			try {
+				csvWriter(fileSelected, x);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+		}
+		System.out.println(fileSelected);
+		
+    	
+    	
+    	
+    	return true;
+    }
+    
     public void addUserReading(String[][] userReading){
         ds.addUserReading(userReading);
     }
@@ -443,11 +577,12 @@ public class Controller {
     	//returns reading bill as of lastmonth
     	String[] billDate = currentBill[0][2].split("/");
     	
-    	if (Integer.valueOf(billDate[1])<Integer.valueOf(systemDate[0]) && Integer.valueOf(billDate[2])<=Integer.valueOf(systemDate[1]) )
-    	{
-    		return currentTotal;
-    	}
-    	else {return currentTotal-previousUsed;}
+//    	if (Integer.valueOf(billDate[1])<Integer.valueOf(systemDate[0]) && Integer.valueOf(billDate[2])<=Integer.valueOf(systemDate[1]) )
+//    	{
+//    		return currentTotal;
+//    	}
+//    	else {return currentTotal-previousUsed;}
+    	return currentTotal-previousUsed;
     	
     }
     
@@ -483,12 +618,12 @@ public class Controller {
     	for (Readings r:readings){
     		this.addMeterReading(userName, r.getUtilityName(), this.getCurrentTotalReading(userName, r.getUtilityName()));
     	}
-    	System.out.println("reseted");
+    	System.out.println(userName+" reseted");
     }
+    
     public boolean checkEditStatus(String userName){
     	String[][] latestBill = this.getLastUserReading(userName);
-    	if (latestBill ==null){
-		return false;}
+    	if (latestBill ==null){return false;}
     	String[] billDate = latestBill[0][2].split("/");
     	if (Integer.valueOf(billDate[1])<Integer.valueOf(systemDate[0])&&Integer.valueOf(billDate[2])<=Integer.valueOf(systemDate[1])){
     		return false;
@@ -529,6 +664,7 @@ public class Controller {
     //!CSV methods
     public String[][] csvReader(String filepath) throws FileNotFoundException {
 		File file = new File(filepath);
+		
 		Scanner scanner = new Scanner(file);
 		scanner.useDelimiter(",");
 		Vector<String[]> data = new Vector<>();
@@ -566,10 +702,11 @@ public class Controller {
 	public void csvWriter(String filepath, String[][] data) throws IOException {
 		FileWriter writer = new FileWriter(filepath);
 		for(String[] d : data) {
-			for (String s:d){
-				// if(s.isEmpty()){s="-";}
-				writer.append(s+",");
-			}
+//			for (String s:d){
+//				// if(s.isEmpty()){s="-";}
+//				writer.append(s+",");
+//			}
+			writer.append(String.join(",", d));
 			writer.append("\n");
 		}
 		writer.close();
@@ -645,12 +782,12 @@ public class Controller {
 
         //store into CSV files
         cdir = System.getProperty("java.class.path").split(";")[0];
-        if (!(System.getProperty("file.separator")=="/")){
-            cdir = cdir.replace("\\", "/");}
-        String[] cp = cdir.split("/");
-        cp[cp.length-1] = "src";// redirects to SRC csv for easy access to edit data
-        cdir = String.join("/", cp);
-        System.out.println(cdir);
+       if (!(System.getProperty("file.separator")=="/")){
+           cdir = cdir.replace("\\", "/");}
+       String[] cp = cdir.split("/");
+       cp[cp.length-1] = "src";// redirects to SRC csv for easy access to edit data
+       cdir = String.join("/", cp);
+       System.out.println(cdir);
         
         try {
             csvWriter(cdir+"/csv/Staff.csv", staffData);
@@ -666,21 +803,22 @@ public class Controller {
 
     public void syncData(){
     	//get current directory
+
     	cdir = System.getProperty("java.class.path").split(";")[0];
-        System.out.println(cdir);
-        if (!(System.getProperty("file.separator")=="/")){
-            cdir = cdir.replace("\\", "/");}
-        String[] cp = cdir.split("/");
-        cp[cp.length-1] = "src";// redirects to SRC csv for easy access to edit data
-        cdir = String.join("/", cp);
-        System.out.println(cdir);
-        
+       System.out.println(cdir);
+       if (!(System.getProperty("file.separator")=="/")){
+           cdir = cdir.replace("\\", "/");}
+       String[] cp = cdir.split("/");
+       cp[cp.length-1] = "src";// redirects to SRC csv for easy access to edit data
+       cdir = String.join("/", cp);
+       System.out.println(cdir);
 
         //Read files for data
         //Creating and adding csv contents into vectors
             String[][] customers;
 			try {
 				customers = csvReader(cdir+"/csv/Customer.csv");
+				
 				//!customer
 	            for(String[]c:customers){
 	                this.addUser(c[0], c[1], c[2],c[3],c[4]);
@@ -757,6 +895,7 @@ public class Controller {
 	            }
 			} catch (FileNotFoundException e) {
 				System.out.println(cdir+"/csv/UserReadings.csv NOT FOUND");
+				setSystemDate("1", "2020");
 			}
             
 

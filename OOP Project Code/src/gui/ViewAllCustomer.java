@@ -15,7 +15,10 @@ import javax.swing.tree.DefaultTreeModel;
 import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
 
 import java.awt.Font;
+import java.awt.Image;
+
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JTree;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -34,6 +37,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.JTextArea;
 import javax.swing.DropMode;
+import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
 
 public class ViewAllCustomer extends JPanel{
@@ -56,6 +60,7 @@ public class ViewAllCustomer extends JPanel{
 	private JTextField txtPostal;
 	private JTextField txtxUnitNo;
 	private JLabel label;
+	private JButton btnExport;
 	
 	public ViewAllCustomer(MainFrame m) {
 		main=m;
@@ -74,6 +79,10 @@ public class ViewAllCustomer extends JPanel{
 					btnEditUser.show();
 				}
 				else{btnEditUser.hide();}
+				if (arg0.getPath().getPathCount()==4){
+					btnExport.show();
+				}
+				else{btnExport.hide();}
 			}
 		});
 		this.tree.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
@@ -127,7 +136,7 @@ public class ViewAllCustomer extends JPanel{
 		});
 		btnEditUser.hide();
 		this.btnEditUser.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
-		this.btnEditUser.setBounds(674, 342, 291, 54);
+		this.btnEditUser.setBounds(672, 342, 295, 56);
 		add(this.btnEditUser);
 		main.setSize(1020,720);
 		
@@ -158,7 +167,7 @@ public class ViewAllCustomer extends JPanel{
 			}
 		});
 		this.tglbtnSearchMethod.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
-		this.tglbtnSearchMethod.setBounds(674, 152, 291, 54);
+		this.tglbtnSearchMethod.setBounds(674, 154, 293, 54);
 		add(this.tglbtnSearchMethod);
 		
 		this.lblPostalCode = new JLabel("Postal:");
@@ -180,7 +189,7 @@ public class ViewAllCustomer extends JPanel{
 			}
 		});
 		this.btnSearch.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
-		this.btnSearch.setBounds(674, 302, 291, 34);
+		this.btnSearch.setBounds(674, 302, 293, 34);
 		add(this.btnSearch);
 		
 		this.txtPostal = new JTextField();
@@ -192,7 +201,7 @@ public class ViewAllCustomer extends JPanel{
 			}
 		});
 		this.txtPostal.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
-		this.txtPostal.setBounds(776, 219, 189, 34);
+		this.txtPostal.setBounds(776, 219, 191, 34);
 		add(this.txtPostal);
 		this.txtPostal.setColumns(10);
 		
@@ -205,7 +214,7 @@ public class ViewAllCustomer extends JPanel{
 			}
 		});
 		this.txtxUnitNo.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
-		this.txtxUnitNo.setBounds(799, 255, 166, 34);
+		this.txtxUnitNo.setBounds(799, 255, 168, 34);
 		add(this.txtxUnitNo);
 		this.txtxUnitNo.setColumns(10);
 		
@@ -213,6 +222,26 @@ public class ViewAllCustomer extends JPanel{
 		this.label.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
 		this.label.setBounds(776, 260, 19, 25);
 		add(this.label);
+		
+		this.btnExport = new JButton("");
+		btnExport.hide();
+		this.btnExport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String user = tree.getSelectionPath().getParentPath().getParentPath().getLastPathComponent().toString();
+				String[] date = tree.getSelectionPath().getLastPathComponent().toString().split(":")[1].split("/");
+				boolean completed = main.getCont().printBills(user, date[1], date[2]);
+				if (completed){
+					JOptionPane.showMessageDialog(null, "Saved Bill");
+				}
+				else {JOptionPane.showMessageDialog(null, "Bill Saved failed");}	
+				
+			}
+		});
+		this.btnExport.setBounds(674, 342, 295, 56);
+		ImageIcon print = new ImageIcon(this.getClass().getResource("/images/print.png"));
+		print.setImage(print.getImage().getScaledInstance(btnExport.getHeight(), btnExport.getHeight(), Image.SCALE_DEFAULT));
+		btnExport.setIcon(print);
+		add(this.btnExport);
 		
 		lblPostalCode.hide();
 		lblUnitNo.hide();
@@ -300,11 +329,15 @@ public class ViewAllCustomer extends JPanel{
 				}
 				String t = String.format("%.2f", total);
 				utotal+= total;
-				bill.add(new DefaultMutableTreeNode("Total: $"+t));//total of bill
+				bill.add(new DefaultMutableTreeNode("Total: $"+t));
 				userR.add(bill);
 				
 			}
-			userR.add(new DefaultMutableTreeNode("User Total: $"+String.format("%.2f", utotal)));
+			if (userReadings.length==0){
+				userR.add(new DefaultMutableTreeNode("No History"));//total of bill
+				System.out.println("No Hist");
+			}
+			else{userR.add(new DefaultMutableTreeNode("User Total: $"+String.format("%.2f", utotal)));}//total of bill
 			username.add(userR);
 		}
 		String t=String.format("%.2f", allTotal);
@@ -349,10 +382,13 @@ public class ViewAllCustomer extends JPanel{
 				}
 				String t = String.format("%.2f", total);
 				utotal+= total;
-				bill.add(new DefaultMutableTreeNode("Total: $"+t));//total of bill
-				userR.add(bill);
+				bill.add(new DefaultMutableTreeNode("Total: $"+t));
 			}
-			userR.add(new DefaultMutableTreeNode("User Total: $"+String.format("%.2f", utotal)));
+			if (userReadings.length==0){
+				userR.add(new DefaultMutableTreeNode("No History"));//total of bill
+				System.out.println("No Hist");
+			}
+			else{userR.add(new DefaultMutableTreeNode("User Total: $"+String.format("%.2f", utotal)));}//total of bill
 			username.add(userR);
 		}
 		model.reload();
@@ -392,10 +428,14 @@ public class ViewAllCustomer extends JPanel{
 				}
 				String t = String.format("%.2f", total);
 				utotal+= total;
-				bill.add(new DefaultMutableTreeNode("Total: $"+t));//total of bill
+				bill.add(new DefaultMutableTreeNode("Total: $"+t));
 				userR.add(bill);
 			}
-			userR.add(new DefaultMutableTreeNode("User Total: $"+String.format("%.2f", utotal)));
+			if (userReadings.length==0){
+				userR.add(new DefaultMutableTreeNode("No History"));//total of bill
+				System.out.println("No Hist");
+			}
+			else{userR.add(new DefaultMutableTreeNode("User Total: $"+String.format("%.2f", utotal)));}//total of bill
 			username.add(userR);
 		}
 		model.reload();

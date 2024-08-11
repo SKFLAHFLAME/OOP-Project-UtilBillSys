@@ -8,6 +8,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.io.StreamCorruptedException;
+import java.rmi.server.ExportException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Vector;
@@ -15,10 +18,13 @@ import java.util.Vector;
 import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Color;
 import javax.swing.JLabel;
@@ -43,6 +49,7 @@ public class EditUtility extends JPanel{
 	private JButton btnClearRow;
 	private JLabel lblBackground;
 	private JLabel lblFilter;
+	private JButton btnExport;
 	public EditUtility(MainFrame m){
 		setBackground(new Color(135, 206, 250));
 		this.main = m;
@@ -78,8 +85,7 @@ public class EditUtility extends JPanel{
 				} catch (Exception e) {
 					
 				}
-				String[] options = {"Yes", "No"};
-				int sel = JOptionPane.showOptionDialog(null, "Confirm Delete?", "Delete", 0, 3, null, options, options[1]);
+				int sel = JOptionPane.showConfirmDialog(null, "Confirm Delete?", "Delete", 0);
 				if(sel != 0){return;}
 				System.out.println(edtRow);
 				deleteRow(edtRow);
@@ -108,16 +114,11 @@ public class EditUtility extends JPanel{
 		this.btnUpdateUtility.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				int c=0;
-				int c2=0;
-//				for (Object[] x : finaldata){
-//					for(Object y:x){System.out.print(y+":"+c2+":"+c+" , ");c2+=1;}
-//					System.out.println();
-//					c2=0;
-//					c+=1;
-//				}
-				c2=0;c=0;
-				updateItems();
+				if (unsaved == true){
+					int selection = JOptionPane.showConfirmDialog(null, "Save Changes?", "Save changes", 0);
+					if(!(selection == 1|| selection== 0)){return;}
+					else if (selection ==0){updateItems();}
+				}
 			}
 		});
 		this.btnUpdateUtility.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
@@ -193,6 +194,18 @@ public class EditUtility extends JPanel{
 		main.setSize(1020,720);
 		
 		main.addTaskBar(this);
+        
+        this.btnExport = new JButton();
+        this.btnExport.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		export();
+        	}
+        });
+        this.btnExport.setBounds(888, 47, 70, 44);
+        ImageIcon print = new ImageIcon(this.getClass().getResource("/images/print.png"));
+        print.setImage(print.getImage().getScaledInstance(btnExport.getHeight(), btnExport.getHeight(), Image.SCALE_DEFAULT));
+        btnExport.setIcon(print);
+        add(this.btnExport);
 		
         this.lblFilter = new JLabel("");
         lblFilter.setOpaque(true);
@@ -218,6 +231,7 @@ public class EditUtility extends JPanel{
 			return;}
 		btnAddUtility.hide();
 		btnDelete.hide();
+		btnExport.hide();
 //		btnUpdateUtility.setLocation(291,318);
 //		btnClearRow.setLocation(12,324);
 	}
@@ -384,12 +398,56 @@ public class EditUtility extends JPanel{
 		}
 		main.closeAddFrame();
 		if (unsaved == true){
-			String[] options = {"Save", "No","Cancel"};
-			int selection = JOptionPane.showOptionDialog(null, "You have unsaved changes Save?", "Unsaved changes", 0,3,null,options,options[0]);
+			int selection = JOptionPane.showConfirmDialog(null, "You have unsaved changes Save?", "Unsaved changes", 1);
 			if(!(selection == 1|| selection== 0)){return false;}
 			else if (selection ==0){updateItems();}
 		}
 		
 		return true;
 	}
+	
+	public void export(){
+		if (unsaved == true){
+			int selection = JOptionPane.showConfirmDialog(null, "You have unsaved changes. Save Changes?", "Save changes", 0);
+			if(!(selection == 1|| selection== 0)){return;}
+			else if (selection ==0){updateItems();}
+		}
+		JFileChooser chooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+    	chooser.setFileFilter(new FileNameExtensionFilter(".csv","csv"));
+    	chooser.setFileFilter(new FileNameExtensionFilter(".txt","txt"));
+    	int r = chooser.showSaveDialog(null);
+    	String fileSelected = null;
+		if (r == JFileChooser.APPROVE_OPTION){
+			fileSelected = chooser.getSelectedFile().getAbsolutePath();
+		}
+		else {
+			System.out.println("Cancelled");
+			return;
+		}
+		if (chooser.getFileFilter().getDescription().equals(".csv")){
+			fileSelected+=".csv";
+		}
+		else {
+			fileSelected+=".txt";
+		}
+		Readings[] readings = main.getCont().getAllReadings();
+		Vector<String[]> textout = new Vector<>();
+		for (Readings r1:readings){
+			String[] reading = {r1.getUtilityName(), String.valueOf(r1.getPrice()), r1.getUnit(), String.valueOf(r1.getServiceCharge())};
+			textout.add(reading);
+		}
+		String[][] x = new String[textout.size()][];
+		textout.toArray(x);
+		try {
+			main.getCont().csvWriter(fileSelected, x);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+	}
+	
+	
 }
