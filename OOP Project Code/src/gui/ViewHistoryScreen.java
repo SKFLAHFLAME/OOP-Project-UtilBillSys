@@ -24,7 +24,7 @@ import controller.MainFrame;
 import java.awt.Color;
 
 public class ViewHistoryScreen extends JPanel {
-    MainFrame main;
+    MainFrame main; // Reference to the main application frame
     private DefaultTreeModel model;
     private DefaultMutableTreeNode userName;
     private ImageIcon logo = new ImageIcon(AllLogin.class.getResource("/images/logo.png"));
@@ -50,11 +50,12 @@ public class ViewHistoryScreen extends JPanel {
 
     public ViewHistoryScreen(MainFrame m) {
     	setBackground(new Color(135, 206, 250));
-        main = m;
+        main = m; // Initialize main application frame reference
         this.setLayout(null);
         userName = new DefaultMutableTreeNode(main.getCurrentAcct()[1]);
         main.addTaskBar(this);
 
+        // Initialize year options for the combo box
         date = main.getCont().getSystemDate();
         Vector<String> temp = new Vector<>();
         temp.add("All");
@@ -64,7 +65,7 @@ public class ViewHistoryScreen extends JPanel {
         year = new String[temp.size()];
         temp.toArray(year);
 
-        model = new DefaultTreeModel(userName);
+        model = new DefaultTreeModel(userName); // Initialize tree model with root node
         
         this.panel = new JPanel();
         this.panel.setBounds(204, 57, 606, 591);
@@ -142,7 +143,7 @@ public class ViewHistoryScreen extends JPanel {
         this.panel.add(this.btnSearch);
         	btnSearch.addActionListener(new ActionListener() {
         		public void actionPerformed(ActionEvent arg0) {
-        			filterTree();
+                    filterTree(); // Trigger filter action when button is clicked
         		}
         	});
         this.btnSearch.setFont(new Font("Trebuchet MS", Font.PLAIN, 25));
@@ -177,15 +178,15 @@ public class ViewHistoryScreen extends JPanel {
         lblBackground.setIcon(background);
         add(this.lblBackground);
         
-        populateTree();
+        populateTree(); // Populate the tree with user readings
     }
 
     public void populateTree() {
-        userName.removeAllChildren();
+        userName.removeAllChildren(); // Clear existing nodes
         String[][][] userReadings = main.getCont().getUserReading(main.getCurrentAcct()[1]); // get all userReadings of user
         Vector<String[][]> x = new Vector<>();
         for (int i = userReadings.length-1; i>=0; i--){
-        	x.add(userReadings[i]);
+            x.add(userReadings[i]); // Add readings to vector
         }
         x.toArray(userReadings);
         double utotal = 0;
@@ -239,7 +240,7 @@ public class ViewHistoryScreen extends JPanel {
         String[][][] userReadings = main.getCont().getUserReading(main.getCurrentAcct()[1]); // get all userReadings of user
         Vector<String[][]> x = new Vector<>();
         for (int i = userReadings.length-1; i>=0; i--){
-        	x.add(userReadings[i]);
+        	x.add(userReadings[i]);	 // Add readings to vector
         }
         x.toArray(userReadings);
         
