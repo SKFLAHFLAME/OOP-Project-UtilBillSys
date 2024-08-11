@@ -281,16 +281,18 @@ public class ResetDetails extends JPanel{
 		this.btnReset = new JButton("Reset");
 		this.btnReset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+			    // Check if the password and confirm password fields do not match
 				if (!pwdPassword.getText().equals(pwdConfirm.getText())){lblError_1.setText("Passwords does not match");return;}
+			    // Display a confirmation dialog for resetting the password
 				String[] options = {"Yes", "No"};
 				int sel = JOptionPane.showOptionDialog(null, "Confirm Reset?", "Confirm", 0, 3, null, options, options[0]);
-				if (sel!=0){return;}
+				if (sel!=0){return;}	 // Exit if the user selects "No"
 				String pass = new String(pwdPassword.getPassword());
 				main.getCont().editUser(user.getUsername(), user.getName(), user.getEmail(), pass, user.getAddress());
 				JOptionPane.showMessageDialog(null, "Password Resetted", "Reset", JOptionPane.INFORMATION_MESSAGE);
 				
 				
-				main.showAllLogin();
+				main.showAllLogin();	    // Show all login information and update the error label to indicate success
 				lblError_1.setText("Success!");
 			}
 		});

@@ -323,21 +323,27 @@ public class EditDraft extends JPanel {
         				init();
                 	}
             	}
+            	// Add an ActionListener to a button (not shown in this snippet)
             	else if (!main.getCurrentAcct()[0].equals("C")&& !main.getCont().checkEditStatus(userName)) {
+            	    // Check if the current account is not a customer ("C") and if the bill is not the latest
             		int sel = JOptionPane.showConfirmDialog(null, "Not Latest Bill, Generate Bill?", "No History", 0);
-    				if(sel != 0){return;}
+    				if(sel != 0){return;}	// Exit if the user selects "No"
+    			    // If the user selects "Yes", generate the bills and reinitialize the view
     				main.getCont().generateBills(userName);
-    				init();
+    			    init(); // Reinitialize the view to reflect the changes
             	}
             }
         });
     	
         
     }
+    
+ // Method to check if there's a draft for the current user
     public void checkDraft(){
+        // If no draft exists for the user, reset the draft
     	if (!main.getCont().hasDraft(userName)){
     		main.getCont().resetDraft(userName);
-    		redraw();
+            redraw(); // Redraw the interface to reflect the reset draft
     		
     	}
     }

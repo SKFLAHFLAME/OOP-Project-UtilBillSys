@@ -706,22 +706,26 @@ public class Controller {
     public String[][] csvReader(String filepath) throws IOException {
 		BufferedReader read = null;
 		try {
+	        // Attempt to create a BufferedReader using the specified file path
 			File in = new File(filepath);
 			read = new BufferedReader(new FileReader(in));
 			
 		} catch (Exception e) {
+	        // If the file is not found, read from the resource stream (useful when running from a JAR)
 			InputStream in = this.getClass().getResourceAsStream(filepath);// if no file is found, it will read from stream. For JAR
 			read = new BufferedReader(new InputStreamReader(in));
 		}
 		String line;
-		Vector<String[]> file = new Vector<>();
+	    Vector<String[]> file = new Vector<>(); // Vector to store the lines of the file as arrays of Strings
 		while ((line = read.readLine())!=null){
+	        // Split each line by commas and add the resulting array to the Vector
 			String [] l = line.split(",");
 			file.add(l);
 		}
+	    // Convert the Vector to a 2D array
 		String [][] f= new String[file.size()][];
 		file.toArray(f);
-		return f;
+	    return f; // Return the 2D array representing the CSV file contents
 	}
 	
     // Create a FileWriter to write data to the specified file path
