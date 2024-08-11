@@ -28,6 +28,7 @@ public class EditSysDate extends JPanel{
 	private JButton btnGenerateMonthsBills;
 	private PopupDialog window;
 	
+	// Constructor initializes the panel and its components
 	public EditSysDate(PopupDialog popupDialog){
 		this.window = popupDialog;
 		this.setLayout(null);
@@ -35,6 +36,7 @@ public class EditSysDate extends JPanel{
 		this.btnBack = new JButton("Cancel");
 		this.btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				// Check the account type and either show login screen or dispose the window
 				if(!window.main.getCurrentAcct()[0].equals("A")){window.main.showAllLogin();return;}
 				window.dispose();
 			}
@@ -46,11 +48,15 @@ public class EditSysDate extends JPanel{
 		this.btnConfirm = new JButton("Confirm");
 		this.btnConfirm.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				// Only proceed if the account type is 'A'
 				if(!window.main.getCurrentAcct()[0].equals("A")){return;}
+				// Prompt the user for confirmation
 				String[] options = {"Yes", "No"};
 				int sel = JOptionPane.showOptionDialog(null, "Confirm Change?", "Date Change", 0, 3, null, options, options[1]);
 				if(sel != 0){return;}
+				// Validate the year input length
 				if(txtYear.getText().length() !=4){lblError.setText("Invalid Year");refresh();return;}
+				// Set the system date with the selected month and year
 				window.main.getCont().setSystemDate(String.valueOf(comboBox.getSelectedIndex()+1), txtYear.getText());
 				refresh();
 				
@@ -81,8 +87,9 @@ public class EditSysDate extends JPanel{
 			public void keyTyped(KeyEvent arg0) {
 				char key = arg0.getKeyChar();
 				String year = txtYear.getText();
+				// Allow only digits and restrict input length to 4 characters
 				if (Character.isDigit(key)&&!(year.length()>3)){return;}
-				arg0.consume();
+				arg0.consume();	// Discard any invalid input
 			}
 		});
 		this.txtYear.setFont(new Font("Tahoma", Font.PLAIN, 18));
@@ -100,10 +107,13 @@ public class EditSysDate extends JPanel{
 		this.btnSyncDate = new JButton("Sync Date");
 		this.btnSyncDate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				// Only allow syncing if the account type is 'A'
 				if(!window.main.getCurrentAcct()[0].equals("A")){return;}
+				// Prompt the user for confirmation before syncing
 				String[] options = {"Yes", "No"};
 				int sel = JOptionPane.showOptionDialog(null, "Confirm Sync? Will Set to current Date", "Sync", 0, 3, null, options, options[1]);
 				if(sel != 0){return;}
+				// Sync the system date with the current date
 				window.main.getCont().syncDate();
 				refresh();
 			}
@@ -112,25 +122,30 @@ public class EditSysDate extends JPanel{
 		this.btnSyncDate.setBounds(12, 225, 454, 40);
 		add(this.btnSyncDate);
 		
+		// Initialize and set up the Generate Bills button 
 		this.btnGenerateMonthsBills = new JButton("Generate Bills");
 		this.btnGenerateMonthsBills.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				// Generate bills for the selected month
 				window.main.getCont().generateBills();
+				// Show a success message after generating the bills
 				JOptionPane.showMessageDialog(null, "Generated Bills", "Success", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 		this.btnGenerateMonthsBills.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
 		this.btnGenerateMonthsBills.setBounds(12, 176, 223, 40);
 		add(this.btnGenerateMonthsBills);
-		
+		// Refresh the panel to update the displayed date
 		refresh();
 		
 	}
 	
-	public void refresh(){
-		String[] date = window.main.getCont().getSystemDate();
-		comboBox.setSelectedIndex(Integer.valueOf(date[0])-1);
-		txtYear.setText(date[1]);
-		
-	}
+	// Method to refresh the displayed system date
+		public void refresh() {
+			// Retrieve the current system date
+			String[] date = window.main.getCont().getSystemDate();
+			// Update the dropdown and text field with the current month and year
+			comboBox.setSelectedIndex(Integer.valueOf(date[0]) - 1);
+			txtYear.setText(date[1]);
+		}
 }

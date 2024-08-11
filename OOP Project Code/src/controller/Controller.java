@@ -85,87 +85,112 @@ public class Controller {
         else {return false;}
     }
 
+    //Edit and change old name, password etc into new name, password etc
     public void editUser(String oldUName, String newFName, String newEmail, String newPass, String newAddress){
         if(!this.isUser(oldUName)){return;}
         Customer c = new Customer(newFName, newEmail, oldUName, newPass, newAddress);
         ds.editUser(oldUName, c);
     }
-
+    
+    //Edit and change old id, password etc with new id, password etc
     public void editStaff(String id, String newID, String newPassword){ 
         if (!isStaff(id)){return;}
         Staff s = new Staff(newID, newPassword);
         ds.editStaff(id, s);
     }
-
+    
+    //Get readings from datastorage
     public Readings[] allReadings(){
     	Readings[] r=ds.getAllReadings();
     	return r;
     }
+    
+    //Get individual selected staff from datastorage through id
     public String[] getStaff(String id){
         Staff s = ds.getStaff(id);
         String[] x = {s.getUsername(),s.getPassword()};
         return x;
     }
     
+    //Get all staff from datastorage
     public Staff[] getAllStaff() {
     	return ds.getAllStaff();
     }
+    
+    //Get individual selected Customer from datastorage through name
     public Customer getCustomer(String name){
         return ds.getUser(name);
     }
     
+    //Get individual selected Customer from datastorage through postal code or unitNo
     public Customer[] getCustomer(String postal, String unitNo){
         return ds.getUser(postal, unitNo);
     }
     
+    //Get all customer from datastorage
     public Customer[] getAllCustomers() {
     	return ds.getAllUser();
     }
+    
+    //Get all readings from datastorage
     public Readings[] getAllReadings(){
         return ds.getAllReadings();
     }
+    
+    //Get Readings based on the utility name
     public Readings getReading(String readingName){
     	return ds.getReadings(readingName);
     }
     
+    //Temporary add user with username and password ( temporary method to test username and password)
     public void addUser(String username, String password){
         Customer c = new Customer(username, password);
         ds.addUser(c);
     }
-
+    
+    //Temporary add user with username, password, fullName and email
     public void addUser(String username, String password,String fullName, String email){
         Customer c = new Customer(fullName, email, username, password);
         ds.addUser(c);
     }
+    
+    //Add user with username, password, fullName and email, address
     public void addUser(String username, String password,String fullName, String email,String address){
         Customer c = new Customer(fullName, email, username, password, address);
         ds.addUser(c);
     }
+    
+    //Add staff through id and password
     public void addStaff(String id, String pass){
     	Staff s= new Staff(id,pass);
     	ds.addStaff(s);
     }
+    
+    //Remove staff by id
     public void removeStaff(String id){
     	ds.removeStaff(id);
     }
     
+    //Add reading name, price, unit, service charge
     public void addReading(String name, double price, String unit, double serviceCharge){
     	Readings readings = new Readings(name, price, unit, serviceCharge);
     	ds.addReading(readings);
     }
-
     
+    //Update the old reading
     public void updateReading(String name, double price, String unit, double serviceCharge, int index){
     	System.out.println(name+":"+price+":"+serviceCharge+":"+index);
     	Readings readings = new Readings(name, price, unit, serviceCharge);
     	ds.updateReading(readings, index);
     }
     
+    //Remove reading by index
     public void removeReading(int index){
     	ds.removeReading(index);
     }
     
-    public double calculateReading(String readingName, String value){
+    //Calculate reading for total
+       public double calculateReading(String readingName, String value){
     	double discount =0;
     	String meterReading = value;
     	int average = this.getAverageReading(readingName);
@@ -178,6 +203,7 @@ public class Controller {
 
     
     //! User Readings
+    //Submit user reading based on username for that date, month and year(test code, not used currently)
     public void submitUserReading(String userName){
     	DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     	LocalDateTime now = LocalDateTime.now();
@@ -190,7 +216,7 @@ public class Controller {
         
         String[][] bill = new String[draft.length+1][3];
         bill[0] = initials;
-        for(int i=0; i<draft.length;i++){
+        for(int i=0; i<draft.length;i++){	//Create a new bill array
         	String[] temp = new String[3];
         	temp[0] = draft[i][0];
         	temp[1] = draft[i][1];
@@ -203,6 +229,7 @@ public class Controller {
         
     }
     
+    //Update user reading for the latest bill
     public void updateUserReading(String userName){
     	DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd");
     	LocalDateTime now = LocalDateTime.now();
@@ -210,7 +237,7 @@ public class Controller {
     	
         String[][][] userReadings=ds.getUserReadings(userName);
         String[] billDate = userReadings[userReadings.length-1][0][2].split("/");
-        if (!billDate[1].equals(systemDate[0])&&!billDate[2].equals(systemDate[1])){
+        if (!billDate[1].equals(systemDate[0])&&!billDate[2].equals(systemDate[1])){	//(Cautionary code in case edit button not blanked)
         	JOptionPane.showMessageDialog(null, "Not Avaliable for editing", "Error", JOptionPane.ERROR_MESSAGE);
         	return;
         }
@@ -222,7 +249,7 @@ public class Controller {
         String[][] bill = new String[draft.length+1][3];
         bill[0] = initials;
         // go thru each reading in draft
-        for(int i=0; i<draft.length;i++){
+        for(int i=0; i<draft.length;i++){	
         	int usage = Integer.valueOf(draft[i][1])-this.getPastTotalReading(userName, draft[i][0]);
         	System.out.println(usage);
         	String[] temp = new String[3];
@@ -235,12 +262,13 @@ public class Controller {
         
     }
     
+    //Generate bill based on average previous user readings for all accounts
     public void generateBills(){
     	DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd");
     	LocalDateTime now = LocalDateTime.now();
     	String date = dtf.format(now);
     	
-    	for (Customer c:ds.getAllUser()){
+    	for (Customer c:ds.getAllUser()){ //Go through all customer
     		String userName = c.getUsername();
     		String[][] previousBill = this.getLastUserReading(userName);
     		
@@ -252,10 +280,10 @@ public class Controller {
             String[][] bill = new String[this.getAllReadings().length+1][3];
             bill[0] = initials;
             
-            if (previousBill==null){
+            if (previousBill==null){	//if no previous bill return average reading of all customer 
             	Readings[] readings = this.getAllReadings();
             	HashMap<String, Integer> aveReadings = new HashMap<>();
-            	for (int i=0; i<readings.length;i++){
+            	for (int i=0; i<readings.length;i++){	//Get average reading of the whole system
             		int averageReading = this.getAverageReading(readings[i].getUtilityName());
             		if (readings[i].getUnit().equals("-")){
             			averageReading=1;
@@ -264,7 +292,7 @@ public class Controller {
             		aveReadings.put(readings[i].getUtilityName(), averageReading);
             	}
             	int count=0;
-            	for (Entry<String, Integer>amt : aveReadings.entrySet()){
+            	for (Entry<String, Integer>amt : aveReadings.entrySet()){	//sort data with map to follow format for Bills
             		String[] temp = {amt.getKey(), String.valueOf(amt.getValue()), String.format("%.2f",calculateReading(amt.getKey(), String.valueOf(amt.getValue())))};
             		bill[count+1] = temp;
             		count+=1;
@@ -281,11 +309,11 @@ public class Controller {
             
             Readings[] readings = this.getAllReadings();
         	HashMap<String, Integer> aveReadings = new HashMap<>();
-        	for (int i=0; i<readings.length;i++){
+        	for (int i=0; i<readings.length;i++){	//Get average reading of all user
         		aveReadings.put(readings[i].getUtilityName(), this.getAverageUserReading(c.getUsername(),readings[i].getUtilityName()));
         	}
         	int count=0;
-        	for (Entry<String, Integer>amt : aveReadings.entrySet()){
+        	for (Entry<String, Integer>amt : aveReadings.entrySet()){	//sort data with map to follow format for Bills
         		String[] temp = {amt.getKey(), String.valueOf(amt.getValue()), String.format("%.2f",calculateReading(amt.getKey(), String.valueOf(amt.getValue())))};
         		bill[count+1] = temp;
         		count+=1;
@@ -300,7 +328,7 @@ public class Controller {
     	}
     }
     
-    
+    //Generate Bill based on average of previous user readings for customer
     public void generateBills(String userName){
     	DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd");
     	LocalDateTime now = LocalDateTime.now();
@@ -318,7 +346,7 @@ public class Controller {
         if (previousBill==null){
         	Readings[] readings = this.getAllReadings();
             HashMap<String, Integer> aveReadings = new HashMap<>();
-            for (int i=0; i<readings.length;i++){
+            for (int i=0; i<readings.length;i++){	//Get average reading of the all customer
             	int averageReading = this.getAverageReading(readings[i].getUtilityName());
             	if (readings[i].getUnit().equals("-")){
             		averageReading=1;
@@ -327,7 +355,7 @@ public class Controller {
             	aveReadings.put(readings[i].getUtilityName(), averageReading);
             }
             int count=0;
-            for (Entry<String, Integer>amt : aveReadings.entrySet()){
+            for (Entry<String, Integer>amt : aveReadings.entrySet()){	//sort data with Map follow format of Bills
             	String[] temp = {amt.getKey(), String.valueOf(amt.getValue()), String.format("%.2f",calculateReading(amt.getKey(), String.valueOf(amt.getValue())))};
             	bill[count+1] = temp;
             	count+=1;
@@ -344,11 +372,11 @@ public class Controller {
             
         Readings[] readings = this.getAllReadings();
         HashMap<String, Integer> aveReadings = new HashMap<>();
-        for (int i=0; i<readings.length;i++){
+        for (int i=0; i<readings.length;i++){	//Get average reading of individual customer
         	aveReadings.put(readings[i].getUtilityName(), this.getAverageUserReading(userName,readings[i].getUtilityName()));
         }
         int count=0;
-        for (Entry<String, Integer>amt : aveReadings.entrySet()){
+        for (Entry<String, Integer>amt : aveReadings.entrySet()){	//sort data with map to follow format for Bills
         	String[] temp = {amt.getKey(), String.valueOf(amt.getValue()), String.format("%.2f",calculateReading(amt.getKey(), String.valueOf(amt.getValue())))};
         	bill[count+1] = temp;
         	count+=1;
@@ -361,17 +389,19 @@ public class Controller {
     	
     }
     
+    //add user reading in a String 2D array
     public void addUserReading(String[][] userReading){
         ds.addUserReading(userReading);
     }
     
+    //calculate average reading of (total customer bill / how many submitted bills)
     public int getAverageReading(String readingName){
     	int count=0;
     	int total =0;
-    	for (Customer c:ds.getAllUser()){
+    	for (Customer c:ds.getAllUser()){	//Go through all customer readings
     		String[][] previousBill = this.getLastUserReading(c.getUsername());
     		if (previousBill==null){continue;}
-    		for (String[] i:previousBill){
+    		for (String[] i:previousBill){	//Go through all previous bill
     			if (i[0].equals(readingName)){
     				total+= Integer.valueOf(i[1]);
     				count+=1;
@@ -381,13 +411,14 @@ public class Controller {
     	if (count==0){count=1;}
     	return total/count;
     }
-    
+    	
+    //calculate average reading of (each individual customer bill /  how many submitted bills)
     public int getAverageUserReading(String userName,String readingName){
     	int count=0;
     	int total =0;
     	int monthLimit = 4;
     	String[][][] bills = this.getUserReading(userName);
-    	for (int i=bills.length; i>bills.length-monthLimit;i--){
+    	for (int i=bills.length; i>bills.length-monthLimit;i--){	
     		String[][] b = new String[1][];
     		try {
     			b = bills[i-1];
@@ -409,29 +440,36 @@ public class Controller {
     	return total/count;
     }
     
+    // Retrieves the last user reading from the DataStorage (ds) class.
     public String[][] getLastUserReading(String userName){
     	return ds.getLastUserReading(userName);
     }
 
+    // Retrieves all readings for a specific user from the DataStorage (ds) class.
     public String[][][] getUserReading(String userName) {
     	return ds.getUserReadings(userName);
     }
     
+    // Retrieves all readings for a specific month and year from the DataStorage (ds) class.
     public String[][][] getUserReading(String month, String year) {
     	return ds.getUserReadings(month,year);
     }
+    
+    // Retrieves all past readings for the specified user.
     public int getCurrentTotalReading(String userName, String readingName){
     	String[][][] pastUR = this.getUserReading(userName);
     	int total =0 ;
-    	for (String [][] ur :pastUR){
-    		for (String [] item :ur){
-    			if (item[0].equals(readingName)){
+    	for (String [][] ur :pastUR){	// Loop through each set of user readings.
+    		for (String [] item :ur){	// Loop through each reading within the set.
+    			if (item[0].equals(readingName)){            // If the reading name matches, add the value to the total.
     				total += Integer.valueOf(item[1]);
     			}
     		}
     	}
     	return total;
     }
+    
+    // Retrieves the last user reading for the specified user.
     public int getPastTotalReading(String userName, String readingName){
     	String[][] currentBill = this.getLastUserReading(userName);
     	int previousUsed = 0;
@@ -459,41 +497,53 @@ public class Controller {
     
 
     //!Meter/Draft Readings
+    // Adds a meter reading to the data storage (ds) for the specified user and reading name
     public void addMeterReading(String uName, String readingName, Integer meterReading) {
 		ds.addMeterReading(uName, readingName, meterReading);
 	}
+    
+    // Checks if the user has a draft saved in the data storage
     public boolean hasDraft(String UName){
         return ds.hasDraft(UName);
     }
+    
+    // Removes a specific meter reading for the given user and reading name from the data storage
     public void removeMeterReading(String userName, String readingName){
     	ds.removeMeterReading(userName, readingName);
     }
     
+    // Edits an existing meter reading for the specified user and reading name with a new value
     public void editMeterReading(String userName, String readingName, Integer editedValue){
     	ds.editMeterReading(userName, readingName, editedValue);
     }
     
+    // Retrieves the draft for the specified user from the data storage
     public String[][] getDraft(String userName){
     	return ds.getDraft(userName);
     }
     
+    // Clears the draft associated with the specified user from the data storage
     public void clearDraft(String userName){
     	ds.removeDraft(userName);
     }
     
+    // Clears any existing draft for the user
     public void resetDraft(String userName){
     	this.clearDraft(userName);
     	Readings[] readings = this.getAllReadings();
-    	for (Readings r:readings){
+    	for (Readings r:readings){	    // Loops through all readings and adds them to the user's draft
     		this.addMeterReading(userName, r.getUtilityName(), this.getCurrentTotalReading(userName, r.getUtilityName()));
     	}
     	System.out.println("reseted");
     }
+    
+    // Retrieve the latest bill for the user
     public boolean checkEditStatus(String userName){
     	String[][] latestBill = this.getLastUserReading(userName);
-    	if (latestBill ==null){
+    	if (latestBill ==null){	    // Check if the latest bill is null
 		return false;}
     	String[] billDate = latestBill[0][2].split("/");
+        // Compare the bill date with the system date
     	if (Integer.valueOf(billDate[1])<Integer.valueOf(systemDate[0])&&Integer.valueOf(billDate[2])<=Integer.valueOf(systemDate[1])){
     		return false;
     	}
@@ -501,19 +551,24 @@ public class Controller {
     }
     
     //! Date Methods
+    // Method to return the current system date as a String array
     public String[] getSystemDate() {
 		return systemDate;
 	}
-
+    
+    // Method to set the system date using a String array
 	public void setSystemDate(String[] systemDate) {
 		this.systemDate = systemDate;
 	}
+	
+    // Method to set the system date using a month and year string
 	public void setSystemDate(String month, String Year){
 		String[] temp = {String.format("%02d",Integer.valueOf(month)),Year};
 		System.out.println(String.join(":", temp));
 		systemDate = temp;
 	}
 	
+    // Method to synchronize the system date with the current date
 	public void syncDate(){
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/yyyy");
     	LocalDateTime now = LocalDateTime.now();
@@ -521,28 +576,30 @@ public class Controller {
 	}
     
     
-
+    // Method to return the current DataStorage object
     public DataStorage getDS() {
         return ds;
     }
 
+    // Method to set the DataStorage object
     public void setDS(DataStorage ds) {
         this.ds = ds;
     }
  
     //!CSV methods
+    // Create a File object with the given file path and initialize a Scanner to read the file
     public String[][] csvReader(String filepath) throws FileNotFoundException {
 		File file = new File(filepath);
 		Scanner scanner = new Scanner(file);
 		scanner.useDelimiter(",");
 		Vector<String[]> data = new Vector<>();
 		int x=0;
-		while(scanner.hasNext()){
+		while(scanner.hasNext()){	// Loop to read each line of the CSV file and store it in the Vector
 			String line = scanner.nextLine();
 			StringTokenizer st = new StringTokenizer(line, ",");
 			Vector<String> v = new Vector<>();
 			int c=0;
-			while (st.hasMoreTokens()){
+			while (st.hasMoreTokens()){    // Inner loop to tokenize each line by commas and store each token in a Vector
 				v.add(st.nextToken());
 				c+=1;
 			}
@@ -567,10 +624,12 @@ public class Controller {
 		
 	}
 	
+    // Create a FileWriter to write data to the specified file path
+    // This method writes the provided 2D String array (data) to a CSV file at the specified file path.
 	public void csvWriter(String filepath, String[][] data) throws IOException {
 		FileWriter writer = new FileWriter(filepath);
-		for(String[] d : data) {
-			for (String s:d){
+		for(String[] d : data) {	// Loop through each row (String array) in the 2D data array
+			for (String s:d){    // Inner loop to iterate through each element in the row
 				// if(s.isEmpty()){s="-";}
 				writer.append(s+",");
 			}
@@ -581,7 +640,7 @@ public class Controller {
 	}
 
 
-
+    // Retrieve all customer, staff, readings, and user readings data from DataStorage
     public void saveData(){
         Customer[] customer = ds.getAllUser();
         Staff[] staffs = ds.getAllStaff(); 
@@ -592,7 +651,7 @@ public class Controller {
         //!Staff 
         String[][] staffData = new String[staffs.length-1][2];
         int c=0;
-        for (int i = 0; i < staffs.length; i++) {
+        for (int i = 0; i < staffs.length; i++) {	// Loop through the staff array
             if (staffs[i].getUsername().equals("admin")){continue;}
             staffData[c][0] = staffs[i].getUsername();
             staffData[c][1] = staffs[i].getPassword();
@@ -602,7 +661,8 @@ public class Controller {
 
         //!Customer (UserName, Password, Full Name, Email, Address, Draft)
         String[][] customerData = new String[customer.length][7];
-        for (int i = 0; i < customer.length; i++) {
+        for (int i = 0; i < customer.length; i++) {	// Loop through the customer array
+
             customerData[i][0] = customer[i].getUsername();
             customerData[i][1] = customer[i].getPassword();
             customerData[i][2] = customer[i].getName();
@@ -612,7 +672,7 @@ public class Controller {
 			
             String[][] draft = customer[i].getDraftArray();
             String d = new String();
-            for (String [] string : draft) {
+            for (String [] string : draft) {	// Loop through the draft array to concatenate draft data into a single string
                 d= d+ string[0]+":"+string[1]+"-";
             }
             if (d.isEmpty()){d="null";}
@@ -621,7 +681,7 @@ public class Controller {
 
         //!Readings
         String[][] readingsData = new String[readings.length][4];
-        for (int i = 0; i < readings.length; i++) {
+        for (int i = 0; i < readings.length; i++) {    // Loop through the readings array
             readingsData[i][0] = readings[i].getUtilityName();
             readingsData[i][1] = Double.toString(readings[i].getPrice());
             readingsData[i][2] = readings[i].getUnit();
@@ -631,11 +691,11 @@ public class Controller {
         //!UserReadings
         String[][] userR = new String[userReadings.length+1][];
         userR[0]= systemDate;
-        for (int i=0;i<userReadings.length; i++){
+        for (int i=0;i<userReadings.length; i++){	// Loop through the user readings array
         	String[][] ur = userReadings[i];
         	c=0;
         	Vector<String> x = new Vector<>();
-        	for (String[] items : ur){
+        	for (String[] items : ur){	// Loop through each reading to concatenate them into a single string
         		String it = String.join(":", items);
         		x.add(it);
         		c+=1;
@@ -667,7 +727,7 @@ public class Controller {
     }
 
 
-
+    // Get current directory
     public void syncData(){
     	//get current directory
     	cdir = System.getProperty("java.class.path").split(";")[0];
@@ -686,17 +746,17 @@ public class Controller {
 			try {
 				customers = csvReader(cdir+"/csv/Customer.csv");
 				//!customer
-	            for(String[]c:customers){
+	            for(String[]c:customers){	// Loop to read Customer data from CSV and add to the system
 	                this.addUser(c[0], c[1], c[2],c[3],c[4]);
 	                if (!c[5].equals("null")){ds.setLastSubmitted(c[0], c[5]);}
 	                if (c[6].equals("null")){continue;}
 	                StringTokenizer st = new StringTokenizer(c[6],"-");
-	                while (st.hasMoreTokens()){
+	                while (st.hasMoreTokens()){	// Inner loop to process each draft item
 	                    String reading = st.nextToken();
 	                    StringTokenizer st2 = new StringTokenizer(reading,":");
 	                    String[] items = new String[2];
 	                    int i =0;
-	                    while (st2.hasMoreTokens()){
+	                    while (st2.hasMoreTokens()){	// Process each token in the draft item
 	                        items[i]=st2.nextToken();
 	                        i+=1;
 	                    }
@@ -717,7 +777,7 @@ public class Controller {
 			try {
 				staffAcct = csvReader(cdir+"/csv/Staff.csv");
 				//!Staff
-	            for(String[]s:staffAcct){
+	            for(String[]s:staffAcct){	// Loop to read Staff data from CSV and add to the system
 	                this.addStaff(s[0], s[1]);
 	            }
 	            
@@ -730,7 +790,7 @@ public class Controller {
 			try {
 				readings = csvReader(cdir+"/csv/Readings.csv");
 				//!Readings
-	            for(String[]r:readings){
+	            for(String[]r:readings){	// Loop to read Readings data from CSV and add to the system
 	                this.addReading(r[0], Double.parseDouble(r[1]), r[2], Double.parseDouble(r[3]));
 	            }
 			} catch (FileNotFoundException e) {
@@ -742,7 +802,7 @@ public class Controller {
 				userReadings = csvReader(cdir+"/csv/UserReadings.csv");
 				//!User Readings
 	            int c=0;
-	            for(String[] ur:userReadings){
+	            for(String[] ur:userReadings){	// Loop to read userReadings data from CSV and add to the system
 	            	if(ur.length==0){
 	            		setSystemDate("1", "2020");
 	            		continue;
@@ -751,7 +811,7 @@ public class Controller {
 	                
 	                if (c==0&&ur[0].length()==2){setSystemDate(ur);c+=1;continue;}
 	                else if (c==0){c+=1;setSystemDate("1", "2020");}
-	                for(String item : ur){
+	                for(String item : ur){	// Loop to process UserReadings from CSV
 	                	String [] t = item.split(":");
 	                	bill.add(t);
 	                }
@@ -760,7 +820,7 @@ public class Controller {
 	                ds.addUserReading(b);
 	            }
 			} catch (FileNotFoundException e) {
-				System.out.println(cdir+"/csv/UserReadings.csv NOT FOUND");
+				System.out	.println(cdir+"/csv/UserReadings.csv NOT FOUND");
 			}
         }
 }

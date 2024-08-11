@@ -18,7 +18,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 public class ResetDetails extends JPanel{
+	// Array of forgotten items for the combo box
 	String[] forgottenItems = {"Username", "Password"};
+	// Reference to the MainFrame object
 	MainFrame main;
 	private JLabel lblBackground;
 	private ImageIcon logo = new ImageIcon(this.getClass().getResource("/images/logo.png"));
@@ -36,11 +38,16 @@ public class ResetDetails extends JPanel{
 	private JLabel lblPleaseVerifyIts;
 	private JLabel lblEmail;
 	
-	private boolean page2 = false;
-	
-	public ResetDetails(MainFrame m) {
-		setBackground(new Color(135, 206, 250));
-		this.main=m;
+	// Boolean flag to track if the user is on the second page
+    private boolean page2 = false;
+    
+    // Constructor to initialize the ResetDetails panel
+    public ResetDetails(MainFrame m) {
+        // Set the background color of the panel
+        setBackground(new Color(135, 206, 250));
+        
+        // Set the main frame reference
+        this.main = m;
 		this.setLayout(null);
 		main.setSize(1020, 720);
 		
@@ -82,16 +89,16 @@ public class ResetDetails extends JPanel{
 		
 		
 		
-		this.lblBackground = new JLabel("Background");
+        this.lblBackground = new JLabel("Background");
         lblBackground.setSize(main.getWidth(), main.getHeight());
-		background.setImage(background.getImage().getScaledInstance(lblBackground.getWidth(), lblBackground.getHeight(), Image.SCALE_DEFAULT));
+        // Resize and set the background image
+        background.setImage(background.getImage().getScaledInstance(lblBackground.getWidth(), lblBackground.getHeight(), Image.SCALE_DEFAULT));
         lblBackground.setIcon(background);
-		add(this.lblBackground);
-		
-		
-		initPage1();
-		
-	}
+        add(this.lblBackground);
+        
+        // Initialize the first page of the form
+        initPage1();
+    }
 	
 	
 	public void initPage1(){
@@ -118,10 +125,11 @@ public class ResetDetails extends JPanel{
 		
 		this.btnBack = new JButton("Back");
 		this.btnBack.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				main.showAllLogin();
-			}
-		});
+            // Action listener to handle the back button click
+            public void actionPerformed(ActionEvent e) {
+                main.showAllLogin(); // Show the main login screen
+            }
+        });
 		this.btnBack.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
 		this.btnBack.setBounds(27, 453, 132, 43);
 		this.panel.add(this.btnBack);

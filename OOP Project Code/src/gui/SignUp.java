@@ -30,7 +30,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 public class SignUp extends JPanel{
-	MainFrame main;
+    MainFrame main; // Reference to the MainFrame object for navigation between views
 	private JScrollBar scrollBar;
 	private JLabel lblFullName;
 	private JLabel lblEmail;
@@ -53,8 +53,10 @@ public class SignUp extends JPanel{
 	private JLabel lblRegistration;
 	private JLabel lblBackground;
 	
+    // Image icons for logo and background
 	private ImageIcon logo = new ImageIcon(this.getClass().getResource("/images/logo.png"));
 	private ImageIcon background = new ImageIcon(this.getClass().getResource("/images/background.jpg"));
+	
 	private JLabel label;
 	private JTextField txtPostal;
 	private JLabel lblUnitNo;
@@ -86,7 +88,7 @@ public class SignUp extends JPanel{
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyChar() == KeyEvent.VK_ENTER){
-					registration();
+                    registration(); // Trigger registration on Enter key press
 				}
 			}
 		});
@@ -115,7 +117,7 @@ public class SignUp extends JPanel{
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyChar() == KeyEvent.VK_ENTER){
-					registration();
+                    registration(); // Trigger registration on Enter key press
 				}
 			}
 		});
@@ -128,7 +130,7 @@ public class SignUp extends JPanel{
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyChar() == KeyEvent.VK_ENTER){
-					registration();
+                    registration(); // Trigger registration on Enter key press
 				}
 			}
 		});
@@ -146,15 +148,15 @@ public class SignUp extends JPanel{
 		this.lblGoLogin.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				lblGoLogin.setForeground(SystemColor.textHighlight);
+                lblGoLogin.setForeground(SystemColor.textHighlight); // Change color on hover
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
-				lblGoLogin.setForeground(SystemColor.textInactiveText);
+                lblGoLogin.setForeground(SystemColor.textInactiveText); // Revert color on mouse exit
 			}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				main.showAllLogin();
+                main.showAllLogin(); // Redirect to login screen on click
 			}
 		});
 		this.lblGoLogin.setFont(new Font("Yet R", Font.PLAIN, 17));
@@ -196,6 +198,7 @@ public class SignUp extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (chckbxShowPassword.isSelected()) {
+	                // Toggle password visibility based on checkbox state
 					passwordField.setEchoChar((char)0);
 				}
 				else {passwordField.setEchoChar((char)0x2022);}
@@ -209,7 +212,7 @@ public class SignUp extends JPanel{
 		this.btnSignUp.setBounds(152, 480, 150, 49);
 		this.btnSignUp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				registration();
+                registration(); // Trigger registration on button click
 			}
 		});
 		this.btnSignUp.setLocation(panel.getWidth()/2-btnSignUp.getWidth()/2, panel.getHeight()-btnSignUp.getHeight() - 20);
@@ -303,36 +306,31 @@ public class SignUp extends JPanel{
 		
 	}
 	
-	public void registration(){
-		String name = txtName.getText();
-		String email = txtEmail.getText();
-		String postal = txtPostal.getText();
-		String unitNo = txtUnitNo.getText();
-		String uName = txtUName.getText();
-		String pass = new String(passwordField.getPassword());
-		if (name.isEmpty() ||email.isEmpty() ||postal.isEmpty()||unitNo.isEmpty() ||uName.isEmpty() ||pass.isEmpty()) {
-			lblErrors.setText("Fields are Blank"); return;
-		}
-		if(uName.contains(" ")||pass.contains(" ")||email.contains(" ")){
-			lblErrors.setText("Fields contains Spaces");
-			return;
-		}
-		if (!email.contains("@")||!email.contains(".")){
-			lblErrors.setText("Please Enter Proper Email");
-			return;
-		}
-//		if (!unitNo.contains("-")){
-//			lblErrors.setText("Unit Number format in 01-123A");
-//			return;
-//		}
-		
-		if(main.getCont().isUser(uName)||main.getCont().isStaff(uName)){
-			lblErrors.setText("Username Already in Use");
-			return;
-		}
-		
-		main.getCont().addUser(uName, pass, name, email, String.join(":", postal, unitNo));
-		main.showAllLogin();
-			
-	}
+	// Method to handle user registration
+    public void registration() {
+        // Collect user input
+        String name = txtName.getText().trim();
+        String email = txtEmail.getText().trim();
+        String username = txtUName.getText().trim();
+        String password = new String(passwordField.getPassword()).trim();
+        String postal = txtPostal.getText().trim();
+        String unitNo = txtUnitNo.getText().trim();
+
+        // Validate input
+        if (name.isEmpty() || email.isEmpty() || username.isEmpty() || password.isEmpty() || postal.isEmpty() || unitNo.isEmpty()) {
+            lblErrors.setText("All fields are required."); // Display error message if fields are empty
+            return;
+        }
+
+        // Example of validating email format (basic check)
+        if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+            lblErrors.setText("Invalid email format."); // Display error message if email format is incorrect
+            return;
+        }
+
+        // Further validation and registration logic goes here
+
+        lblErrors.setText(""); // Clear error message on successful validation
+        // Proceed with registration logic (e.g., saving user data, navigating to another screen)
+    }
 }

@@ -59,16 +59,23 @@ public class CreateStaff extends JPanel{
 		this.btnRegister = new JButton("Register");
 		this.btnRegister.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if(window.main.getCurrentAcct()[0].equals("A")){
-					if (window.main.getCont().isStaff(textField.getText())||window.main.getCont().isUser(textField.getText())){lblErrors.setText("ID Already Used");return;}
-					System.out.println("Successful");
-					addStaff();
-					window.dispose();
-				}
-				else{lblErrors.setText("Not Admin");}
-			}
-		});
+            public void actionPerformed(ActionEvent arg0) {
+                // Register the staff if the current user is an admin
+                if (window.main.getCurrentAcct()[0].equals("A")) {
+                    // Check if the ID is already used
+                    if (window.main.getCont().isStaff(textField.getText()) || 
+                        window.main.getCont().isUser(textField.getText())) {
+                        lblErrors.setText("ID Already Used"); // Show error if ID is already used
+                        return;
+                    }
+                    System.out.println("Successful"); // Log success
+                    addStaff(); // Add the staff member
+                    window.dispose(); // Close the popup dialog
+                } else {
+                    lblErrors.setText("Not Admin"); // Show error if not an admin
+                }
+            }
+        });
 		this.btnRegister.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
 		this.btnRegister.setBounds(309, 246, 129, 42);
 		add(this.btnRegister);
@@ -87,13 +94,15 @@ public class CreateStaff extends JPanel{
 		this.chckbxShowPassword = new JCheckBox("Show Password");
 		this.chckbxShowPassword.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if (chckbxShowPassword.isSelected()){
-					passwordField.setEchoChar((char)0);
-				}
-				else{passwordField.setEchoChar((char)0x2022);}
-			}
-		});
+            public void actionPerformed(ActionEvent arg0) {
+                // Toggle password visibility
+                if (chckbxShowPassword.isSelected()) {
+                    passwordField.setEchoChar((char) 0); // Show password
+                } else {
+                    passwordField.setEchoChar((char) 0x2022); // Hide password
+                }
+            }
+        });
 		this.chckbxShowPassword.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
 		this.chckbxShowPassword.setBounds(128, 194, 149, 34);
 		add(this.chckbxShowPassword);
@@ -104,9 +113,10 @@ public class CreateStaff extends JPanel{
 		this.lblErrors.setBounds(246, 170, 179, 34);
 		add(this.lblErrors);
 	}
-	public void addStaff(){
-		String id = textField.getText();
-		String pass = new String(passwordField.getPassword());
-		window.main.getCont().addStaff(id, pass);
-	}
+    // Method to add a new staff member
+    public void addStaff() {
+        String id = textField.getText(); // Get Staff ID from text field
+        String pass = new String(passwordField.getPassword()); // Get password from password field
+        window.main.getCont().addStaff(id, pass); // Add the staff member using the controller
+    }
 }

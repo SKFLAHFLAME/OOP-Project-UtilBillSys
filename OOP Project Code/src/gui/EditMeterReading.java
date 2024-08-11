@@ -17,6 +17,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 public class EditMeterReading extends JPanel {
+	// Declare UI components and variables
 	private JTextField textField;
 	private JComboBox mrBox;
 	private String[] valueArr;
@@ -24,6 +25,7 @@ public class EditMeterReading extends JPanel {
 	private String previous;
 	private boolean noUnit=false;
 	private PopupDialog window;
+    // Constructor to initialize the panel and its components
 	public EditMeterReading(PopupDialog popupDialog, String CurrentName, String Reading, String user) {
 		window =popupDialog;
 		setLayout(null);
@@ -44,6 +46,7 @@ public class EditMeterReading extends JPanel {
 		this.mrBox.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
 		this.mrBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+                // Update the unit label based on the selected utility
 				String unit = window.main.getCont().getReading((String) mrBox.getSelectedItem()).getUnit();
 				lblUnit.setText(unit);
 				if(unit.equals("-")){
@@ -52,6 +55,7 @@ public class EditMeterReading extends JPanel {
 					noUnit = true;
 					return;
 				}
+				 // Handle cases where the unit is not applicable
 				if (noUnit==false){previous = textField.getText();}
 				textField.setEditable(true);
 				textField.setText(previous);
@@ -61,7 +65,7 @@ public class EditMeterReading extends JPanel {
 			
 		});
 		mrBox.setBounds(172, 72, 263, 43);
-		mrBox.setEnabled(false);
+		mrBox.setEnabled(false);	// Disable the combo box until necessary
 		add(mrBox);
 
 		
@@ -76,15 +80,16 @@ public class EditMeterReading extends JPanel {
 			@Override
 			public void keyTyped(KeyEvent arg0) {
 				char key = arg0.getKeyChar();
+				// Allow only numeric input
 				if(Character.isDigit(key)){
 		            return;}
-				arg0.consume();
+				arg0.consume();	// Discard non-numeric input
 			}
 		});
 		textField.setBounds(172, 158, 188, 37);
 		add(textField);
 		textField.setColumns(10);
-		textField.setText(Reading);
+		textField.setText(Reading);	// Set the initial value for the meter reading
 		
 		JButton btnBack = new JButton("Cancel");
 		btnBack.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
@@ -94,7 +99,7 @@ public class EditMeterReading extends JPanel {
 					window.main.showCustMenu();
 					return;
 				}
-				window.dispose();
+				window.dispose();	// Close the popup  
 			}
 		});
 		btnBack.setBounds(15, 241, 122, 43);
@@ -108,12 +113,13 @@ public class EditMeterReading extends JPanel {
                 String readingName = (String) mrBox.getSelectedItem();
                 int meterReading = Integer.valueOf(textField.getText()); 
                 
+                // Remove the old meter reading and add the updated reading
                 window.main.getCont().removeMeterReading(user, CurrentName);
                 window.main.getCont().addMeterReading(user,readingName, meterReading);
                 window.main.setPrepage(false);
-                window.main.showEditDraft(user);
-                window.dispose();
-			}
+                window.main.showEditDraft(user);// Show the updated draft
+                window.dispose(); // Close the popup
+            }
 		});
 		btnAdd.setBounds(320, 241, 115, 43);
 		add(btnAdd);
@@ -122,18 +128,21 @@ public class EditMeterReading extends JPanel {
 		this.lblUnit.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
 		this.lblUnit.setBounds(370, 161, 65, 34);
 		add(this.lblUnit);
+		
+        // Set the initial unit and selected utility in the combo box
 		lblUnit.setText(window.main.getCont().getReading((String) mrBox.getSelectedItem()).getUnit());
 		mrBox.setSelectedItem(CurrentName);
 	}
 	
+    // Initialize the combo box with the names of available readings
 	private void initReadingNames(){
-		Readings[] r=window.main.getCont().allReadings();
-		valueArr=new String[r.length];
-		int c=0;
-		for(Readings x:r){
-			String n = x.getUtilityName();
-			valueArr[c]=n;
-			c+=1;
+        Readings[] r = window.main.getCont().allReadings(); // Get all readings
+        valueArr = new String[r.length]; // Initialize the array with appropriate size
+        int c = 0;
+        for (Readings x : r) {
+            String n = x.getUtilityName();
+            valueArr[c] = n; // Populate the array with utility names
+            c += 1;
 		}
 	}
 }

@@ -87,61 +87,77 @@ public class MainFrame extends JFrame implements WindowListener{
     
     //! Show Panels
 
+	// Display customer menu
     public void showCustMenu(){
         m = new CMenu(this);
         add(m, "menu");
         card.show(this.getContentPane(), "menu");
     }
+    
+    // Display admin menu
     public void showAdminMenu(){
         AMenu m = new AMenu(this);
         add(m, "menu");
         card.show(this.getContentPane(), "menu");
     }
+    
+    // Display staff menu
     public void showStaffMenu(){
         SMenu m = new SMenu(this);
         add(m, "menu");
         card.show(this.getContentPane(), "menu");
     }
     
+    // Display all login panel
     public void showAllLogin(){
         AllLogin l = new AllLogin(this);
         add(l, "login");
         card.show(this.getContentPane(), "login");
     }
     
+    // Display sign-up panel
     public void showSignUp(){
         SignUp su = new SignUp(this);
         add(su, "Signup");
         card.show(this.getContentPane(), "Signup");
     }
+    
+    // Display reset details panel
     public void showResetDetails(){
         ResetDetails rd = new ResetDetails(this);
         add(rd, "RD");
         card.show(this.getContentPane(), "RD");
     }
     
+    // Display edit utility panel
     public void showEditUtility(){
         eu=new EditUtility(this);
         add(eu,"Util");
         card.show(this.getContentPane(), "Util");
     }
+    
+    // Display edit draft panel
     public void showEditDraft(String user){
     	ed=new EditDraft(this, user);
     	add(ed, "Edit");
     	card.show(this.getContentPane(), "Edit");
     }
     
-    
+    // Display all customers panel
     public void showAllCustomers() {
     	ViewAllCustomer vs = new ViewAllCustomer(this);
     	add(vs,"vs");
     	card.show(getContentPane(), "vs");
     }
+    
+    // Display view history screen
     public void showViewHistoryScreen(){
     	vhs = new ViewHistoryScreen(this);
     	add(vhs, "vhs");
     	card.show(getContentPane(), "vhs");
     }
+    
+    // Display all bills panel
 	public void showAllBills() {
     	ViewAllBills vs = new ViewAllBills(this);
     	add(vs,"vs");
@@ -169,11 +185,15 @@ public class MainFrame extends JFrame implements WindowListener{
     	closeCurrentDialogs();
     	pop = new PopupDialog(this, panel,parameters);
     }
+    
+    // Display add frame dialog
     public void showAddFrame(){
     	closeCurrentDialogs();
     	frame = new AddFrame(this);
     	frame.setVisible(true);
     }
+    
+     // Close add frame dialog if it exists
     public void closeAddFrame(){
     	try {
     		frame.dispose();
@@ -182,6 +202,8 @@ public class MainFrame extends JFrame implements WindowListener{
 		}
     	
     }
+    
+     // Close popup dialog if it exists
     public void closePopup(){
     	try {
     		pop.dispose();
@@ -191,13 +213,14 @@ public class MainFrame extends JFrame implements WindowListener{
     }
     
     
-    
+    // Close both add frame and popup dialog
     public void closeCurrentDialogs(){
     	closeAddFrame();
     	closePopup();
     	
     }
     
+    // Add a task bar to the specified panel
     public void addTaskBar(JPanel panel){
     	TaskBar bar = new TaskBar(panel, this);
     }
@@ -205,52 +228,63 @@ public class MainFrame extends JFrame implements WindowListener{
 
 
 
-
+    // Get controller instance
     public Controller getCont() {
         return cont;
     }
 
+    // Get the prepage flag
 	public boolean getPrepage() {
 		return prepage;
 	}
 
+	// Set the prepage flag
 	public void setPrepage(boolean prepage) {
 		this.prepage = prepage;
 	}
 
+    // Get current account information
 	public String[] getCurrentAcct() {
 		return currentAcct;
 	}
 
+    // Set current account information
 	public void setCurrentAcct(String type, String Uname) {
 		String[] x = {type,Uname};
 		this.currentAcct = x;
 	}
+	
+    // Clear current account information
 	public void clearCurrentAcct(){
 		this.currentAcct[0] =null;
 		this.currentAcct[1] = null;
 	}
 
+    // Get EditUtility instance
 	public EditUtility getEu() {
 		return eu;
 	}
 
+    // Get logo icon
 	public ImageIcon getLogo() {
 		return logo;
 	}
 
+	// Set logo icon
 	public void setLogo(ImageIcon logo) {
 		this.logo = logo;
 	}
     
-
+    // Get background file path
 	public String getBackgroundFP() {
 		return backgroundFP;
 	}
 
+    // Get logo file path
 	public String getLogoFP() {
 		return logoFP;
 	}
+    // Get EditDraft instance
 	public EditDraft getEd() {
 		return ed;
 	}
@@ -302,6 +336,8 @@ public class MainFrame extends JFrame implements WindowListener{
 		
 		
 	}
+	
+    // Main method to run the application
 	public static void main(String[] args)
 	{
 		MainFrame ex = new MainFrame();

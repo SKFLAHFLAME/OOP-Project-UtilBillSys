@@ -13,10 +13,10 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JCheckBox;
 
-public class SAccountPage extends JPanel{
-	PopupDialog window;
-	String id;
-	String[] acct;
+public class SAccountPage extends JPanel {
+	PopupDialog window;  // Reference to the PopupDialog window
+	String id;  // Staff ID
+	String[] acct;  // Array to store account details
 	
 	private JLabel lblId;
 	private JLabel lblPassword;
@@ -49,8 +49,12 @@ public class SAccountPage extends JPanel{
 		this.btnBack = new JButton("Close");
 		this.btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (editing == true){showNormalScreen();showAccount();return;}
-				window.dispose();
+				if (editing == true) {
+					showNormalScreen();  // If in editing mode, revert to normal screen
+					showAccount();  // Refresh account details
+					return;
+				}
+				window.dispose();  // Close the window
 			}
 		});
 		this.btnBack.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
@@ -60,17 +64,18 @@ public class SAccountPage extends JPanel{
 		this.btnEdit = new JButton("Edit");
 		this.btnEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String id = textField.getText();
-				String pass = new String(passwordField.getPassword());
-                if(editing==true) {//edit to not edit
-                	if (!(id.equals(acct[0])&&pass.equals(acct[1]))){
+				String id = textField.getText();  // Get the ID from the text field
+				String pass = new String(passwordField.getPassword());  // Get the password from the password field
+                if (editing == true) { // If already editing
+                	if (!(id.equals(acct[0]) && pass.equals(acct[1]))) {
                 	String[] options = {"Yes", "No"};
     				int sel = JOptionPane.showOptionDialog(null, "Confirm Changes?", "Confirmation", 0, 3, null, options, options[0]);
-    				if (sel == 1){return;}
-    				else{saveChanges(id, pass);}}
-					showNormalScreen();	
-                } else {//not edit to edit
-					showEditScreen();
+    				if (sel == 1) { return; }  // If user selects "No", return
+    				else { saveChanges(id, pass); }  // Save changes if "Yes" is selected
+					}
+					showNormalScreen();  // Revert to normal screen after editing
+                } else {  // If not in editing mode
+					showEditScreen();  // Switch to editing mode
                 }
             }
 		});
@@ -99,10 +104,11 @@ public class SAccountPage extends JPanel{
 		this.chckbxShowPassword = new JCheckBox("Show Password");
 		this.chckbxShowPassword.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if (chckbxShowPassword.isSelected()){
-					passwordField.setEchoChar((char)0);
+				if (chckbxShowPassword.isSelected()) {
+					passwordField.setEchoChar((char) 0);  // Show password
+				} else {
+					passwordField.setEchoChar((char) 0x2022);  // Hide password
 				}
-				else{passwordField.setEchoChar((char)0x2022);}
 			}
 		});
 		this.chckbxShowPassword.setFont(new Font("Tw Cen MT", Font.PLAIN, 17));
@@ -116,7 +122,7 @@ public class SAccountPage extends JPanel{
 
 	}
 	
-
+	// Method to switch to the editing screen
 	public void showEditScreen(){
 		editing=true;
 		btnEdit.setText("Finish");
@@ -129,6 +135,7 @@ public class SAccountPage extends JPanel{
 		
 	}
 
+	// Method to switch back to the normal screen
 	public void showNormalScreen(){
 		editing = false;
 		btnEdit.setText("Edit");
@@ -145,11 +152,14 @@ public class SAccountPage extends JPanel{
 		
 	}
 	
+	// Method to display the account details on the screen
 	public void showAccount(){
 		acct = window.main.getCont().getStaff(id);
 		textField.setText(acct[0]);
 		passwordField.setText(acct[1]);
 	}
+	
+	// Method to save changes to the account details
 	public void saveChanges(String id, String password){
 		window.main.getCont().editStaff(acct[0], id, password);
 		this.id = id;

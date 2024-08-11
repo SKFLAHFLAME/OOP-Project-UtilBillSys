@@ -24,6 +24,7 @@ import java.awt.Color;
 import javax.swing.JLabel;
 
 public class EditUtility extends JPanel{
+    // MainFrame object to interact with other parts of the application
 	MainFrame main;
 	private JButton btnBack;
 	private JButton btnDelete;
@@ -211,7 +212,7 @@ public class EditUtility extends JPanel{
 		
 		init();
 	}
-	
+	// Initialization method
 	public void init(){
 		if(main.getCurrentAcct()[0].equals("A")){
 //			btnUpdateUtility.setLocation(291,318);
@@ -222,7 +223,7 @@ public class EditUtility extends JPanel{
 //		btnClearRow.setLocation(12,324);
 	}
 	
-
+	// Method to add a new row (utility) to the table
 	public void addRow(){
 //		main.getCont().addReading("i", 0.0, "i", 0.0);
 //		redraw();
@@ -230,6 +231,7 @@ public class EditUtility extends JPanel{
 //		redraw();
 	}
 	
+	 // Method to delete a row from the table
 	public void deleteRow(int row){
 		if (row<0){return;}
 		int c=0;
@@ -270,6 +272,7 @@ public class EditUtility extends JPanel{
 		return true;
 	}
 	
+	 // Method to refresh the table data
 	public void redraw(){
 		this.model.setRowCount(0);
 		int c=0;
@@ -302,6 +305,7 @@ public class EditUtility extends JPanel{
 		
 	}
 	
+	 // Method to update items (utilities) in the table
 	public void updateItems(){
 		try {
 			table.getCellEditor().stopCellEditing();
@@ -332,6 +336,7 @@ public class EditUtility extends JPanel{
 		redraw();
 	}
 	
+	// Method to clear a row's data
 	public void clearRow(){
 		if (!(main.getCurrentAcct()[0].equals("A") || main.getCurrentAcct()[0].equals("S"))){return;}
 		int selRow = table.getSelectedRow();
@@ -377,6 +382,7 @@ public class EditUtility extends JPanel{
 		redraw();
 	}
 	
+	// Method to go back to the previous menu
 	public boolean back(){
 		try {
 			table.getCellEditor().stopCellEditing();

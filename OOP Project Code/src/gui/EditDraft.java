@@ -93,7 +93,7 @@ public class EditDraft extends JPanel {
         
         this.model = new DefaultTableModel(columnNames, 0){
             public boolean isCellEditable(int row, int column) {
-                return false;
+                return false;	// Cells are not editable
             }
         };
         this.table = new JTable(model);
@@ -277,102 +277,116 @@ public class EditDraft extends JPanel {
     }
     
     public void init(){
-    	fillCurrentPrices();
-    	redraw();
-    	
-    	// Tells program to run later
+        // Initialize the panel by filling current prices and redrawing the table
+        fillCurrentPrices();
+        redraw();
+
+        // Schedule a task to be executed later on the Event Dispatch Thread
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-            	showCurrentBill();
-            	if (lastBill==null){
-                	
-                	if (main.getCurrentAcct()[0].equals("C")) {
-                		main.showCustMenu();
-                		JOptionPane.showMessageDialog(null, "No History", "Error", JOptionPane.ERROR_MESSAGE);
-                	} else {
-                		String[] options = {"Yes", "No"};
-        				int sel = JOptionPane.showOptionDialog(null, "No History, Generate Bill?", "No History", 0, 3, null, options, options[1]);
-        				if(sel != 0){main.showAllCustomers();return;}
-        				main.getCont().generateBills(userName);
-        				init();
-                	}
-            	}
+                // Display the current bill information
+                showCurrentBill();
+                
+                // Check if there's no bill history
+                if (lastBill == null) {
+                    // Handle the scenario where there is no bill history
+                    if (main.getCurrentAcct()[0].equals("C")) {
+                        main.showCustMenu();
+                        JOptionPane.showMessageDialog(null, "No History", "Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        // Prompt the user to generate a bill if history is missing
+                        String[] options = {"Yes", "No"};
+                        int sel = JOptionPane.showOptionDialog(null, "No History, Generate Bill?", "No History", 0, 3, null, options, options[1]);
+                        if (sel != 0) {
+                            main.showAllCustomers();
+                            return;
+                        }
+                        // Generate a new bill and reinitialize the panel
+                        main.getCont().generateBills(userName);
+                        init();
+                    }
+                }
             }
         });
-    	
-    	
-    	
-        
     }
-    public void showCurrentBill(){
-    	//bill area
-    	if (lastBill==null){txtrCurrentBill.setText("No History");return;}
-    	String text = "Current Bill: "+lastBill[0][2]+ '\n';
-    	double total =0;
-    	for (int i =0; i<lastBill.length-1; i++){
-    		text+= lastBill[i+1][0] +" : "+lastBill[i+1][1]+"\n";
-    		total+=Double.valueOf(lastBill[i+1][2]);
-    	}
-    	text+="Total : $"+String.format("%.2f", total);
-    	txtrCurrentBill.setText(text);
-    	lblDate.setText("Bill Date: "+billDate[1]+"/"+billDate[2]);
-    }
-    
-    public void fillCurrentPrices(){
-    	//price Table
-    	priceModel.setRowCount(0);
-        Readings[] readings = main.getCont().getAllReadings();
-        for(Readings r:readings){
-        	String[] row = {r.getUtilityName(), "$"+r.getPrice()+"/"+r.getUnit(), ""+r.getServiceCharge()+"%"};
-        	priceModel.addRow(row);
-        }
-        tablePrice.setModel(priceModel);
-        tablePrice.repaint();
-    }
-    
-    
-	
-	
-	public void resetRow(int row){
-		if(row ==-1){
-			return;
-		}
-		String readingName=(String) table.getValueAt(row, 0);
-		int currentReading = main.getCont().getCurrentTotalReading(userName, readingName);
-		main.getCont().editMeterReading(userName, readingName, currentReading);
-		
-		main.showEditDraft(userName);
 
-	}
+    public void showCurrentBill(){
+        // Update the bill area with the current bill information
+        if (lastBill == null) {
+            txtrCurrentBill.setText("No History");
+            return;
+        }
+        String text = "Current Bill: " + lastBill[0][2] + '\n';
+        double total = 0;
+        
+        // Iterate through the bill details and calculate the total
+        for (int i = 0; i < lastBill.length - 1; i++) {
+            text += lastBill[i + 1][0] + " : " + lastBill[i + 1][1] + "\n";
+            total += Double.valueOf(lastBill[i + 1][2]);
+        }
+        text += "Total : $" + String.format("%.2f", total);
+        txtrCurrentBill.setText(text);
+        lblDate.setText("Bill Date: " + billDate[1] + "/" + billDate[2]);
+    }
+
+    public void fillCurrentPrices(){
+        // Populate the price table with current utility prices
+        priceModel.setRowCount(0); // Clear existing rows
+        Readings[] readings = main.getCont().getAllReadings(); // Fetch all readings from the controller
+        
+        // Add each reading to the price table
+        for (Readings r : readings) {
+            String[] row = {r.getUtilityName(), "$" + r.getPrice() + "/" + r.getUnit(), "" + r.getServiceCharge() + "%"};
+            priceModel.addRow(row);
+        }
+        tablePrice.setModel(priceModel); // Update the table model
+        tablePrice.repaint(); // Repaint the table to reflect changes
+    }
+
+    public void resetRow(int row){
+        // Reset the data in the specified row of the meter readings table
+        if (row == -1) {
+            return; // No row selected
+        }
+        String readingName = (String) table.getValueAt(row, 0);
+        int currentReading = main.getCont().getCurrentTotalReading(userName, readingName);
+        main.getCont().editMeterReading(userName, readingName, currentReading); // Reset meter reading
+        
+        // Refresh the draft view after resetting
+        main.showEditDraft(userName);
+    }
 
     public void redraw() {
-    	draft = main.getCont().getDraft(userName);
-        this.model.setRowCount(0);
-        double total=0;
-        for (String[] d :draft) {
-        	System.out.println(String.join(", ", d));
-        	try {
-        		Readings r = main.getCont().getReading(d[0]);
-        		int currentTotal = Integer.valueOf(d[1]);
-        		int pastTotal = main.getCont().getPastTotalReading(userName, r.getUtilityName());
-        		int amtUsed = currentTotal - pastTotal;
-        		
-        		
-                Object[] x = {d[0],d[1],pastTotal,amtUsed,"$"+String.format("%.2f", main.getCont().calculateReading(r.getUtilityName(),""+amtUsed))};
+        // Redraw the table with updated draft data
+        draft = main.getCont().getDraft(userName);
+        this.model.setRowCount(0); // Clear existing rows
+        double total = 0;
+        
+        // Iterate through the draft data and update the table
+        for (String[] d : draft) {
+            System.out.println(String.join(", ", d)); // Debug output
+            try {
+                Readings r = main.getCont().getReading(d[0]);
+                int currentTotal = Integer.valueOf(d[1]);
+                int pastTotal = main.getCont().getPastTotalReading(userName, r.getUtilityName());
+                int amtUsed = currentTotal - pastTotal;
+                
+                // Calculate and display the amount used and cost
+                Object[] x = {d[0], d[1], pastTotal, amtUsed, "$" + String.format("%.2f", main.getCont().calculateReading(r.getUtilityName(), "" + amtUsed))};
                 model.addRow(x);
-                total+=main.getCont().calculateReading(r.getUtilityName(),""+amtUsed);
-			} catch (Exception e) {
-				lblError.setText(d[0]+" Not Avaliable, Deleted");
-				main.getCont().removeMeterReading(userName, d[0]);
-				continue;
-
-			}
-        	txtTotal.setText(String.format("%.2f", total));
-        	
+                total += main.getCont().calculateReading(r.getUtilityName(), "" + amtUsed);
+            } catch (Exception e) {
+                // Handle exceptions (e.g., missing or invalid readings)
+                lblError.setText(d[0] + " Not Available, Deleted");
+                main.getCont().removeMeterReading(userName, d[0]); // Remove invalid reading
+                continue;
+            }
+            txtTotal.setText(String.format("%.2f", total)); // Update the total amount
         }
-        table.setModel(model);
-        table.repaint();
+        table.setModel(model); // Update the table model
+        table.repaint(); // Repaint the table to reflect changes
     }
+
     
     
     

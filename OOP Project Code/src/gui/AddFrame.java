@@ -66,6 +66,7 @@ public class AddFrame extends JDialog{
 	private JLabel lbldoNotUse;
 	private JLabel lblFormat;
 	
+    // Constructor initializes the frame and sets visibility of panels
 	public AddFrame(MainFrame m){
 		main=m;
 		this.f = main.flag;
@@ -88,6 +89,7 @@ public class AddFrame extends JDialog{
 	
 	
 	//!Panel 1
+    // Initializes panel1 with components for manual addition
 	private void InitPanel1(){
 		this.panel1 =  new JPanel();
 		this.panel1.setLocation(0, 0);
@@ -200,6 +202,7 @@ public class AddFrame extends JDialog{
 
 
 	//!Panel 2
+    // Initializes panel2 with components for file-based addition
 	private void initPanel2(){
 		this.panel2 = new JPanel();
 		this.panel2.setLocation(0, 0);
@@ -211,10 +214,12 @@ public class AddFrame extends JDialog{
 
 		this.btnAdd_1 = new JButton("Add");
 		this.btnAdd_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) {	// Check if a file is selected
 				if (fileSelected==null){lblError.setText("No File Uploaded");return;}
+				// If the flag is false, process the file contents
 				if (f == false){
 					int c=0;
+					 // Skip header if present
 					for(String[] s : fileContents){
 						if(c==0&&Header==true){c+=1;continue;}
 						addReading(s[0], s[1], s[2], s[3].split("%")[0]);
@@ -241,6 +246,7 @@ public class AddFrame extends JDialog{
 				fileChooser.setFileFilter(new FileNameExtensionFilter(".txt , .csv", "csv","txt"));
 				panel2.add(fileChooser);
 				int r = fileChooser.showOpenDialog(null);
+				// Check if file selection was approved
 				if (r == JFileChooser.APPROVE_OPTION){
 					fileSelected = fileChooser.getSelectedFile().getAbsolutePath();
 				}
@@ -319,21 +325,28 @@ public class AddFrame extends JDialog{
 	
 
 	//! Populate List Method
+	// Reads data from a CSV file, processes it, and updates the list and format label.
 	private void populateList() throws FileNotFoundException{
+		// Check if a file has been selected; if not, print a message and return.
 		if (fileSelected == null){System.out.println("No File to populate with");return;}
+	    // Read the contents of the selected CSV file using a csvReader method.
 		fileContents = main.getCont().csvReader(fileSelected);
+	    // Initialize the lines array to store the formatted lines from the file.
 		lines=new String[fileContents.length];
 		int c=0;
+	    // Iterate through each line in the fileContents.
 		for (String[] line : fileContents){
+	        // Print the first element of each line (for debugging).
 			System.out.println(line[0]);
-			
+	        // Check if the first element of the line is "Header" to set the Header flag.
 			if (line[0].equals("Header")){Header = true;}
+	        // Concatenate each element of the line into a single string with separators.
 			String l="";
 			for (String var: line){
 				l=l+var+"  |  ";
 			}
 			lines[c]=l;
-			
+	        // Set the format of the file based on the number of columns in the line.
 			if (line.length==4){lblFormat.setText("Format: \r\nUtil Name, Price($), Unit, Service Charge(%)");}
 			else if (line.length==3&&f == true){lblFormat.setText("Format: \r\nUtil Name, Price($), Service Charge(%)");}
 			else if (line.length==2&&f == true){lblFormat.setText("Format: \r\nUtil Name, Price($)");}
@@ -342,6 +355,7 @@ public class AddFrame extends JDialog{
 			c+=1;
 		}
 		c=0;
+	    // Create a DefaultListModel to hold the lines for display in the list.
 		DefaultListModel<String> model = new DefaultListModel<>();
 		for (String line:lines){
 			System.out.println(line);
@@ -355,6 +369,7 @@ public class AddFrame extends JDialog{
 			model.addElement("Reading "+c+"| "+line);
 			c+=1;
 		}
+	    // Set the model to the list component to display the data.
 		list.setModel(model);
 		
 	}
@@ -369,31 +384,40 @@ public class AddFrame extends JDialog{
 //		}
 //		return true;
 //	}
+	
+	// Adds a reading to the system
 	public void addReading(String name, String priceString, String unit, String serviceCharge){
 		Double price;
 		Double serCharge;
+	    // Attempt to parse the price from the string; default to 0.0 if parsing fails.
 		try {
 			price = Double.parseDouble(priceString);
 		} catch (Exception e) {
 			price = 0.0;
 		}
+	    // Attempt to parse the service charge from the string; default to 0.0 if parsing fails.
 		try {
 			serCharge = Double.parseDouble(serviceCharge);
 		} catch (Exception e) {
 			serCharge =0.0;
 		}
+	    // Default values for empty fields.
 		if(name.isEmpty()){name="-";}
 		if(unit.isEmpty()){unit="-";}
 		
+	    // Add the reading using the controller's addReading method.
 		main.getCont().addReading(name, price, unit, serCharge);
 	}
 	
+	// Updates readings based on the contents of the file.
 	public boolean updateReading(){
 		Vector<String[]> avaliable = new Vector<>();
 		Vector<String[]> unAvaliable = new Vector<>();
 		Vector<String> notAvaRead = new Vector<>();
 		int c=0;
+	    // Iterate through each line in fileContents.
 		for (String[] line : fileContents){
+	        // Skip the header line if present.
 			if (c==0&&Header == true){c+=1;continue;}
 			try {
 				main.getCont().getReading(line[0]).getUtilityName();
@@ -404,13 +428,15 @@ public class AddFrame extends JDialog{
 			}
 			c+=1;
 		}
+	    // Print unavailable readings (for debugging).
 		System.out.println(String.join(",", notAvaRead));
-		if (!unAvaliable.isEmpty()){
+		if (!unAvaliable.isEmpty()){	    // If there are unavailable readings, prompt the user to continue or cancel.
 			String[] options = {"Continue","Cancel"};
 			int selection = JOptionPane.showOptionDialog(null, String.join(", ", notAvaRead)+" is not avaliable in Readings. Continue? Will change those avaliable", "Unavaliable Edits", 0,3,null,options,options[0]);
 			if(selection != 0){return false;}
 		}
 		
+	    // Update the available readings in the system.
 		for (String[] line :avaliable){
 			if (line.length ==4){main.getEu().editRow(line[0], line[1], line[2], line[3]);}// utilName, Price, Unit, serCharge
 			else if (line.length ==3){main.getEu().editRow(line[0], line[1], "", line[2]);}//utilName, Price, serCharge
