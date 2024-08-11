@@ -41,7 +41,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
 
 public class ViewAllCustomer extends JPanel{
-	MainFrame main;
+    MainFrame main; // Reference to the main application frame
 	private DefaultTreeModel model;
 	private DefaultMutableTreeNode customer = new DefaultMutableTreeNode("Customers");
 	
@@ -63,7 +63,7 @@ public class ViewAllCustomer extends JPanel{
 	private JButton btnExport;
 	
 	public ViewAllCustomer(MainFrame m) {
-		main=m;
+        main = m; // Initialize main application frame
 		this.setLayout(null);
 		
 		this.scrollPane = new JScrollPane();
@@ -75,6 +75,7 @@ public class ViewAllCustomer extends JPanel{
 		tree.setRowHeight(30);
 		this.tree.addTreeSelectionListener(new TreeSelectionListener() {
 			public void valueChanged(TreeSelectionEvent arg0) {
+                // Show or hide "Edit User" button based on tree selection
 				if (arg0.getPath().getPathCount()==2){
 					btnEditUser.show();
 				}
@@ -196,6 +197,7 @@ public class ViewAllCustomer extends JPanel{
 		this.txtPostal.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent arg0) {
+                // Only allow digit input
 				if (Character.isDigit(arg0.getKeyChar())){return;}
 				arg0.consume();
 			}
@@ -243,12 +245,14 @@ public class ViewAllCustomer extends JPanel{
 		btnExport.setIcon(print);
 		add(this.btnExport);
 		
-		lblPostalCode.hide();
+		lblPostalCode.hide();// Hide postal and unit number related components initially
 		lblUnitNo.hide();
 		label.hide();
 		txtPostal.hide();
 		txtxUnitNo.hide();
 		btnSearch.hide();
+		
+        // Show address search if flag is set
 		if (main.flag==true){
 			main.flag=false;
 			tglbtnSearchMethod.setSelected(true);
@@ -256,6 +260,7 @@ public class ViewAllCustomer extends JPanel{
 		}
 	}
 	
+	// Set units in the units text area
 	public void setUnits(){
 		Readings[] readings = main.getCont().getAllReadings();
 		HashMap<String, String> organisedUnits = new HashMap<>();
@@ -300,8 +305,9 @@ public class ViewAllCustomer extends JPanel{
 		btnSearch.hide();
 	}
 	
-	
+	// Populate tree with customer information
 	public void populateTree() {
+		 // Create root node
 		Customer[] accts = main.getCont().getAllCustomers();
 		customer.removeAllChildren();
 		double allTotal=0;
@@ -347,8 +353,11 @@ public class ViewAllCustomer extends JPanel{
 		tree.setModel(model);
 	}
 
+	// Searches the tree based on the provided search string
 	public void searchTree(String search){
+	    // If the search string is empty, repopulate the tree with all customers
 		if (search.equals("")){populateTree();return;}
+	    // Retrieve all customers from the controller
 		Customer[] accts = main.getCont().getAllCustomers();
 		Vector<Customer> filtered = new Vector<>();
 		// Filter accts
@@ -359,36 +368,44 @@ public class ViewAllCustomer extends JPanel{
 		}
 
 		customer.removeAllChildren();
+	    // Add filtered customers to the tree
 		for (Customer a : filtered) {
 			DefaultMutableTreeNode username = new DefaultMutableTreeNode(a.getUsername());
 			customer.add(username);
 			
+	        // Add customer details
 			username.add(new DefaultMutableTreeNode("Full Name: "+a.getName()));
 			username.add(new DefaultMutableTreeNode("Email: "+a.getEmail()));
 			username.add(new DefaultMutableTreeNode("Address: "+a.getAddress()));
 			
-			DefaultMutableTreeNode userR = new DefaultMutableTreeNode("View All Bills");
-			String[][][] userReadings = main.getCont().getUserReading(a.getUsername());//get all userReadings of user
-			double utotal = 0;
-			for (String[][] ur: userReadings){//go thru each bill
-				double total=0;
-				if(ur==null){continue;}
-				if (ur[0][0]==null){continue;}
-				DefaultMutableTreeNode bill= new DefaultMutableTreeNode("Bill "+ur[0][1]+":"+ur[0][2]);
+			// Create node for viewing all bills
+	        DefaultMutableTreeNode userR = new DefaultMutableTreeNode("View All Bills");
+	        String[][][] userReadings = main.getCont().getUserReading(a.getUsername()); // Get all user readings
+	        double utotal = 0; // Initialize user total
+	        // Iterate through each bill
+	        for (String[][] ur : userReadings){
+	            double total = 0; // Initialize bill total
+	            if (ur == null || ur[0][0] == null) {
+	                continue;
+	            }
+	            DefaultMutableTreeNode bill = new DefaultMutableTreeNode("Bill " + ur[0][1] + ":" + ur[0][2]);
+	            
+	            // Iterate through each reading in the bill
 				for (int i =0; i<ur.length-1; i++){// go thru each reading
 					if (ur[i][0]==null){continue;}
 					bill.add(new DefaultMutableTreeNode(ur[i+1][0]+" used: "+ ur[i+1][1]));
 					total+=Double.valueOf(ur[i+1][2]);
 				}
+	            // Add total of the bill
 				String t = String.format("%.2f", total);
 				utotal+= total;
 				bill.add(new DefaultMutableTreeNode("Total: $"+t));
 			}
 			if (userReadings.length==0){
-				userR.add(new DefaultMutableTreeNode("No History"));//total of bill
+				userR.add(new DefaultMutableTreeNode("No History"));
 				System.out.println("No Hist");
 			}
-			else{userR.add(new DefaultMutableTreeNode("User Total: $"+String.format("%.2f", utotal)));}//total of bill
+			else{userR.add(new DefaultMutableTreeNode("User Total: $"+String.format("%.2f", utotal)));}// Add total of all bills for the user
 			username.add(userR);
 		}
 		model.reload();
@@ -397,14 +414,17 @@ public class ViewAllCustomer extends JPanel{
 	
 	
 	public void searchTree(String postal, String unitNo){
+	    // If postal code is empty, repopulate the tree with all customers
 		if (postal.equals("")){populateTree();return;}
+	    // Retrieve customers based on postal code and unit number
 		Customer[] accts = main.getCont().getAllCustomers();
 //		Vector<Customer> filtered = new Vector<>();
-		// Filter accts
+		// Filter accts	
 		Customer[] filtered = main.getCont().getCustomer(postal, unitNo);
 		
 
 		customer.removeAllChildren();
+	    // Add filtered customers to the tree
 		for (Customer a : filtered) {
 			DefaultMutableTreeNode username = new DefaultMutableTreeNode(a.getUsername());
 			customer.add(username);
@@ -416,6 +436,7 @@ public class ViewAllCustomer extends JPanel{
 			DefaultMutableTreeNode userR = new DefaultMutableTreeNode("View All Bills");
 			String[][][] userReadings = main.getCont().getUserReading(a.getUsername());//get all userReadings of user
 			double utotal = 0;
+	        // Iterate through each bill
 			for (String[][] ur: userReadings){//go thru each bill
 				double total=0;
 				if(ur==null){continue;}
@@ -426,6 +447,7 @@ public class ViewAllCustomer extends JPanel{
 					bill.add(new DefaultMutableTreeNode(ur[i+1][0]+" used: "+ ur[i+1][1]));
 					total+=Double.valueOf(ur[i+1][2]);
 				}
+	            // Add total of the bill
 				String t = String.format("%.2f", total);
 				utotal+= total;
 				bill.add(new DefaultMutableTreeNode("Total: $"+t));
@@ -435,9 +457,10 @@ public class ViewAllCustomer extends JPanel{
 				userR.add(new DefaultMutableTreeNode("No History"));//total of bill
 				System.out.println("No Hist");
 			}
-			else{userR.add(new DefaultMutableTreeNode("User Total: $"+String.format("%.2f", utotal)));}//total of bill
+			else{userR.add(new DefaultMutableTreeNode("User Total: $"+String.format("%.2f", utotal)));}// Add total of all bills for the user
 			username.add(userR);
 		}
+	    // Reload the model and update the tree
 		model.reload();
 		tree.setModel(model);
 	}
